@@ -16,7 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from SkyScoreApp import views
+# these are view functions - they should live in the views.py file
+
 
 urlpatterns = [
+    path('',views.home, name='home'), # this is the home page
     path('admin/', admin.site.urls),
+
+    
 ]
