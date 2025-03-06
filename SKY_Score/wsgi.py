@@ -1,5 +1,5 @@
 """
-WSGI config for SKY_Score project.
+WSGI config for Sky_Score project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'SKY_Score.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Sky_Score.settings')
 
 application = get_wsgi_application()

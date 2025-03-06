@@ -1,5 +1,5 @@
 """
-ASGI config for SKY_Score project.
+ASGI config for Sky_Score project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'SKY_Score.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Sky_Score.settings')
 
 application = get_asgi_application()
