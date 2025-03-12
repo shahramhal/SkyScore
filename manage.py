@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'SKY_Score.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Sky_Score.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

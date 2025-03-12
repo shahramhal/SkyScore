@@ -1,5 +1,5 @@
 """
-URL configuration for SKY_Score project.
+URL configuration for Sky_Score project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -16,7 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from SkyScoreApp import views
+# these are view functions - they should live in the views.py file
+
 
 urlpatterns = [
+    path('',views.home, name='home'), # this is the home page
     path('admin/', admin.site.urls),
+
+    
 ]
