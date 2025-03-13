@@ -1,0 +1,30 @@
+{% load static %} <!-- Load the static template tag to handle static files -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Setting the character encoding for the document -->
+    <meta charset="UTF-8">
+    <!-- Ensuring the page is responsive on all devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title of the sign-up page -->
+    <title>Sign Up</title>
+    <!-- Link to the external CSS stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Container for the sign-up form -->
+    <div class="container">
+        <!-- Heading for the sign-up form -->
+        <h1>Sign Up</h1>
+        <!-- Sign-up form with POST method -->
+        <form method="post">
+            <!-- CSRF token for security -->
+            {% csrf_token %}
+            <!-- Render the form fields as paragraphs -->
+            {{ form.as_p }}
+            <!-- Submit button for the sign-up form -->
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+</body>
+</html>
