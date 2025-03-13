@@ -33,4 +33,4 @@ def signup_view(request):
 
 def admin_login(request):
     # Render the manager login page
-    return render(request, 'admin_login.html')
+    return render(request, 'admin.html')
