@@ -1,0 +1,38 @@
+{% load static %} <!-- Load the static template tag to handle static files -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Setting the character encoding for the document -->
+    <meta charset="UTF-8">
+    <!-- Ensuring the page is responsive on all devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title of the login page -->
+    <title>Login</title>
+    <!-- Link to the external CSS stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Container for the login form -->
+    <div class="login-container">
+        <!-- Heading for the login form -->
+        <h2>Login</h2>
+        <!-- Login form with POST method -->
+        <form method="post">
+            <!-- CSRF token for security -->
+            {% csrf_token %}
+            <!-- Form group for the username input -->
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <!-- Form group for the password input -->
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <!-- Submit button for the login form -->
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>
