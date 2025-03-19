@@ -1,21 +1,31 @@
 {% load static %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+<link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 
-  <div class="footer">
-    <div></div>
-    <div class="footer-right">
-      <!-- Link to the guide page -->
-      <a href="{%url 'guide'%}" class="guide-button">Our Guide</a>
-      <!-- Button to toggle the menu -->
-      <button class="menu-button" id="menuToggle">≡</button>
-      <!-- Container for social media icons -->
-      <div class="social-icons">
-        <!-- Link to Facebook -->
-        <a href="#" class="social-icon"></a>
-        <!-- Link to another social media -->
-        <a href="#" class="social-icon">✕</a>
-      </div>
+<div class="footer">
+  <div class="footer-left">
+    <!-- Link to the guide page -->
+    <a href="{% url 'guide' %}" class="guide-button">Our Guide</a>
+  </div>
+  <div class="footer-right">
+    <!-- Container for social media icons -->
+    <div class="social-icons">
+      <!-- Link to Facebook -->
+      <a href="#" class="social-icon"></a>
+      <!-- Link to another social media -->
+      <a href="#" class="social-icon">✕</a>
     </div>
   </div>
-  <script src="{% static 'js/script.js' %}"></script>
-</head>
+  <!-- Button to toggle the side navigation -->
+  <button class="menu-button" onclick="openNav()">&#9776;</button>
+</div>
+
+<!-- Side navigation bar -->
+<div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <a href="#">About</a>
+  <a href="#">Services</a>
+  <a href="#">Clients</a>
+  <a href="#">Contact</a>
+</div>
+
+<script src="{% static 'js/script.js' %}"></script>
