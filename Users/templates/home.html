@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  {% include "headfile.html" %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Page</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <div class="content-container">
+    <div class="buttons-container">
+      <!-- Link to the login page -->
+      <a href="{% url 'login' %}" class="auth-button">SIGN IN</a>
+      <!-- Link to the sign-up page -->
+      <a href="{% url 'signup' %}" class="auth-button">SIGN UP</a>
+      <!-- Link to the django-admin login page -->
+      <a href="{% url 'admin:index' %}" class="auth-button">Admin Log in</a>
+    </div>
+  </div>
+  {%include "footer.html"%}
+</html>
