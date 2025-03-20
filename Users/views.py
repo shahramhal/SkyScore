@@ -19,10 +19,11 @@ def login_view(request):
         if user is not None:
             # Log the user in and redirect to the dashboard
             login(request, user)
-            return redirect('dashboard')
+            return redirect('django-admin')
         else:
             # Display an error message if authentication fails
             messages.error(request, 'Invalid username or password')
+            return redirect('login')
     
     # Render the login page
     return render(request, 'login.html')
@@ -68,11 +69,11 @@ def admin_login(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         
-        if user is not None and user.userType == 'manager':  # Check if user is a manager
-            login(request, user)
-            return redirect('admin_dashboard')  # Redirect to admin dashboard
-        else:
-            messages.error(request, 'Invalid credentials or insufficient permissions')
+        # if user is not None and user.userType == 'manager':  # Check if user is a manager
+        #     login(request, user)
+        #     return redirect('admin_dashboard')  # Redirect to admin dashboard
+        # else:
+        #     messages.error(request, 'Invalid credentials or insufficient permissions')
     
     # Render the manager login page
-    return render(request, 'admin.html')
+    return render(request, 'admin_login.html')
