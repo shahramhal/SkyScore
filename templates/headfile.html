@@ -1,0 +1,26 @@
+{% load static %}
+<!-- Load the static template tag to handle static files -->
+
+<!-- Setting the character encoding for the document -->
+<meta charset="UTF-8" />
+<!-- Ensuring the page is responsive on all devices -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Title of the welcome page -->
+<title>Sky Score - Welcome</title>
+<!-- Link to the external CSS stylesheet -->
+<link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+<div class="container">
+  <div class="upper-section">
+    <!-- Welcome logo text -->
+    <div class="welcome-logo">
+      <a href="{% url 'home' %}">Welcome</a>
+    </div>
+    <!-- Sky Score logo text -->
+    <div class="sky-score-logo">
+      <span class="sky-text">sky</span>
+      <span class="score-text">score</span>
+    </div>
+    <!-- Container for authentication buttons -->
+  </div>
+</div>

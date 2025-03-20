@@ -17,11 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from Users import views
+from . import views
 # these are view functions - they should live in the views.py file
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Users.urls')),
+    path('guide/', views.guide, name='guide')
+    
 ]
 
