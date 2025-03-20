@@ -56,6 +56,17 @@
               required
             />
           </div>
+          
+          <div class="show-pass">
+            <label for="show_password">
+              <input
+                type="checkbox"
+                id="show_password"
+                class="show-password-checkbox"
+              />
+              Show Password
+            </label>
+          </div>
 
           <div class="form-actions">
             <button type="submit" class="sign-in-button auth-button">
@@ -73,8 +84,10 @@
       </div>
 
       <div class="account-options">
-        <button class="no-account-button">Don't have an Account?</button>
-        <button class="forgot-password-button">Forgot Password?</button>
+        <button class="no-account-button">
+          <a href="{% url 'home' %}">Don't have an Account?<a/></button>
+        <button class="forgot-password-button">
+          <a href="{% url 'forgotPassword' %}">Forgot Password?<a/></button>
       </div>
 
       {% include "footer.html" %}

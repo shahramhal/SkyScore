@@ -124,17 +124,19 @@
               <div class="dropdown">
                 <div class="dropdown-header">
                   <span>Role: </span>
+                  <span id="selected-role">Choose the role</span> 
                   <div class="dropdown-arrow"></div>
                 </div>
-                <select name="role" class="hidden-select" required>
-                  <option value="team_member">Team Member</option>
-                  <option value="team_lead">Team Lead</option>
+                <select id="role-select" name="role" class="hidden-select" required>
+                  <option value="team_member">Engineer</option>
+                  <option value="team_lead">Team Leader</option>
+                  <option value="dept_lead">Department Leader</option>
+                  <option value="Sen-man">Senior managers</option>
                   <option value="admin">Admin</option>
                 </select>
               </div>
             </div>
           </div>
-
           <div class="form-actions1">
             <a href="{% url 'login' %}" class="login-link"
               >Already have an Account?</a
@@ -145,20 +147,13 @@
       </div>
     </div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const showPasswordCheckbox = document.getElementById("show_password");
-        const passwordFields = document.querySelectorAll(
-          'input[type="password"]'
-        );
+    <script src="{% static 'js/user_script.js' %}"></script>
 
-        showPasswordCheckbox.addEventListener("change", function () {
-          passwordFields.forEach((field) => {
-            field.type = this.checked ? "text" : "password";
-          });
-        });
-      });
-    </script>
+
+
+   
   </body>
+
+
   {% include "footer.html" %}
 </html>
