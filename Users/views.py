@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
+from .models import User
 # Create your views here.
 
 def home(request):
@@ -10,22 +9,30 @@ def home(request):
 
 def login_view(request):
     if request.method == 'POST':
-        # Get the username and password from the POST request
         username = request.POST.get('username')
         password = request.POST.get('password')
-        # Authenticate the user
-        user = authenticate(request, username=username, password=password)
         
-        if user is not None:
-            # Log the user in and redirect to the dashboard
-            login(request, user)
-            return redirect('django-admin')
-        else:
-            # Display an error message if authentication fails
+        try:
+            # Try to find the user in your custom table
+            user = User.objects.get(username=username, password=password)
+            
+            # Store user info in session
+            request.session['user_id'] = user.userID
+            request.session['user_type'] = user.userType
+            request.session['username'] = user.username
+            
+            # Redirect based on user type
+            if user.userType == 'Admin':
+                return redirect('admin_dashboard') # !!!!!you should create template with this name 
+            elif user.userType in ['SenManager', 'TeamLead']:
+                return redirect('manager_dashboard')# !!!!!you should create template with this name)
+            else:
+                return redirect('home')
+                
+        except User.DoesNotExist:
             messages.error(request, 'Invalid username or password')
             return redirect('login')
     
-    # Render the login page
     return render(request, 'login.html')
 
 def signup_view(request):
@@ -36,23 +43,24 @@ def signup_view(request):
         password = request.POST.get('password')
         user_type = request.POST.get('userType', 'customer')  # Default to customer
         
-        # Create a new user in your database
-        user = user.objects.create(
-            username=username,
-            email=email,
-            password=password,  # You should hash this!
-            userType=user_type
-        )
-        
-        # Create an auth user (if using Django's auth)
-        # from django.contrib.auth.models import User as AuthUser
-        # auth_user = AuthUser.objects.create_user(username=username, email=email, password=password)
-        
-        # Log the user in
-        # login(request, auth_user)
-        
-        # Redirect to dashboard or login
-        return redirect('login')
+        # Create a new user using Django's auth system
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,  # create_user handles hashing
+                userType=user_type
+            )
+            
+            # If you have a custom user profile model for user_type
+            # Create it here and link to the auth user
+            # profile = UserProfile.objects.create(user=user, user_type=user_type)
+            
+            messages.success(request, 'Account created successfully! Please log in.')
+            return redirect('login')
+        except Exception as e:
+            messages.error(request, f'Error creating account: {str(e)}')
+            return redirect('signup')
     
     # Render the sign-up page
     return render(request, 'signup.html')
@@ -63,17 +71,17 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 
-def admin_login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+# def admin_login(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+#         user = authenticate(request, username=username, password=password)
         
-        # if user is not None and user.userType == 'manager':  # Check if user is a manager
-        #     login(request, user)
-        #     return redirect('admin_dashboard')  # Redirect to admin dashboard
-        # else:
-        #     messages.error(request, 'Invalid credentials or insufficient permissions')
+#         # if user is not None and user.userType == 'manager':  # Check if user is a manager
+#         #     login(request, user)
+#         #     return redirect('admin_dashboard')  # Redirect to admin dashboard
+#         # else:
+#         #     messages.error(request, 'Invalid credentials or insufficient permissions')
     
-    # Render the manager login page
-    return render(request, 'admin_login.html')
+#     # Render the manager login page
+#     return render(request, 'admin_login.html')

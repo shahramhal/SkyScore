@@ -10,6 +10,6 @@ urlpatterns = [
     # Route for user registration page
     path('signup/', views.signup_view, name='signup'),
     # Route for admin/manager login page
-    path('django-admin/', views.admin_login, name='django-admin'),
+    # path('django-admin/', views.admin_login, name='django-admin'),
     path('dashboard/', views.dashboard, name='dashboard')
 ]

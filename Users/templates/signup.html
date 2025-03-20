@@ -14,21 +14,151 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
   <body>
-    <!-- Container for the sign-up form -->
     <div class="main-container">
-      <!-- Heading for the sign-up form -->
-      <div class="sign-in-header">
-      <h1>Sign Up</h1>
-      <!-- Sign-up form with POST method -->
-      <form method="post">
-        <!-- CSRF token for security -->
-        {% csrf_token %}
-        <!-- Render the form fields as paragraphs -->
-        {{ form.as_p }}
-        <!-- Submit button for the sign-up form -->
-        <button type="submit">Sign Up</button>
-      </form>
+      <div class="registration-content">
+        <div class="registration-header">
+          <h1>User Registration</h1>
+          <span class="checkmark">✓</span>
+        </div>
+        <div class="registration-info">
+          <p>Department Leaders and Senior Managers require admin approval</p>
+          <p>Engineers and Team Leaders can register directly</p>
+          <div class="security-icon">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="#333"
+                stroke-width="2"
+                fill="none"
+              />
+              <path
+                d="M7 12 L11 16 L17 8"
+                stroke="#333"
+                stroke-width="2"
+                fill="none"
+              />
+            </svg>
+          </div>
+        </div>
+        <form method="post" action="{% url 'signup' %}">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group">
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your Name:"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                name="surname"
+                placeholder="Enter your Surname:"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <input
+                type="text"
+                name="username"
+                placeholder="Create a Username:"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your Email Address"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <input
+                type="password"
+                name="password"
+                placeholder="Create a Password:"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="password"
+                name="confirm_password"
+                placeholder="Confirm Password:"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group password-toggle-container">
+              <input
+                type="checkbox"
+                id="show_password"
+                class="show-password-checkbox"
+              />
+              <label for="show_password">Show Password</label>
+            </div>
+          </div>
+
+          <!-- Role selection centered at the bottom -->
+          <div class="form-row role-selection">
+            <div class="form-group">
+              <div class="dropdown">
+                <div class="dropdown-header">
+                  <span>Role: </span>
+                  <div class="dropdown-arrow"></div>
+                </div>
+                <select name="role" class="hidden-select" required>
+                  <option value="team_member">Team Member</option>
+                  <option value="team_lead">Team Lead</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions1">
+            <a href="{% url 'login' %}" class="login-link"
+              >Already have an Account?</a
+            >
+            <button type="submit" class="signup-button">SIGN UP</button>
+          </div>
+        </form>
+      </div>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const showPasswordCheckbox = document.getElementById("show_password");
+        const passwordFields = document.querySelectorAll(
+          'input[type="password"]'
+        );
+
+        showPasswordCheckbox.addEventListener("change", function () {
+          passwordFields.forEach((field) => {
+            field.type = this.checked ? "text" : "password";
+          });
+        });
+      });
+    </script>
   </body>
   {% include "footer.html" %}
 </html>
