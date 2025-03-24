@@ -1,30 +1,159 @@
-{% load static %} <!-- Load the static template tag to handle static files -->
+{% load static %}
+<!-- Load the static template tag to handle static files -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    {% include "headfile.html" %}
     <!-- Setting the character encoding for the document -->
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <!-- Ensuring the page is responsive on all devices -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Title of the sign-up page -->
     <title>Sign Up</title>
     <!-- Link to the external CSS stylesheet -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-    <!-- Container for the sign-up form -->
-    <div class="container">
-        <!-- Heading for the sign-up form -->
-        <h1>Sign Up</h1>
-        <!-- Sign-up form with POST method -->
-        <form method="post">
-            <!-- CSRF token for security -->
-            {% csrf_token %}
-            <!-- Render the form fields as paragraphs -->
-            {{ form.as_p }}
-            <!-- Submit button for the sign-up form -->
-            <button type="submit">Sign Up</button>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="registration-content">
+        <div class="registration-header">
+          <h1>User Registration</h1>
+          <span class="checkmark">✓</span>
+        </div>
+        <div class="registration-info">
+          <p>Department Leaders and Senior Managers require admin approval</p>
+          <p>Engineers and Team Leaders can register directly</p>
+          <div class="security-icon">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="#333"
+                stroke-width="2"
+                fill="none"
+              />
+              <path
+                d="M7 12 L11 16 L17 8"
+                stroke="#333"
+                stroke-width="2"
+                fill="none"
+              />
+            </svg>
+          </div>
+        </div>
+        <form method="post" action="{% url 'signup' %}">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group">
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your Name:"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                name="surname"
+                placeholder="Enter your Surname:"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <input
+                type="text"
+                name="username"
+                placeholder="Create a Username:"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your Email Address"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <input
+                type="password"
+                name="password"
+                placeholder="Create a Password:"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="password"
+                name="confirm_password"
+                placeholder="Confirm Password:"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group password-toggle-container">
+              <input
+                type="checkbox"
+                id="show_password"
+                class="show-password-checkbox"
+              />
+              <label for="show_password">Show Password</label>
+            </div>
+          </div>
+
+          <!-- Role selection centered at the bottom -->
+          <div class="form-row role-selection">
+            <div class="form-group">
+              <div class="dropdown">
+                <div class="dropdown-header">
+                  <span>Role: </span>
+                  <span id="selected-role">Choose the role</span> 
+                  <div class="dropdown-arrow"></div>
+                </div>
+                <select id="role-select" name="role" class="hidden-select" required>
+                  <option value="team_member">Engineer</option>
+                  <option value="team_lead">Team Leader</option>
+                  <option value="dept_lead">Department Leader</option>
+                  <option value="Sen-man">Senior managers</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions1">
+            <a href="{% url 'login' %}" class="login-link"
+              >Already have an Account?</a
+            >
+            <button type="submit" class="signup-button">SIGN UP</button>
+          </div>
         </form>
+      </div>
     </div>
-</body>
+
+    <script src="{% static 'js/user_script.js' %}"></script>
+
+
+
+   
+  </body>
+
+
+  {% include "footer.html" %}
 </html>
