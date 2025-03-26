@@ -145,7 +145,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start; /* Changed from center to flex-start */
-    margin-left: 20px; /* Add some margin for better positioning */
+    margin-left: 313px; /* Add some margin for better positioning */
   }
 
 /* Account options */

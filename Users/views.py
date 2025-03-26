@@ -21,7 +21,7 @@ def login_view(request):
            
             
             # Store user info in session
-            request.session['user_id'] = user.userID
+            request.session['user_id'] = user.userID##
             request.session['user_type'] = user.userType
             request.session['username'] = user.username
             
@@ -30,6 +30,8 @@ def login_view(request):
                 return redirect('admin_dashboard') # !!!!!you should create template with this name 
             elif user.userType in ['SenManager', 'TeamLead']:
                 return redirect('manager_dashboard')# !!!!!you should create template with this name)
+            elif user.userType == 'Engineer':
+                return redirect('engineer_dashboard')
             else:
                 return redirect('home')
                 
