@@ -11,14 +11,14 @@ class CustomAuthBackend(BaseBackend):
             user = User.objects.get(Q(username=username) | Q(email=username))
             
             # Check the hashed password
-            if check_password(password, user.password):
+            if user.password == password: #removed hashing  
                 return user
             return None
         except User.DoesNotExist:
             return None
     
-    def get_user(self, user_id):
+    def get_user(self,userID):
         try:
-            return User.objects.get(pk=user_id)
+            return User.objects.get(pk=userID)
         except User.DoesNotExist:
             return None

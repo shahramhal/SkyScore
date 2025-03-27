@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import User
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 # Create your views here.
 
 def home(request):
@@ -14,6 +14,7 @@ def login_view(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         
+        
          # Try to find the user in your custom table
         user = authenticate(request, username=username, password=password)
         
@@ -21,7 +22,7 @@ def login_view(request):
            
             
             # Store user info in session
-            request.session['user_id'] = user.userID##
+            request.session['user_id'] = user.userID
             request.session['user_type'] = user.userType
             request.session['username'] = user.username
             
@@ -82,7 +83,7 @@ def signup_view(request):
             user = User(
                 username=username,
                 email=email,
-                password=make_password(password),  # Note: You should hash this password
+                password=password,  # removed the hashing 
                 userType=user_type,
                 first_name=first_name,
                 last_name=last_name
