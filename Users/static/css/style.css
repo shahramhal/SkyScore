@@ -1,7 +1,28 @@
+/* Base styles */
+html, body {
+    height: 100%;
+    overflow-y: auto;
+}
+
+body {
+    background-color: #e6f3f7;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.main-container {
+    min-height: 100vh;
+    padding-bottom: 60px; /* Add space for footer */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .content-container {
     max-width: 1200px;
     margin: 50px auto 120px auto;
     padding: 0 1rem;
+    width: 100%;
 }
 
 .buttons-container {
@@ -32,14 +53,395 @@
     background-color: var(--dark-blue);
 }
 
+.auth-header-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 20px;
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.update-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--primary-blue);
+    color: var(--primary-blue);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Sign in header */
+.sign-in-header {
+    text-align: center;
+    padding: 20px;
+    font-size: 24px;
+    color: #4a3b99;
+    width: 100%;
+}
+
+.arrow-icon {
+    font-size: 28px;
+}
+
+/* Form styling */
+.login-form-container {
+    max-width: 500px;
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-group label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: center;
+}
+
+.form-group input {
+    width: 100%;
+    max-width: 350px;
+    padding: 0.8rem;
+    border: 2px solid #6a42c1;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    margin: 0 auto;
+    display: block;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.sign-in-button {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    font-size: 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    max-width: 200px;
+    width: 100%;
+}
+
+.stay-signed-in {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+}
+.password-toggle-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.show-pass {
+    text-align: center;
+    margin: 10px 0;
+    width: 100%;
+}
+.show-pass label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.show-pass input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+/* Account options */
+.account-options {
+    text-align: center;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.no-account-button, .forgot-password-button {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+
+/* Registration Form Styles */
+.registration-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    width: 90%;
+}
+
+.registration-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.registration-header h1 {
+    font-size: 2.2rem;
+    color: #333;
+    margin: 0;
+    border: 2px solid #6a42c1;
+    padding: 0.25rem 1rem;
+    border-radius: 5px;
+}
+
+.checkmark {
+    color: #4caf50;
+    font-size: 2.5rem;
+    margin-left: 10px;
+}
+
+.registration-info {
+    position: relative;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.registration-info p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.security-icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.password-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the whole element horizontally */
+    width: 100%;
+    margin: 5px 0; /* Adjust spacing as needed */
+  }
+
+.show-password-checkbox {
+    width: auto;
+    margin-right: 8px; /* Space between checkbox and label */
+    cursor: pointer;
+  }
+.password-toggle-container label {
+    cursor: pointer;
+    user-select: none; /* Prevent text selection */
+    gap: 5px;
+  }
+
+/* Role selection styling */
+.role-selection .form-group {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.dropdown {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 2px solid #6a42c1;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.dropdown-arrow {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #666;
+}
+
+.hidden-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Eye icon for password visibility */
+.eye-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>');
+    background-size: contain;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+/* Form actions styling */
+.form-actions1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    width: 100%;
+}
+
+.login-link {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background-color: var(--primary-blue);
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    min-width: 120px;
+    text-align: center;
+}
+
+.signup-button {
+    padding: 0.8rem 1.5rem;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    min-width: 120px;
+    text-align: center;
+}
+
+.signup-button:hover {
+    background: linear-gradient(to right, var(--accent-blue), var(--primary-blue));
+}
+.error-input {
+    border: 2px solid red !important;
+  }
+  .error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    text-align: center;
+  }
+
+/* forgotPassword styling */
+/* Form styling */
+.f-pass-form-container {
+    max-width: 500px;
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+}
+.f-pass-header {
+    text-align: center;
+    padding: 20px;
+    font-size: 24px;
+    color: #4a3b99;
+    width: 100%;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .buttons-container {
+    .form-row {
         flex-direction: column;
-        align-items: center;
+    }
+    
+    .form-group {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .registration-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .form-actions1 {
+        flex-direction: column;
         gap: 1rem;
     }
     
-    .auth-button {
-        width: 80%;
+    .login-link, .signup-button {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .role-selection .form-group {
+        width: 100%;
+    }
+    
+    .account-options {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .auth-header-container {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .sign-in-header {
+        font-size: 20px;
+    }
+    
+    .form-group label {
+        font-size: 16px;
+    }
+    
+    .sign-in-button {
+        padding: 12px 30px;
+        font-size: 16px;
+    }
+}
+@media (max-width:480px){
+    .f-pass-header {
+        text-align: center;
+        padding: 20px;
+        font-size: 24px;
+        color: #4a3b99;
+        width: 100%;
     }
 }
