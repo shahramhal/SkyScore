@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import User                    
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate 
+from .backends import CustomAuthBackend
 # Create your views here.
 
 def home(request):
@@ -41,6 +42,8 @@ def login_view(request):
     
     return render(request, 'login.html')
 def signup_view(request):
+    auth_backend = CustomAuthBackend()
+    
     if request.method == 'POST':
         # Process the form data
         username = request.POST.get('username')
@@ -51,55 +54,21 @@ def signup_view(request):
         last_name = request.POST.get('surname')
         role = request.POST.get('role')
         
-        # Initializing  error tracking
-        errors = {}
-        
-        # Convert role from form to userType in database
-        role_mapping = {
-            'Engineer': 'Engineer',
-            'team_lead': 'TeamLead',
-            'dept_lead': 'SenManager',
-            'Sen-man': 'SenManager',
-            'admin': 'Admin'
-        }
-        user_type = role_mapping.get(role, 'Engineer')  # Default to Engineer
-        
-       # Validate username
-        if not username:
-            errors['username'] = 'Username is required'
-        elif User.objects.filter(username=username).exists():
-            errors['username'] = 'Username already exists'
-        
-        # Validate email
-        if not email:
-            errors['email'] = 'Email is required'
-        elif not email or '@' not in email:
-            errors['email'] = 'Invalid email format'
-        elif User.objects.filter(email=email).exists():
-            errors['email'] = 'Email already exists'
-        
-        # Validate password
-        if not password:
-            errors['password'] = 'Password is required'
-        elif len(password) < 8:
-            errors['password'] = 'Password must be at least 8 characters long'
-        
-        # Validate confirm password
-        if not confirm_password:
-            errors['confirm_password'] = 'Please confirm your password'
-        elif password != confirm_password:
-            errors['confirm_password'] = 'Passwords do not match'
-        
-        # Validate first name and last name
-        if not first_name:
-            errors['name'] = 'First name is required'
-        if not last_name:
-            errors['surname'] = 'Last name is required'
-        
+         # Validate the input
+        validation_errors=auth_backend.validate_signup(
+            username=username,
+            email=email,
+            password=password,
+            confirm_password=confirm_password,
+            first_name=first_name,
+            last_name=last_name,
+            role=role
+         )
+       
         # If there are any errors, return to signup page with error messages
-        if errors:
+        if validation_errors:
             return render(request, 'signup.html', {
-                'errors': errors,
+                'errors': validation_errors,
                 'form_data': {
                     'username': username,
                     'email': email,
@@ -108,14 +77,15 @@ def signup_view(request):
                     'role': role
                 }
             })
+        
         # Create a new user using Django's auth system
         try:
             # Create a new user using your custom User model
-            user = User(
+            user = auth_backend.create_user(
                 username=username,
                 email=email,
                 password=password,  # removed the hashing 
-                userType=user_type,
+               role=role,
                 first_name=first_name,
                 last_name=last_name
             )

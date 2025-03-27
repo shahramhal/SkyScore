@@ -57,12 +57,12 @@
                 name="name"
                 placeholder="Enter your Name:"
                 required
-                vaule="{{form_data.name | default : ""}}"
+                value="{{ form_data.name|default:'' }}"
                 class="{% if errors.name %}error-input{% endif %}"
               />
               {% if errors.name %}
               <div class="error-message">{{ errors.name }}</div>
-              {%endif%}
+              {% endif %}
             </div>
             <div class="form-group">
               <input
@@ -70,11 +70,11 @@
                 name="surname"
                 placeholder="Enter your Surname:"
                 required
-                value = "{{form_data.surname | default:""}}"
+                value="{{ form_data.surname|default:'' }}"
                 class="{% if errors.surname %}error-input{% endif %}"
               />
               {% if errors.surname %}
-                <div class="error-message">{{ errors.surname }}</div>
+              <div class="error-message">{{ errors.surname }}</div>
               {% endif %}
             </div>
           </div>
@@ -86,7 +86,12 @@
                 name="username"
                 placeholder="Create a Username:"
                 required
+                value="{{ form_data.username|default:'' }}"
+                class="{% if errors.username %}error-input{% endif %}"
               />
+              {% if errors.username %}
+              <div class="error-message">{{ errors.username }}</div>
+              {% endif %}
             </div>
             <div class="form-group">
               <input
@@ -94,7 +99,12 @@
                 name="email"
                 placeholder="Enter your Email Address"
                 required
+                value="{{ form_data.email|default:'' }}"
+                class="{% if errors.email %}error-input{% endif %}"
               />
+              {% if errors.email %}
+              <div class="error-message">{{ errors.email }}</div>
+              {% endif %}
             </div>
           </div>
 
@@ -105,7 +115,11 @@
                 name="password"
                 placeholder="Create a Password:"
                 required
+                class="{% if errors.password %}error-input{% endif %}"
               />
+              {% if errors.password %}
+              <div class="error-message">{{ errors.password }}</div>
+              {% endif %}
             </div>
             <div class="form-group">
               <input
@@ -113,7 +127,11 @@
                 name="confirm_password"
                 placeholder="Confirm Password:"
                 required
+                class="{% if errors.confirm_password %}error-input{% endif %}"
               />
+              {% if errors.confirm_password %}
+              <div class="error-message">{{ errors.confirm_password }}</div>
+              {% endif %}
             </div>
           </div>
 
