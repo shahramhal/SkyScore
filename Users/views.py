@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import User
-from django.contrib.auth.hashers import make_password
+from .models import User                    
 from django.contrib.auth import authenticate
 # Create your views here.
 
@@ -52,9 +51,12 @@ def signup_view(request):
         last_name = request.POST.get('surname')
         role = request.POST.get('role')
         
+        # Initializing  error tracking
+        errors = {}
+        
         # Convert role from form to userType in database
         role_mapping = {
-            'team_member': 'Engineer',
+            'Engineer': 'Engineer',
             'team_lead': 'TeamLead',
             'dept_lead': 'SenManager',
             'Sen-man': 'SenManager',
@@ -62,21 +64,50 @@ def signup_view(request):
         }
         user_type = role_mapping.get(role, 'Engineer')  # Default to Engineer
         
-         # Validate passwords match
-        if password != confirm_password:
-            messages.error(request, 'Passwords do not match')
-            return redirect('signup')
-            
-        # Check if username already exists
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already exists')
-            return redirect('signup')
+       # Validate username
+        if not username:
+            errors['username'] = 'Username is required'
+        elif User.objects.filter(username=username).exists():
+            errors['username'] = 'Username already exists'
         
-        # Check if email already exists
-        if User.objects.filter(email=email).exists():
-            messages.error(request, 'Email already exists')
-            return redirect('signup')
+        # Validate email
+        if not email:
+            errors['email'] = 'Email is required'
+        elif not email or '@' not in email:
+            errors['email'] = 'Invalid email format'
+        elif User.objects.filter(email=email).exists():
+            errors['email'] = 'Email already exists'
         
+        # Validate password
+        if not password:
+            errors['password'] = 'Password is required'
+        elif len(password) < 8:
+            errors['password'] = 'Password must be at least 8 characters long'
+        
+        # Validate confirm password
+        if not confirm_password:
+            errors['confirm_password'] = 'Please confirm your password'
+        elif password != confirm_password:
+            errors['confirm_password'] = 'Passwords do not match'
+        
+        # Validate first name and last name
+        if not first_name:
+            errors['name'] = 'First name is required'
+        if not last_name:
+            errors['surname'] = 'Last name is required'
+        
+        # If there are any errors, return to signup page with error messages
+        if errors:
+            return render(request, 'signup.html', {
+                'errors': errors,
+                'form_data': {
+                    'username': username,
+                    'email': email,
+                    'name': first_name,
+                    'surname': last_name,
+                    'role': role
+                }
+            })
         # Create a new user using Django's auth system
         try:
             # Create a new user using your custom User model

@@ -356,6 +356,15 @@ body {
 .signup-button:hover {
     background: linear-gradient(to right, var(--accent-blue), var(--primary-blue));
 }
+.error-input {
+    border: 2px solid red !important;
+  }
+  .error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    text-align: center;
+  }
 
 /* forgotPassword styling */
 /* Form styling */

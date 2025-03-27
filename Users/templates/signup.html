@@ -57,7 +57,12 @@
                 name="name"
                 placeholder="Enter your Name:"
                 required
+                vaule="{{form_data.name | default : ""}}"
+                class="{% if errors.name %}error-input{% endif %}"
               />
+              {% if errors.name %}
+              <div class="error-message">{{ errors.name }}</div>
+              {%endif%}
             </div>
             <div class="form-group">
               <input
@@ -65,7 +70,12 @@
                 name="surname"
                 placeholder="Enter your Surname:"
                 required
+                value = "{{form_data.surname | default:""}}"
+                class="{% if errors.surname %}error-input{% endif %}"
               />
+              {% if errors.surname %}
+                <div class="error-message">{{ errors.surname }}</div>
+              {% endif %}
             </div>
           </div>
 
@@ -136,7 +146,7 @@
                   class="hidden-select"
                   required
                 >
-                  <option value="team_member">Engineer</option>
+                  <option value="Engineer">Engineer</option>
                   <option value="team_lead">Team Leader</option>
                   <option value="dept_lead">Department Leader</option>
                   <option value="Sen-man">Senior managers</option>
