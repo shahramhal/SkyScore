@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import User
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login
+from .models import User                    
+from django.contrib.auth import authenticate 
+from .backends import CustomAuthBackend
 # Create your views here.
 
 def home(request):
@@ -13,6 +13,7 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        
         
          # Try to find the user in your custom table
         user = authenticate(request, username=username, password=password)
@@ -30,6 +31,8 @@ def login_view(request):
                 return redirect('admin_dashboard') # !!!!!you should create template with this name 
             elif user.userType in ['SenManager', 'TeamLead']:
                 return redirect('manager_dashboard')# !!!!!you should create template with this name)
+            elif user.userType == 'Engineer':
+                return redirect('engineer_dashboard')
             else:
                 return redirect('home')
                 
@@ -39,6 +42,8 @@ def login_view(request):
     
     return render(request, 'login.html')
 def signup_view(request):
+    auth_backend = CustomAuthBackend()
+    
     if request.method == 'POST':
         # Process the form data
         username = request.POST.get('username')
@@ -49,39 +54,38 @@ def signup_view(request):
         last_name = request.POST.get('surname')
         role = request.POST.get('role')
         
-        # Convert role from form to userType in database
-        role_mapping = {
-            'team_member': 'Engineer',
-            'team_lead': 'TeamLead',
-            'dept_lead': 'SenManager',
-            'Sen-man': 'SenManager',
-            'admin': 'Admin'
-        }
-        user_type = role_mapping.get(role, 'Engineer')  # Default to Engineer
-        
-         # Validate passwords match
-        if password != confirm_password:
-            messages.error(request, 'Passwords do not match')
-            return redirect('signup')
-            
-        # Check if username already exists
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already exists')
-            return redirect('signup')
-        
-        # Check if email already exists
-        if User.objects.filter(email=email).exists():
-            messages.error(request, 'Email already exists')
-            return redirect('signup')
+         # Validate the input
+        validation_errors=auth_backend.validate_signup(
+            username=username,
+            email=email,
+            password=password,
+            confirm_password=confirm_password,
+            first_name=first_name,
+            last_name=last_name,
+            role=role
+         )
+       
+        # If there are any errors, return to signup page with error messages
+        if validation_errors:
+            return render(request, 'signup.html', {
+                'errors': validation_errors,
+                'form_data': {
+                    'username': username,
+                    'email': email,
+                    'name': first_name,
+                    'surname': last_name,
+                    'role': role
+                }
+            })
         
         # Create a new user using Django's auth system
         try:
             # Create a new user using your custom User model
-            user = User(
+            user = auth_backend.create_user(
                 username=username,
                 email=email,
-                password=make_password(password),  # Note: You should hash this password
-                userType=user_type,
+                password=password,  # removed the hashing 
+               role=role,
                 first_name=first_name,
                 last_name=last_name
             )
