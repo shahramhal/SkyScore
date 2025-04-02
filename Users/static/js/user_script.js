@@ -24,3 +24,13 @@ document.addEventListener('DOMContentLoaded', function () {
     confirmPasswordField.type = type;
   });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+  const showPasswordCheckbox= document.getElementById('show_password');
+  const passwordField = document.querySelector('input[name="password"]');
+ 
+  showPasswordCheckbox.addEventListener('change', function() {
+    const type = this.checked ? 'text' : 'password';
+    passwordField.type = type;
+  });
+});

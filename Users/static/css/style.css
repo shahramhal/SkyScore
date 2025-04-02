@@ -53,15 +53,7 @@ body {
     background-color: var(--dark-blue);
 }
 
-.auth-header-container {
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px 20px;
-    position: relative;
-    z-index: 3;
-    width: 100%;
-    box-sizing: border-box;
-}
+
 
 .update-button {
     background-color: rgba(255, 255, 255, 0.2);
@@ -73,6 +65,12 @@ body {
 }
 
 /* Sign in header */
+.login-content {
+    max-width: 800px;
+    margin: 90px 0;
+    padding: 2rem;
+    width: 90%;
+}
 .sign-in-header {
     text-align: center;
     padding: 20px;
@@ -144,9 +142,24 @@ body {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Changed from center to flex-start */
-    margin-left: 20px; /* Add some margin for better positioning */
-  }
+    justify-content: flex-start;
+}
+.show-pass {
+    text-align: center;
+    margin: 10px 0;
+    width: 100%;
+}
+.show-pass label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.show-pass input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
 
 /* Account options */
 .account-options {
@@ -175,7 +188,7 @@ body {
 /* Registration Form Styles */
 .registration-content {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 90px 0;
     padding: 2rem;
     width: 90%;
 }
@@ -226,21 +239,27 @@ body {
 .form-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .password-toggle-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* Changed from center to flex-start */
-  margin-left: 20px; /* Add some margin for better positioning */
-}
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the whole element horizontally */
+    width: 100%;
+    margin: 5px 0; /* Adjust spacing as needed */
+  }
 
 .show-password-checkbox {
-  width: auto !important;
-  margin-right: 10px; /* Increase the space between checkbox and label */
-}
+    width: auto;
+    margin-right: 8px; /* Space between checkbox and label */
+    cursor: pointer;
+  }
+.password-toggle-container label {
+    cursor: pointer;
+    user-select: none; /* Prevent text selection */
+    gap: 5px;
+  }
 
 /* Role selection styling */
 .role-selection .form-group {
@@ -335,6 +354,15 @@ body {
 .signup-button:hover {
     background: linear-gradient(to right, var(--accent-blue), var(--primary-blue));
 }
+.error-input {
+    border: 2px solid red !important;
+  }
+  .error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    text-align: center;
+  }
 
 /* forgotPassword styling */
 /* Form styling */
@@ -387,9 +415,7 @@ body {
         align-items: center;
     }
     
-    .auth-header-container {
-        justify-content: center;
-    }
+    
 }
 
 @media (max-width: 480px) {

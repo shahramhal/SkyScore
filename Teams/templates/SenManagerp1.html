@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sky Score - Department Performance</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #4A90E2, #2C3E50);
+            height: 100%;
+        }
+        .dashboard {
+            width: 1000px;
+            height: 700px;
+            background: white;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: linear-gradient(to right, #4A90E2, #2C3E50);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .charts {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        .chart {
+            width: 48%;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .performance-summary {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f0f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .performance-item {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .performance-item h4 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .bottom-nav {
+            background: linear-gradient(to right, #4A90E2, #2C3E50);
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .bottom-nav button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .department-selector {
+            margin-bottom: 20px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1 id="department-title">Engineering Operations Dept</h1>
+            <div class="logo">Sky Score</div>
+        </div>
+
+        <div class="content">
+            <div class="department-selector">
+                <select id="department-select">
+                    <!-- Placeholder for dynamic department list -->
+                    <option value="engineering">Engineering Operations</option>
+                    <option value="software">Software Development</option>
+                    <!-- Add more departments as needed -->
+                </select>
+            </div>
+
+            <div class="charts">
+                <div class="chart">
+                    <h3>Average Performance Metrics</h3>
+                    <canvas id="bar-chart"></canvas>
+                </div>
+                <div class="chart">
+                    <h3>Performance Trend</h3>
+                    <canvas id="line-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="performance-summary">
+                <div class="performance-item">
+                    <h4>Top Performing Area</h4>
+                    <p id="top-performing">Mission - 4.1 ⭐</p>
+                </div>
+                <div class="performance-item">
+                    <h4>Struggling Area</h4>
+                    <p id="struggling-area">Fun - 3.75 ⭐</p>
+                </div>
+                <div class="performance-item">
+                    <h4>Average Health Score</h4>
+                    <p id="average-health-score">4.0 ⭐</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <button onclick="navigateTo('settings')">Settings</button>
+            <button onclick="navigateTo('comparison')">COMPARISON</button>
+            <button onclick="navigateTo('logout')">LOG OUT</button>
+        </div>
+    </div>
+
+    <script>
+        // Placeholder for dynamic data and interactions
+        function navigateTo(page) {
+            // Implement navigation logic
+            console.log(`Navigating to: ${page}`);
+            // You can add specific navigation functionality here
+        }
+
+        // Charts initialization with placeholder data
+        function initializeCharts() {
+            const barCtx = document.getElementById('bar-chart').getContext('2d');
+            const lineCtx = document.getElementById('line-chart').getContext('2d');
+
+            // Bar Chart Placeholder
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mission', 'Fun', 'Speed', 'Value'],
+                    datasets: [{
+                        label: 'Performance Metrics',
+                        data: [4.10, 3.75, 4.05, 3.90],
+                        backgroundColor: ['#4A90E2', '#F39C12', '#2ECC71', '#E74C3C']
+                    }]
+                }
+            });
+
+            // Line Chart Placeholder
+            new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mission', 'Fun', 'Speed', 'Value'],
+                    datasets: [{
+                        label: 'Performance Trend',
+                        data: [4.10, 3.75, 4.05, 3.90],
+                        borderColor: '#4A90E2',
+                        fill: false
+                    }]
+                }
+            });
+        }
+
+        // Department Selection Placeholde
+        document.getElementById('department-select').addEventListener('change', function() {
+            const selectedDepartment = this.value;
+            // Placeholder for dynamic data fetching
+            document.getElementById('department-title').textContent = 
+                selectedDepartment === 'engineering' ? 'Engineering Operations Dept' : 'Software Development Dept';
+            
+            // You can add more dynamic updates here
+            console.log(`Selected department: ${selectedDepartment}`);
+        });
+
+        // Initialize charts on page load
+        initializeCharts();
+    </script>
+</body>
+</html>
