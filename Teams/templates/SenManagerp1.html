@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Sky Score - Department Performance</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body, html {
             margin: 0;
@@ -122,12 +122,12 @@
 
             <div class="charts">
                 <div class="chart">
-                    <h3>Average Performance Metrics</h3>
-                    <canvas id="bar-chart"></canvas>
+                    <h3>Average Performance (Plotly Bar)</h3>
+                    <div id="plotly-bar"></div>
                 </div>
                 <div class="chart">
-                    <h3>Performance Trend</h3>
-                    <canvas id="line-chart"></canvas>
+                    <h3>Area Contribution (Plotly Pie)</h3>
+                    <div id="plotly-pie"></div>
                 </div>
             </div>
 
@@ -208,6 +208,34 @@
 
         // Initialize charts on page load
         initializeCharts();
+
+
+        const barLabels = {{ bar_labels|safe }};
+        const barValues = {{ bar_values|safe }};
+        const pieLabels = {{ pie_labels|safe }};
+        const pieValues = {{ pie_values|safe }};
+
+        Plotly.newPlot('plotly-bar', [{
+            x: barLabels,
+            y: barValues,
+            type: 'bar',
+            marker: {
+            color: '#4A90E2'
+            }
+        }], {
+        title: 'Average Scores by Category',
+        margin: { t: 40 }
+        });
+
+        Plotly.newPlot('plotly-pie', [{
+            labels: pieLabels,
+            values: pieValues,
+            type: 'pie'
+        }], {
+            title: 'Department Contribution Split',
+            margin: { t: 40 }
+        });
+
     </script>
 </body>
 </html>
