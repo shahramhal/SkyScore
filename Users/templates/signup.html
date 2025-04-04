@@ -1,17 +1,13 @@
 {% load static %}
-<!-- Load the static template tag to handle static files -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     {% include "headfile.html" %}
-    <!-- Setting the character encoding for the document -->
     <meta charset="UTF-8" />
-    <!-- Ensuring the page is responsive on all devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Title of the sign-up page -->
     <title>Sign Up</title>
-    <!-- Link to the external CSS stylesheet -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}" />
   </head>
   <body>
     <div class="main-container">
@@ -177,7 +173,7 @@
             <a href="{% url 'login' %}" class="login-link"
               >Already have an Account?</a
             >
-            <button type="submit" class="signup-button">SIGN UP</button>
+            <button type="submit" class="submit-button">SIGN UP</button>
           </div>
         </form>
       </div>

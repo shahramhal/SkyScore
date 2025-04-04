@@ -2,26 +2,27 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    {% include "headfile.html" %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Page</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
   </head>
   <body>
-    {% include "headfile.html" %}
-    
-    <div class="content-container">
-      <div class="buttons-container">
-        <!-- Link to the login page -->
-        <a href="{% url 'login' %}" class="auth-button">SIGN IN</a>
-        <!-- Link to the sign-up page -->
-        <a href="{% url 'signup' %}" class="auth-button">SIGN UP</a>
-        <!-- Link to the django-admin login page -->
-        <a href="{% url 'admin:index' %}" class="auth-button">Admin Log in</a>
+    <div class="main-container">
+      <div class="content-container">
+        <div class="buttons-container">
+          <!-- Link to the login page -->
+          <a href="{% url 'login' %}" class="auth-button">SIGN IN</a>
+          <!-- Link to the sign-up page -->
+          <a href="{% url 'signup' %}" class="auth-button">SIGN UP</a>
+          <!-- Link to the django-admin login page -->
+          <a href="{% url 'admin:index' %}" class="auth-button">Admin Log in</a>
+        </div>
       </div>
     </div>
-    
+
     {% include "footer.html" %}
   </body>
 </html>
