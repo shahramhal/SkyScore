@@ -43,6 +43,7 @@ body {
     align-items: center;
     color: #333;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .welcome-logo::before {

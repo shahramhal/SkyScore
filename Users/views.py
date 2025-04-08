@@ -212,3 +212,10 @@ def resetPassword(request, uidb64, token):
 def passwordResetConfirm(request):
     messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
     return redirect('login')
+def engineer_dashboard(request):
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    # Render the engineer dashboard
+    return render(request, 'engineer_dashboard.html')
