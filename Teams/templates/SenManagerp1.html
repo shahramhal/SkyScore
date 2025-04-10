@@ -216,15 +216,16 @@
         const pieValues = {{ pie_values|safe }};
 
         Plotly.newPlot('plotly-bar', [{
+    
             x: barLabels,
             y: barValues,
             type: 'bar',
             marker: {
             color: '#4A90E2'
-            }
+        }
         }], {
-        title: 'Average Scores by Category',
-        margin: { t: 40 }
+            title: 'Average Scores by Category',
+            margin: { t: 40 }
         });
 
         Plotly.newPlot('plotly-pie', [{
