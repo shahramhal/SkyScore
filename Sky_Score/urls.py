@@ -24,6 +24,7 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Users.urls')),
+    path('teams/', include('Teams.urls')),
     path('guide/', views.guide, name='guide')
     
 ]
