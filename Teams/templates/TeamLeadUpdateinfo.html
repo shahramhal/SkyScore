@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Login Details - Sky Engineering</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header Section */
+    .header {
+      background: linear-gradient(to right, #1a4b8c, #2868c8);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .sky-score {
+      font-size: 2rem;
+      color: #ff6b4a;
+      font-weight: bold;
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      background: linear-gradient(to bottom, #2868c8, #5b9bd5);
+      padding: 2rem;
+      color: white;
+    }
+    
+    .update-form {
+      background-color: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .form-title {
+      font-size: 1.8rem;
+      color: #1a4b8c;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #1a4b8c;
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+    
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+    
+    .form-group {
+      flex: 1;
+      margin: 0 1rem;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 1rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #2868c8;
+      box-shadow: 0 0 0 2px rgba(40, 104, 200, 0.2);
+    }
+    
+    .form-check {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+    }
+    
+    .form-check-input {
+      width: 18px;
+      height: 18px;
+      margin-right: 0.5rem;
+    }
+    
+    .form-check-label {
+      color: #333;
+      font-size: 1rem;
+    }
+    
+    .security-icon {
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 1rem;
+    }
+    
+    .btn-primary {
+      background-color: #1a4b8c;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #15407a;
+    }
+    
+    .btn-secondary {
+      background-color: #4a90e2;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #3a80d2;
+    }
+    
+    .welcome-icon {
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+    
+    /* Footer */
+    .footer {
+      background-color: #1a4b8c;
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .menu-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    
+    /* Guide Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 80%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transform: translateY(-20px);
+      transition: all 0.3s;
+    }
+    
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .modal-title {
+      font-size: 1.5rem;
+      color: #1a4b8c;
+      font-weight: 600;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+    
+    .close-modal:hover {
+      color: #333;
+    }
+    
+    .guide-content {
+      color: #505050;
+      line-height: 1.6;
+    }
+    
+    /* Alert Message */
+    .alert {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+      display: none;
+    }
+    
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+      display: none;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header">
+      <div class="logo-text">TEAM LEADER</div>
+      <div class="sky-score">sky<span style="color: white;">score</span></div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="update-form">
+        <div class="form-header">
+          <span class="welcome-icon">👤</span>
+          <h2 class="form-title">UPDATE LOG IN DETAILS</h2>
+        </div>
+        
+        <div id="alertMessage" class="alert"></div>
+        
+        <form id="updateForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="oldUsername">Enter your old Username</label>
+              <input type="text" class="form-control" id="oldUsername" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="newUsername">Enter your new Username</label>
+              <input type="text" class="form-control" id="newUsername" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="oldFullName">Enter your Full Name</label>
+              <input type="text" class="form-control" id="oldFullName" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="newFullName">Enter your Full Name</label>
+              <input type="text" class="form-control" id="newFullName" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="oldPassword">Enter your old Password</label>
+              <input type="password" class="form-control" id="oldPassword" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="newPassword">Enter your new Password</label>
+              <input type="password" class="form-control" id="newPassword" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="oldEmail">Enter your old Email Address</label>
+              <input type="email" class="form-control" id="oldEmail" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="newEmail">Enter your new Email Address</label>
+              <input type="email" class="form-control" id="newEmail" required>
+            </div>
+          </div>
+          
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="confirmDetails">
+            <label class="form-check-label" for="confirmDetails">Confirm details</label>
+            <span class="security-icon">👁️</span>
+          </div>
+          
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="enable2FA">
+            <label class="form-check-label" for="enable2FA">Enable 2FA for extra security</label>
+          </div>
+          
+          <div class="action-buttons">
+            <button type="button" id="guideBtn" class="btn btn-secondary">Our Guide</button>
+            <button type="submit" id="submitBtn" class="btn btn-primary">
+              Update Details
+              <span class="spinner" id="loadingSpinner"></span>
+            </button>
+            <button type="button" id="returnBtn" class="btn btn-primary">Return to LOG IN</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <div>© 2025 Sky Engineering</div>
+      <button class="menu-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Guide Modal -->
+    <div class="modal-overlay" id="guideModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Sky Engineering Update Details Guide</h2>
+          <button class="close-modal" id="closeModal">&times;</button>
+        </div>
+        <div class="guide-content">
+          <h3>How to Update Your Login Details</h3>
+          <p>This form allows you to update your account information in the Sky Engineering system. Please follow these guidelines:</p>
+          <ul>
+            <li><strong>Username:</strong> Enter your current username and the new username you wish to use.</li>
+            <li><strong>Full Name:</strong> Provide your current full name and update if necessary.</li>
+            <li><strong>Password:</strong> Enter your current password and your new password. Make sure your new password is strong and secure.</li>
+            <li><strong>Email Address:</strong> Enter your current email address and the new one if you wish to change it.</li>
+            <li><strong>Confirm details:</strong> Check this box to confirm that all the information provided is correct.</li>
+            <li><strong>2FA:</strong> We strongly recommend enabling two-factor authentication for additional security.</li>
+          </ul>
+          <p>If you need further assistance, please contact your system administrator.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const updateForm = document.getElementById('updateForm');
+    const guideBtn = document.getElementById('guideBtn');
+    const guideModal = document.getElementById('guideModal');
+    const closeModal = document.getElementById('closeModal');
+    const returnBtn = document.getElementById('returnBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const alertMessage = document.getElementById('alertMessage');
+    
+    // Event Listeners
+    updateForm.addEventListener('submit', handleFormSubmit);
+    guideBtn.addEventListener('click', openGuideModal);
+    closeModal.addEventListener('click', closeGuideModal);
+    returnBtn.addEventListener('click', returnToLogin);
+    
+    guideModal.addEventListener('click', function(e) {
+      if (e.target === guideModal) {
+        closeGuideModal();
+      }
+    });
+    
+    // Close the modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && guideModal.classList.contains('active')) {
+        closeGuideModal();
+      }
+    });
+    
+    // Functions
+    function openGuideModal() {
+      guideModal.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent scrolling while modal is open
+    }
+    
+    function closeGuideModal() {
+      guideModal.classList.remove('active');
+      document.body.style.overflow = 'auto'; // Enable scrolling again
+    }
+    
+    function returnToLogin() {
+      // Navigate back to login page
+      alert('Returning to Login Page');
+      // window.location.href = 'login.html';
+    }
+    
+    function showAlert(message, type) {
+      alertMessage.textContent = message;
+      alertMessage.className = 'alert';
+      alertMessage.classList.add('alert-' + type);
+      alertMessage.style.display = 'block';
+      
+      // Auto hide alert after 5 seconds
+      setTimeout(() => {
+        alertMessage.style.display = 'none';
+      }, 5000);
+    }
+    
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      // Validate form
+      const confirmDetails = document.getElementById('confirmDetails').checked;
+      if (!confirmDetails) {
+        showAlert('Please confirm your details before submitting', 'danger');
+        return;
+      }
+      
+      // Show loading spinner
+      loadingSpinner.style.display = 'inline-block';
+      submitBtn.disabled = true;
+      
+      // Get form data
+      const formData = {
+        oldUsername: document.getElementById('oldUsername').value,
+        newUsername: document.getElementById('newUsername').value,
+        oldFullName: document.getElementById('oldFullName').value,
+        newFullName: document.getElementById('newFullName').value,
+        oldPassword: document.getElementById('oldPassword').value,
+        newPassword: document.getElementById('newPassword').value,
+        oldEmail: document.getElementById('oldEmail').value,
+        newEmail: document.getElementById('newEmail').value,
+        enable2FA: document.getElementById('enable2FA').checked
+      };
+      
+      // Simulate API call to update database
+      setTimeout(() => {
+        updateUserDetails(formData);
+      }, 1500);
+    }
+    
+    function updateUserDetails(formData) {
+      // This function would normally make an API call to update the database
+      // For demonstration, we'll simulate a successful update
+      
+      console.log('Updating user details in database:', formData);
+      
+      // Simulate database interaction
+      const success = Math.random() > 0.2; // 80% chance of success for demo
+      
+      if (success) {
+        // Hide loading spinner
+        loadingSpinner.style.display = 'none';
+        submitBtn.disabled = false;
+        
+        // Show success message
+        showAlert('Your login details have been successfully updated', 'success');
+        
+        // Reset form after success
+        setTimeout(() => {
+          updateForm.reset();
+        }, 2000);
+      } else {
+        // Hide loading spinner
+        loadingSpinner.style.display = 'none';
+        submitBtn.disabled = false;
+        
+        // Show error message
+        showAlert('There was an error updating your details. Please try again.', 'danger');
+      }
+    }
+  </script>
+</body>
+</html>
