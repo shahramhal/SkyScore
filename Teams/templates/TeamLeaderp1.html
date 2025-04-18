@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyScore - Team Leader Overview</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #1d4e9c;
+            --secondary-blue: #4b7cc9;
+            --light-blue: #d9eeff;
+            --accent-orange: #ff6633;
+            --gray-button: #a5b7cc;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100%;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: var(--primary-blue);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+            border-bottom-left-radius: 50% 15%;
+            border-bottom-right-radius: 50% 15%;
+        }
+
+        .header h1 {
+            margin: 0;
+            padding: 10px;
+            font-size: 2.5rem;
+        }
+
+        .main-content {
+            background-color: var(--light-blue);
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-self: flex-start;
+            margin-left: 5%;
+        }
+
+        .welcome-icon {
+            font-size: 2rem;
+        }
+
+        .welcome-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo {
+            position: absolute;
+            right: 50px;
+            top: 30px;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            color: var(--accent-orange);
+        }
+
+        .description {
+            text-align: center;
+            max-width: 800px;
+            margin: 20px 0 40px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .teams-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 30px;
+        }
+
+        .team-button {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .team-button:hover {
+            background-color: var(--secondary-blue);
+            transform: scale(1.03);
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px 0;
+            margin-top: 30px;
+        }
+
+        .footer-button {
+            background-color: var(--gray-button);
+            color: #333;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .footer-button.primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .footer-button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--primary-blue);
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .metric-card {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .metric-title {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .status-good {
+            background-color: #4CAF50;
+        }
+
+        .status-warning {
+            background-color: #FFC107;
+        }
+
+        .status-alert {
+            background-color: #F44336;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                font-size: 1.8rem;
+                top: 20px;
+                right: 20px;
+            }
+            
+            .description {
+                font-size: 1rem;
+            }
+            
+            .footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+            
+            .footer-button {
+                width: 80%;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Team Leader Overview</h1>
+            <div class="logo">
+                <span class="logo-text">sky</span>score
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="welcome-section">
+                <div class="welcome-icon">👋</div>
+                <div class="welcome-text">Welcome</div>
+            </div>
+            
+            <div class="description">
+                Get a Clear View of your Teams Performance! Select a Team below to see their
+                latest health check results, Progress Trends and key insights
+            </div>
+            
+            <div class="teams-container">
+                <div class="team-button" onclick="openHealthModal('5CS16_A')">5CS16_A</div>
+                <div class="team-button" onclick="openHealthModal('5CS16_B')">5CS16_B</div>
+                <div class="team-button" onclick="openHealthModal('5CS16_C')">5CS16_C</div>
+                <div class="team-button" onclick="openHealthModal('5CS16_D')">5CS16_D</div>
+            </div>
+            
+            <div class="footer">
+                <button class="footer-button">Settings</button>
+                <button class="footer-button primary">Countinue to Health Check</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Health Cards Modal -->
+    <div id="healthModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('healthModal')">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle">Team Health Check</h2>
+            </div>
+            
+            <div class="button-controls" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button id="btnHealthCards" class="footer-button primary" onclick="showHealthCards()">View Health Cards</button>
+                <button id="btnProgress" class="footer-button" onclick="showProgress()">View Progress</button>
+            </div>
+            
+            <div id="healthCardsSection">
+                <div class="chart-container">
+                    <canvas id="healthChart"></canvas>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-title">Team Morale</div>
+                        <div class="metric-value"><span class="status-indicator status-good"></span>85%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Communication</div>
+                        <div class="metric-value"><span class="status-indicator status-warning"></span>72%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Delivery Speed</div>
+                        <div class="metric-value"><span class="status-indicator status-good"></span>90%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Quality</div>
+                        <div class="metric-value"><span class="status-indicator status-good"></span>88%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Process Adherence</div>
+                        <div class="metric-value"><span class="status-indicator status-alert"></span>65%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Overall Health</div>
+                        <div class="metric-value"><span class="status-indicator status-warning"></span>78%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="progressSection" style="display: none;">
+                <div class="chart-container">
+                    <canvas id="progressChart"></canvas>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-title">Team Performance Trend</div>
+                        <div class="metric-value">↗️ Improving</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Health Check Participation</div>
+                        <div class="metric-value">95%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">YoY Improvement</div>
+                        <div class="metric-value">+12%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Last Health Check</div>
+                        <div class="metric-value" style="font-size: 1.5rem;">April 10, 2025</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Keep track of current view and team
+        let currentTeam = '';
+        let currentView = 'health'; // 'health' or 'progress'
+        
+        // Modal functionality
+        function openHealthModal(teamId) {
+            currentTeam = teamId;
+            document.getElementById('modalTitle').innerText = teamId + ' - Team Health Check';
+            document.getElementById('healthModal').style.display = 'flex';
+            showHealthCards(); // Default to health cards view
+            fetchTeamData(teamId);
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // View toggle functions
+        function showHealthCards() {
+            document.getElementById('healthCardsSection').style.display = 'block';
+            document.getElementById('progressSection').style.display = 'none';
+            document.getElementById('btnHealthCards').className = 'footer-button primary';
+            document.getElementById('btnProgress').className = 'footer-button';
+            currentView = 'health';
+            renderHealthChart(currentTeam);
+        }
+        
+        function showProgress() {
+            document.getElementById('healthCardsSection').style.display = 'none';
+            document.getElementById('progressSection').style.display = 'block';
+            document.getElementById('btnHealthCards').className = 'footer-button';
+            document.getElementById('btnProgress').className = 'footer-button primary';
+            currentView = 'progress';
+            renderProgressChart(currentTeam);
+        }
+        
+        // Close modal when clicking outside the content
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        }
+        
+        // Data fetching function - would connect to Django backend in production
+        function fetchTeamData(teamId) {
+            // In a real application, this would be an AJAX call to your Django backend
+            // For demo purposes, we'll use the simulated data
+            renderHealthChart(teamId);
+            renderProgressChart(teamId);
+            updateMetricCards(teamId);
+        }
+        
+        // Simulated data - in a real application this would come from Django backend
+        const teamData = {
+            '5CS16_A': {
+                health: {
+                    labels: ['Team Morale', 'Communication', 'Delivery Speed', 'Quality', 'Process Adherence', 'Overall Health'],
+                    data: [85, 72, 90, 88, 65, 78],
+                    colors: ['#4CAF50', '#FFC107', '#4CAF50', '#4CAF50', '#F44336', '#FFC107']
+                },
+                progress: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                    data: [65, 70, 75, 78]
+                }
+            },
+            '5CS16_B': {
+                health: {
+                    labels: ['Team Morale', 'Communication', 'Delivery Speed', 'Quality', 'Process Adherence', 'Overall Health'],
+                    data: [90, 85, 82, 78, 75, 82],
+                    colors: ['#4CAF50', '#4CAF50', '#4CAF50', '#FFC107', '#FFC107', '#4CAF50']
+                },
+                progress: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                    data: [70, 75, 80, 82]
+                }
+            },
+            '5CS16_C': {
+                health: {
+                    labels: ['Team Morale', 'Communication', 'Delivery Speed', 'Quality', 'Process Adherence', 'Overall Health'],
+                    data: [75, 65, 80, 70, 60, 70],
+                    colors: ['#FFC107', '#F44336', '#4CAF50', '#FFC107', '#F44336', '#FFC107']
+                },
+                progress: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                    data: [60, 62, 65, 70]
+                }
+            },
+            '5CS16_D': {
+                health: {
+                    labels: ['Team Morale', 'Communication', 'Delivery Speed', 'Quality', 'Process Adherence', 'Overall Health'],
+                    data: [92, 88, 85, 90, 82, 87],
+                    colors: ['#4CAF50', '#4CAF50', '#4CAF50', '#4CAF50', '#4CAF50', '#4CAF50']
+                },
+                progress: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                    data: [75, 80, 83, 87]
+                }
+            }
+        };
+        
+        // Global chart objects
+        let healthChart = null;
+        let progressChart = null;
+        
+        // Update metric cards with team data
+        function updateMetricCards(teamId) {
+            const team = teamData[teamId];
+            
+            // Update health metrics
+            const healthMetrics = document.querySelectorAll('#healthCardsSection .metric-card .metric-value');
+            healthMetrics.forEach((el, index) => {
+                if (index < team.health.data.length) {
+                    const statusIndicator = el.querySelector('.status-indicator');
+                    if (statusIndicator) {
+                        // Remove all status classes
+                        statusIndicator.classList.remove('status-good', 'status-warning', 'status-alert');
+                        
+                        // Add appropriate status class
+                        if (team.health.data[index] >= 80) {
+                            statusIndicator.classList.add('status-good');
+                        } else if (team.health.data[index] >= 70) {
+                            statusIndicator.classList.add('status-warning');
+                        } else {
+                            statusIndicator.classList.add('status-alert');
+                        }
+                    }
+                    
+                    // Update the text (keeping the status indicator if it exists)
+                    const statusHTML = statusIndicator ? statusIndicator.outerHTML : '';
+                    el.innerHTML = statusHTML + team.health.data[index] + '%';
+                }
+            });
+        }
+        
+        // Render health chart
+        function renderHealthChart(teamId) {
+            const ctx = document.getElementById('healthChart').getContext('2d');
+            const team = teamData[teamId];
+            
+            // Destroy previous chart if exists
+            if (healthChart) {
+                healthChart.destroy();
+            }
+            
+            healthChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: team.health.labels,
+                    datasets: [{
+                        label: 'Health Score (%)',
+                        data: team.health.data,
+                        backgroundColor: team.health.colors,
+                        borderColor: team.health.colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Score (%)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Health Metrics'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: teamId + ' - Current Health Metrics'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Render progress chart
+        function renderProgressChart(teamId) {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            const team = teamData[teamId];
+            
+            // Destroy previous chart if exists
+            if (progressChart) {
+                progressChart.destroy();
+            }
+            
+            progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: team.progress.labels,
+                    datasets: [
+                        {
+                            label: 'Overall Team Health',
+                            data: team.progress.data,
+                            borderColor: '#1d4e9c',
+                            backgroundColor: 'rgba(29, 78, 156, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 0,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Overall Health Score (%)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: teamId + ' - Health Check Progress'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Simulate dynamic data updates
+        setInterval(() => {
+            if (currentTeam && document.getElementById('healthModal').style.display === 'flex') {
+                // Randomly update some values to simulate real-time changes
+                const team = teamData[currentTeam];
+                
+                // Update one random health metric
+                const randomIndex = Math.floor(Math.random() * team.health.data.length);
+                const change = Math.floor(Math.random() * 5) - 2; // Random change between -2 and +2
+                
+                team.health.data[randomIndex] = Math.max(0, Math.min(100, team.health.data[randomIndex] + change));
+                
+                // Update color based on new value
+                if (team.health.data[randomIndex] >= 80) {
+                    team.health.colors[randomIndex] = '#4CAF50';
+                } else if (team.health.data[randomIndex] >= 70) {
+                    team.health.colors[randomIndex] = '#FFC107';
+                } else {
+                    team.health.colors[randomIndex] = '#F44336';
+                }
+                
+                // Redraw current view
+                if (currentView === 'health') {
+                    renderHealthChart(currentTeam);
+                    updateMetricCards(currentTeam);
+                } else {
+                    // Add small random change to latest progress point
+                    const lastIndex = team.progress.data.length - 1;
+                    const progressChange = Math.floor(Math.random() * 3) - 1; // Random change between -1 and +1
+                    team.progress.data[lastIndex] = Math.max(0, Math.min(100, team.progress.data[lastIndex] + progressChange));
+                    renderProgressChart(currentTeam);
+                }
+            }
+        }, 5000); // Update every 5 seconds
+    </script>
+</body>
+</html>

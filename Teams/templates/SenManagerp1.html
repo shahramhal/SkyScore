@@ -1,242 +1,571 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Sky Score - Department Performance</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #4A90E2, #2C3E50);
-            height: 100%;
-        }
-        .dashboard {
-            width: 1000px;
-            height: 700px;
-            background: white;
-            margin: 20px auto;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-        }
-        .header {
-            background: linear-gradient(to right, #4A90E2, #2C3E50);
-            color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .logo {
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .content {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .charts {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-        .chart {
-            width: 48%;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .performance-summary {
-            display: flex;
-            justify-content: space-between;
-            background-color: #f0f4f8;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .performance-item {
-            text-align: center;
-            flex-grow: 1;
-        }
-        .performance-item h4 {
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-        .bottom-nav {
-            background: linear-gradient(to right, #4A90E2, #2C3E50);
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
-        }
-        .bottom-nav button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .department-selector {
-            margin-bottom: 20px;
-        }
-        select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sky Engineering Health Check</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header Section */
+    .header {
+      background: linear-gradient(to right, #1a4b8c, #2868c8);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .sky-score {
+      font-size: 2rem;
+      color: #ff6b4a;
+      font-weight: bold;
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      background: linear-gradient(to bottom, #2868c8, #5b9bd5);
+      padding: 2rem;
+      color: white;
+    }
+    
+    .settings-panel {
+      background-color: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .panel-title {
+      font-size: 1.5rem;
+      color: #1a4b8c;
+      font-weight: 600;
+    }
+    
+    .update-login-btn {
+      background-color: #1a4b8c;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+    
+    .update-login-btn:hover {
+      background-color: #15407a;
+    }
+    
+    .welcome-banner {
+      background-color: #f5f8ff;
+      border-radius: 0.8rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      border: 1px solid #d1e3ff;
+    }
+    
+    .welcome-title {
+      font-size: 1.2rem;
+      color: #1a4b8c;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .welcome-text {
+      color: #505050;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+    
+    .settings-section {
+      margin-bottom: 2rem;
+    }
+    
+    .section-title {
+      font-size: 1.1rem;
+      color: #1a4b8c;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    
+    .settings-card {
+      background-color: #f9fbff;
+      border-radius: 0.8rem;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #e6edf8;
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .card-title {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    
+    .team-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .status-active {
+      background-color: #4caf50;
+    }
+    
+    .status-moderate {
+      background-color: #ff9800;
+    }
+    
+    .status-text {
+      font-size: 0.9rem;
+      color: #505050;
+    }
+    
+    .assistance-section {
+      background-color: #f5f8ff;
+      border-radius: 0.8rem;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      border: 1px solid #d1e3ff;
+    }
+    
+    .assistance-text {
+      color: #505050;
+      font-size: 0.95rem;
+      flex: 1;
+    }
+    
+    .notification-icon {
+      color: #ff9800;
+      font-size: 1.2rem;
+      margin-right: 1rem;
+    }
+    
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background-color: #1a4b8c;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #15407a;
+    }
+    
+    .btn-secondary {
+      background-color: #e0e0e0;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #d0d0d0;
+    }
+    
+    /* Footer */
+    .footer {
+      background-color: #1a4b8c;
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .menu-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    
+    /* Guide Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 80%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transform: translateY(-20px);
+      transition: all 0.3s;
+    }
+    
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .modal-title {
+      font-size: 1.5rem;
+      color: #1a4b8c;
+      font-weight: 600;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+    
+    .close-modal:hover {
+      color: #333;
+    }
+    
+    .guide-content {
+      color: #505050;
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
-    <div class="dashboard">
-        <div class="header">
-            <h1 id="department-title">Engineering Operations Dept</h1>
-            <div class="logo">Sky Score</div>
-        </div>
-
-        <div class="content">
-            <div class="department-selector">
-                <select id="department-select">
-                    <!-- Placeholder for dynamic department list -->
-                    <option value="engineering">Engineering Operations</option>
-                    <option value="software">Software Development</option>
-                    <!-- Add more departments as needed -->
-                </select>
-            </div>
-
-            <div class="charts">
-                <div class="chart">
-                    <h3>Average Performance (Plotly Bar)</h3>
-                    <div id="plotly-bar"></div>
-                </div>
-                <div class="chart">
-                    <h3>Area Contribution (Plotly Pie)</h3>
-                    <div id="plotly-pie"></div>
-                </div>
-            </div>
-
-            <div class="performance-summary">
-                <div class="performance-item">
-                    <h4>Top Performing Area</h4>
-                    <p id="top-performing">Mission - 4.1 ⭐</p>
-                </div>
-                <div class="performance-item">
-                    <h4>Struggling Area</h4>
-                    <p id="struggling-area">Fun - 3.75 ⭐</p>
-                </div>
-                <div class="performance-item">
-                    <h4>Average Health Score</h4>
-                    <p id="average-health-score">4.0 ⭐</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bottom-nav">
-            <button onclick="navigateTo('settings')">Settings</button>
-            <button onclick="navigateTo('comparison')">COMPARISON</button>
-            <button onclick="navigateTo('logout')">LOG OUT</button>
-        </div>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header">
+      <div class="logo-text">TEAM LEADER</div>
+      <h1>Team Leader Settings</h1>
+      <div class="sky-score">sky<span style="color: white;">score</span></div>
     </div>
-
-    <script>
-        // Placeholder for dynamic data and interactions
-        function navigateTo(page) {
-            // Implement navigation logic
-            console.log(`Navigating to: ${page}`);
-            // You can add specific navigation functionality here
-        }
-
-        // Charts initialization with placeholder data
-        function initializeCharts() {
-            const barCtx = document.getElementById('bar-chart').getContext('2d');
-            const lineCtx = document.getElementById('line-chart').getContext('2d');
-
-            // Bar Chart Placeholder
-            new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Mission', 'Fun', 'Speed', 'Value'],
-                    datasets: [{
-                        label: 'Performance Metrics',
-                        data: [4.10, 3.75, 4.05, 3.90],
-                        backgroundColor: ['#4A90E2', '#F39C12', '#2ECC71', '#E74C3C']
-                    }]
-                }
-            });
-
-            // Line Chart Placeholder
-            new Chart(lineCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Mission', 'Fun', 'Speed', 'Value'],
-                    datasets: [{
-                        label: 'Performance Trend',
-                        data: [4.10, 3.75, 4.05, 3.90],
-                        borderColor: '#4A90E2',
-                        fill: false
-                    }]
-                }
-            });
-        }
-
-        // Department Selection Placeholde
-        document.getElementById('department-select').addEventListener('change', function() {
-            const selectedDepartment = this.value;
-            // Placeholder for dynamic data fetching
-            document.getElementById('department-title').textContent = 
-                selectedDepartment === 'engineering' ? 'Engineering Operations Dept' : 'Software Development Dept';
-            
-            // You can add more dynamic updates here
-            console.log(`Selected department: ${selectedDepartment}`);
-        });
-
-        // Initialize charts on page load
-        initializeCharts();
-
-
-        const barLabels = {{ bar_labels|safe }};
-        const barValues = {{ bar_values|safe }};
-        const pieLabels = {{ pie_labels|safe }};
-        const pieValues = {{ pie_values|safe }};
-
-        Plotly.newPlot('plotly-bar', [{
     
-            x: barLabels,
-            y: barValues,
-            type: 'bar',
-            marker: {
-            color: '#4A90E2'
-        }
-        }], {
-            title: 'Average Scores by Category',
-            margin: { t: 40 }
-        });
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="settings-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Health Check Settings</h2>
+          <button class="update-login-btn" id="updateLoginBtn">UPDATE LOG IN DETAILS</button>
+        </div>
+        
+        <div class="welcome-banner">
+          <h3 class="welcome-title">Welcome to the Sky Engineering Health Check Website!</h3>
+          <p class="welcome-text">This tool helps Sky Engineering teams assess their operational health using the Spotify Health Check technique. Users can rate various aspects of their team's performance and visualize the results. Use Our guide to get started.</p>
+        </div>
+        
+        <div class="settings-section">
+          <h3 class="section-title">Status Overview</h3>
+          
+          <div class="team-status">
+            <span class="status-indicator status-active"></span>
+            <span class="status-text">TEAM 5CS16_A STATUS: ACTIVE</span>
+          </div>
+          
+          <div class="team-status">
+            <span class="status-indicator status-moderate"></span>
+            <span class="status-text">TEAM 5CS16_B STATUS: MODERATELY ACTIVE</span>
+          </div>
+          
+          <div class="team-status">
+            <span class="status-indicator status-moderate"></span>
+            <span class="status-text">TEAM 5CS16_C STATUS: MODERATELY ACTIVE</span>
+          </div>
+          
+          <div class="team-status">
+            <span class="status-indicator status-active"></span>
+            <span class="status-text">TEAM 5CS16_D STATUS: ACTIVE</span>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3 class="section-title">Notification Settings</h3>
+          
+          <div class="settings-card">
+            <div class="card-header">
+              <span class="card-title">Health Score Alerts</span>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="settings-description">Configure alerts when health scores for teams fall below certain thresholds.</p>
+          </div>
+          
+          <div class="settings-card">
+            <div class="card-header">
+              <span class="card-title">Weekly Report Email</span>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="settings-description">Receive weekly summary reports of team health metrics via email.</p>
+          </div>
+          
+          <div class="settings-card">
+            <div class="card-header">
+              <span class="card-title">Dashboard Notifications</span>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="settings-description">Enable browser notifications for significant health score changes.</p>
+          </div>
+        </div>
+        
+        <div class="assistance-section">
+          <span class="notification-icon">🔔</span>
+          <p class="assistance-text">Need Assistance? If you need help at any point, you can visit this guide page to the left or contact your system administrator.</p>
+        </div>
+        
+        <div class="button-group">
+          <button class="btn btn-secondary" id="overviewBtn">OVERVIEW</button>
+          <button class="btn btn-primary" id="guideBtn">Our Guide</button>
+          <button class="btn btn-primary" id="continueBtn">Continue to Health Check</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <div>© 2025 Sky Engineering</div>
+      <button class="menu-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Guide Modal -->
+    <div class="modal-overlay" id="guideModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Sky Engineering Health Check Guide</h2>
+          <button class="close-modal" id="closeModal">&times;</button>
+        </div>
+        <div class="guide-content">
+          <!-- Guide content can be added here later -->
+          <p>This is where you can add detailed guide information later. The content of this guide will help team leaders understand how to properly use the Sky Engineering Health Check tool and interpret results.</p>
+          <p>The guide will provide step-by-step instructions on:</p>
+          <ul>
+            <li>Completing the health check assessment</li>
+            <li>Interpreting team health scores</li>
+            <li>Implementing improvements based on results</li>
+            <li>Tracking progress over time</li>
+          </ul>
+          <p>You can easily update this content later as needed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        Plotly.newPlot('plotly-pie', [{
-            labels: pieLabels,
-            values: pieValues,
-            type: 'pie'
-        }], {
-            title: 'Department Contribution Split',
-            margin: { t: 40 }
-        });
+  <script>
+    // DOM Elements
+    const guideBtn = document.getElementById('guideBtn');
+    const guideModal = document.getElementById('guideModal');
+    const closeModal = document.getElementById('closeModal');
+    const updateLoginBtn = document.getElementById('updateLoginBtn');
+    const overviewBtn = document.getElementById('overviewBtn');
+    const continueBtn = document.getElementById('continueBtn');
 
-    </script>
+    // Event Listeners
+    guideBtn.addEventListener('click', openGuideModal);
+    closeModal.addEventListener('click', closeGuideModal);
+    guideModal.addEventListener('click', function(e) {
+      if (e.target === guideModal) {
+        closeGuideModal();
+      }
+    });
+
+    // Button click handlers for navigation
+    updateLoginBtn.addEventListener('click', function() {
+      alert('Navigate to Update Login Details page');
+      // Implement actual navigation later
+      // window.location.href = 'update-login.html';
+    });
+
+    overviewBtn.addEventListener('click', function() {
+      alert('Navigate to Overview page');
+      // Implement actual navigation later
+      // window.location.href = 'overview.html';
+    });
+
+    continueBtn.addEventListener('click', function() {
+      alert('Navigate to Health Check page');
+      // Implement actual navigation later
+      // window.location.href = 'health-check.html';
+    });
+
+    // Functions
+    function openGuideModal() {
+      guideModal.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent scrolling while modal is open
+    }
+
+    function closeGuideModal() {
+      guideModal.classList.remove('active');
+      document.body.style.overflow = 'auto'; // Enable scrolling again
+    }
+
+    // Toggle switches functionality
+    const toggleSwitches = document.querySelectorAll('.toggle-switch input');
+    toggleSwitches.forEach(toggle => {
+      toggle.addEventListener('change', function() {
+        // You can add custom functionality here
+        const setting = this.closest('.card-header').querySelector('.card-title').innerText;
+        console.log(`${setting} is now ${this.checked ? 'enabled' : 'disabled'}`);
+      });
+    });
+
+    // Close the modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && guideModal.classList.contains('active')) {
+        closeGuideModal();
+      }
+    });
+  </script>
 </body>
 </html>
