@@ -11,6 +11,9 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -19,7 +22,24 @@ def home(request):
     # Render the home page
     return render(request, 'home.html')
 
+@never_cache
 def login_view(request):
+    
+    if 'login_attempt' not in request.session:
+        request.session.flush()
+        request.session['login_attempt'] = True
+        
+    if 'user_id' in request.session:
+        
+        user_type = request.session.get('user_type')
+        if user_type == 'Admin':
+            return redirect('/admin/')
+        if user_type in ['SenManager', 'TeamLead']:
+            return redirect('manager_dashboard')
+        elif user_type == 'Engineer':
+            return redirect('engineer_dashboard')
+        else:
+            return redirect('home')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -38,7 +58,7 @@ def login_view(request):
             
             # Redirect based on user type
             if user.userType == 'Admin':
-                return redirect('admin_dashboard') # !!!!!you should create template with this name 
+                return redirect('/admin/') # !!!!!you should create template with this name 
             elif user.userType in ['SenManager', 'TeamLead']:
                 return redirect('manager_dashboard')# !!!!!you should create template with this name)
             elif user.userType == 'Engineer':
@@ -51,6 +71,7 @@ def login_view(request):
             return redirect('login')
     
     return render(request, 'login.html')
+@never_cache
 def signup_view(request):
     auth_backend = CustomAuthBackend()
     
@@ -212,10 +233,36 @@ def resetPassword(request, uidb64, token):
 def passwordResetConfirm(request):
     messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
     return redirect('login')
+
+@never_cache
+# @login_required(login_url='login')
 def engineer_dashboard(request):
-    # Check if user is authenticated
-    if not request.user.is_authenticated:
+    if 'user_id' not in request.session:
         return redirect('login')
     
-    # Render the engineer dashboard
-    return render(request, 'engineer_dashboard.html')
+    try:
+        # Get full user object from database
+        user = User.objects.get(userID=request.session['user_id'])
+        context = {
+            'user': user,
+            # Also pass session data to ensure it's available
+            'session_data': request.session
+        }
+        return render(request, 'engineer_dashboard.html', context)
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('login')
+    
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+
+def logout_view(request):
+    # Clear the session data
+    request.session.flush()
+    
+    response = redirect('login')
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    # Redirect to login page
+    messages.success(request, "You have been successfully logged out.")
+    return response
