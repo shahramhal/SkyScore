@@ -8,13 +8,14 @@
 <!-- Title of the welcome page -->
 <title>Sky Score - Welcome</title>
 <!-- Link to the external CSS stylesheet -->
+<link rel="stylesheet" href="{% static 'css/base.css' %}" />
 <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 
 <div class="container">
   <div class="upper-section">
     <!-- Welcome logo text -->
-    <div class="welcome-logo">
-      <a href="{% url 'home' %}">Welcome</a>
+    <div class="welcome-logo" onclick="window.location.href='{% url 'home' %}'">
+      Welcome
     </div>
     <!-- Sky Score logo text -->
     <div class="sky-score-logo">

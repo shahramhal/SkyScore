@@ -1,0 +1,28 @@
+/* Home page specific styles */
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+  }
+.content-container {
+    max-width: 1200px;
+    margin: 50px auto 120px auto;
+    padding: 0 1rem;
+    width: 100%;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .buttons-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .auth-button {
+      width: 100%;
+      max-width: 300px;
+    }
+  }

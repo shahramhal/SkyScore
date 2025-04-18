@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Page</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/engineer_dashboard.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <meta
+    http-equiv="Cache-Control"
+    content="no-cache, no-store, must-revalidate"
+  />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <body>
+    <!-- Side Navigation -->
+    <nav class="side-nav">
+      <div class="side-nav-header">
+        <a href="{% url 'engineer_dashboard' %}" class="side-nav-logo"
+          >Sky Score</a
+        >
+        <button class="side-nav-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <!-- User Profile Section -->
+      <div class="user-profile">
+        <div class="user-avatar">
+          {% if user %} {{ user.username|slice:":1"|upper }} {% else %} U
+          {%endif %}
+        </div>
+        <div class="user-name">
+          {% if user %} {{ user.first_name }} {{ user.last_name }} {% else %}
+          Guest User {% endif %}
+        </div>
+
+        <div class="user-role">
+          {%if user %}{{ user.userType }}{% else %}Guest User{% endif %}
+        </div>
+      </div>
+      <ul class="side-nav-menu">
+        <li class="side-nav-item">
+          <a href="{% url 'engineer_dashboard' %}" class="side-nav-link active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="side-nav-item">
+          <a href="#" class="side-nav-link">
+            <i class="fas fa-heart"></i>
+            <span>Health Check</span>
+          </a>
+        </li>
+        <li class="side-nav-item">
+          <a href="#" class="side-nav-link">
+            <i class="fas fa-chart-line"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+        <li class="side-nav-item">
+          <a href="#" class="side-nav-link">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+          </a>
+        </li>
+        <li class="side-nav-item">
+          <a href="#" class="side-nav-link">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="side-nav-item">
+          <a href="#" class="side-nav-link">
+            <i class="fas fa-question-circle"></i>
+            <span>Help</span>
+          </a>
+        </li>
+        <li class="side-nav-item">
+          <a href="{% url 'logout' %}" class="side-nav-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-toggle" style="display: none">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="dashboard-container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+          <h1>
+            Welcome, {% if user %}{{ user.first_name }}{% else %}Guest
+            {%endif%}!
+          </h1>
+          <p>Track and improve your team's health metrics</p>
+        </div>
+        <!-- Active Sessions Card -->
+        <div class="dashboard-card">
+          <h2><i class="fas fa-calendar-alt"></i> Active Sessions</h2>
+          <div class="session-list">
+            {% for session in active_sessions %}
+            <div class="session-item">
+              <h3>{{ session.name }}</h3>
+              <p>Due: {{ session.due_date }}</p>
+              <a
+                href="{% url 'health_check' session.id %}"
+                class="session-button"
+              >
+                {% if session.voted %}Update Vote{% else %}Vote Now{% endif %}
+              </a>
+            </div>
+            {% empty %}
+            <p class="no-sessions">No active sessions available</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Team Health Summary -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h2>
+              <i class="fas fa-users"></i> Team: <span>Frontend Squad</span>
+            </h2>
+            <a href="{% url 'engineer_dashboard' %}" class="view-report"
+              >View Full Report</a
+            >
+          </div>
+
+          <div class="health-cards-grid">
+            <!-- Example Health Card (repeat for each metric) -->
+            <div class="health-card green">
+              <h3>Codebase Health</h3>
+              <div class="health-status">
+                <span class="team-status"
+                  >Team: <span class="status-badge green">Green</span></span
+                >
+                <span class="trend up"
+                  ><i class="fas fa-arrow-up"></i> Improving</span
+                >
+              </div>
+              <small>Last voted: 5 Mar 2025</small>
+            </div>
+
+            <div class="health-card amber">
+              <h3>Testing</h3>
+              <div class="health-status">
+                <span class="team-status"
+                  >Team: <span class="status-badge amber">Amber</span></span
+                >
+                <span class="trend down"
+                  ><i class="fas fa-arrow-down"></i> Declining</span
+                >
+              </div>
+              <small>Your vote pending</small>
+            </div>
+
+            <!-- Add more health cards as needed -->
+          </div>
+
+          <div class="text-center">
+            <a href="{% url 'engineer_dashboard' %}" class="primary-button">
+              Vote for All Cards
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-container">
+          <div class="stat-card">
+            <h3><i class="fas fa-clipboard-check"></i> Your Voting Progress</h3>
+            <div class="progress-bar-container">
+              <div class="progress-bar" style="width: 70%">7/10 cards</div>
+            </div>
+            <p>3 cards remaining for current session</p>
+          </div>
+
+          <div class="stat-card">
+            <h3><i class="fas fa-history"></i> Recent Activity</h3>
+            <ul class="activity-list">
+              <li>
+                <i class="fas fa-check-circle green-icon"></i> Voted on
+                "Codebase Health" (5 Mar)
+              </li>
+              <li>
+                <i class="fas fa-exclamation-circle amber-icon"></i> Pending:
+                "Testing", "Release Process"
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="{% static 'js/enDashboard.js' %}"></script>
+</html>

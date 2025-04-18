@@ -3,13 +3,43 @@ from django.contrib import messages
 from .models import User                    
 from django.contrib.auth import authenticate 
 from .backends import CustomAuthBackend
+from .backends import CustomPasswordResetTokenGenerator
+
+
+from django.contrib.auth import authenticate
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control
+from django.contrib.auth.decorators import login_required
+
+
 # Create your views here.
 
 def home(request):
     # Render the home page
     return render(request, 'home.html')
 
+@never_cache
 def login_view(request):
+    
+    if 'login_attempt' not in request.session:
+        request.session.flush()
+        request.session['login_attempt'] = True
+        
+    if 'user_id' in request.session:
+        
+        user_type = request.session.get('user_type')
+        if user_type == 'Admin':
+            return redirect('/admin/')
+        if user_type in ['SenManager', 'TeamLead']:
+            return redirect('manager_dashboard')
+        elif user_type == 'Engineer':
+            return redirect('engineer_dashboard')
+        else:
+            return redirect('home')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -28,7 +58,7 @@ def login_view(request):
             
             # Redirect based on user type
             if user.userType == 'Admin':
-                return redirect('admin_dashboard') # !!!!!you should create template with this name 
+                return redirect('/admin/') # !!!!!you should create template with this name 
             elif user.userType in ['SenManager', 'TeamLead']:
                 return redirect('manager_dashboard')# !!!!!you should create template with this name)
             elif user.userType == 'Engineer':
@@ -41,6 +71,7 @@ def login_view(request):
             return redirect('login')
     
     return render(request, 'login.html')
+@never_cache
 def signup_view(request):
     auth_backend = CustomAuthBackend()
     
@@ -85,7 +116,7 @@ def signup_view(request):
                 username=username,
                 email=email,
                 password=password,  # removed the hashing 
-               role=role,
+                userType=role,
                 first_name=first_name,
                 last_name=last_name
             )
@@ -105,20 +136,133 @@ def dashboard(request):
         return redirect('login')
     return render(request, 'dashboard.html')
 
-
-# def admin_login(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-#         user = authenticate(request, username=username, password=password)
-        
-#         # if user is not None and user.userType == 'manager':  # Check if user is a manager
-#         #     login(request, user)
-#         #     return redirect('admin_dashboard')  # Redirect to admin dashboard
-#         # else:
-#         #     messages.error(request, 'Invalid credentials or insufficient permissions')
-    
-#     # Render the manager login page
-#     return render(request, 'admin_login.html')
+password_reset_token_generator = CustomPasswordResetTokenGenerator()
 def forgotPassword(request):
-    return render (request, 'forgotPassword.html')
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        # Check if the email exists
+        try:
+            user = User.objects.get(email=email)
+            
+            # Generate a unique token using custom token generator
+            uidb64 = urlsafe_base64_encode(force_bytes(user.userID))
+            token = password_reset_token_generator.make_token(user)
+            
+            # Build the reset URL
+            reset_url = f"{request.scheme}://{request.get_host()}/reset-password/{uidb64}/{token}/"
+            
+            # Prepare email
+            subject = 'Password Reset Request'
+            
+            # For simplicity, we'll use a plain text email here
+            email_message = f"""
+            Hello {user.first_name},
+            
+            You requested a password reset for your account. Please click the link below to reset your password:
+            
+            {reset_url}
+            
+            If you didn't request this, please ignore this email.
+            
+            Thank you,
+            The Sky Score Team
+            """
+            
+            # Send email
+            try:
+                send_mail(
+                    subject,
+                    email_message,
+                    settings.EMAIL_HOST_USER,  # Use the configured email in settings
+                    [user.email],
+                    fail_silently=False,
+                )
+                messages.success(request, 'Password reset link has been sent to your email.')
+            except Exception as e:
+                messages.error(request, f'Error sending email: {e}')
+            
+            return redirect('login')
+            
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with that email address.')
+            return redirect('forgotPassword')
+    
+    return render(request, 'forgotPassword.html')
+
+def resetPassword(request, uidb64, token):
+    try:
+        # Decode the user id
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(userID=uid)
+        
+        # Verify the token using custom token generator
+        if password_reset_token_generator.check_token(user, token):
+            if request.method == 'POST':
+                new_password = request.POST.get('new_password')
+                confirm_password = request.POST.get('confirm_password')
+                
+                if new_password != confirm_password:
+                    messages.error(request, 'Passwords do not match.')
+                    return render(request, 'reset_password.html', {
+                        'valid_token': True,
+                        'uidb64': uidb64,
+                        'token': token
+                    })
+                
+                # Update the password
+                user.password =new_password
+                user.save()
+                
+                messages.success(request, 'Password has been reset successfully. You can now log in with your new password.')
+                return redirect('login')
+            
+            return render(request, 'reset_password.html', {
+                'valid_token': True,
+                'uidb64': uidb64,
+                'token': token
+            })
+        else:
+            messages.error(request, 'The reset link is invalid or has expired.')
+            return render(request, 'reset_password.html', {'valid_token': False})
+            
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        messages.error(request, 'Invalid reset link.')
+        return render(request, 'reset_password.html', {'valid_token': False})
+
+def passwordResetConfirm(request):
+    messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
+    return redirect('login')
+
+@never_cache
+# @login_required(login_url='login')
+def engineer_dashboard(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+    
+    try:
+        # Get full user object from database
+        user = User.objects.get(userID=request.session['user_id'])
+        context = {
+            'user': user,
+            # Also pass session data to ensure it's available
+            'session_data': request.session
+        }
+        return render(request, 'engineer_dashboard.html', context)
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('login')
+    
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+
+def logout_view(request):
+    # Clear the session data
+    request.session.flush()
+    
+    response = redirect('login')
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    # Redirect to login page
+    messages.success(request, "You have been successfully logged out.")
+    return response

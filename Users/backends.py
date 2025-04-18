@@ -1,6 +1,8 @@
 from django.contrib.auth.backends import BaseBackend
 from django.db.models import Q
 from .models import User
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
 
 class CustomAuthBackend(BaseBackend):
     # Convert role from form to userType in database
@@ -73,7 +75,7 @@ class CustomAuthBackend(BaseBackend):
         Convert form role to database user type
         """
         return self.ROLE_MAPPING.get(role, 'Engineer')  # Default to Engineer
-    def create_user(self, username,email, password, user_type,first_name, last_name):
+    def create_user(self, username,email, password, userType,first_name, last_name):
         """
         Create a new user with the given information
         """
@@ -82,7 +84,7 @@ class CustomAuthBackend(BaseBackend):
                 username=username,
                 email=email,
                 password=password,  
-                userType=user_type,
+                userType=userType,
                 first_name=first_name,
                 last_name=last_name
             )
@@ -91,4 +93,16 @@ class CustomAuthBackend(BaseBackend):
         except Exception as e:
             return None
         
+class CustomPasswordResetTokenGenerator(PasswordResetTokenGenerator):
+    
+    def _make_hash_value(self, user, timestamp):
+        # Create a unique hash using available fields
+        return (
+            str(user.userID) + 
+            str(timestamp) + 
+            str(user.password)
+        )
+
+# Create an instance of the custom token generator
+password_reset_token_generator = CustomPasswordResetTokenGenerator()
        

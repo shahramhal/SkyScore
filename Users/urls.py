@@ -11,5 +11,10 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     # Route for admin/manager login page
     # path('django-admin/', views.admin_login, name='django-admin'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('forgotPassword/', views.forgotPassword, name='forgotPassword')]
+   
+    path('forgotPassword/', views.forgotPassword, name='forgotPassword'),
+    path('reset-password/<str:uidb64>/<str:token>/', views.resetPassword, name='resetPassword'),
+    path('password-reset-confirm/', views.passwordResetConfirm, name='passwordResetConfirm'),
+    path ('engineer_dashboard/', views.engineer_dashboard, name='engineer_dashboard'),
+    path('logout/', views.logout_view, name='logout')
+    ]
