@@ -1,0 +1,508 @@
+.action-container {
+    display: flex;
+    justify-content: center;
+    margin: 50px 0;
+  }
+  .health-check-button {
+    background-color: rgba(100, 150, 200, 0.5);
+    color: black;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s;
+  }
+
+  .health-check-button:hover {
+    background-color: rgba(100, 150, 200, 0.7);
+  }
+
+    
+     /* Left side navigation bar styles */
+     .side-nav {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 250px;
+        background: linear-gradient(to bottom, var(--primary-blue), var(--dark-blue));
+        color: white;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+      }
+
+      .side-nav-header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .side-nav-logo {
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+      }
+
+      .side-nav-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .user-profile {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .user-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background-color: var(--accent-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .user-name {
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+
+      .user-role {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+      }
+
+      .side-nav-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .side-nav-item {
+        padding: 0;
+        margin: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .side-nav-link {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s;
+      }
+
+      .side-nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .side-nav-link i {
+        margin-right: 10px;
+        font-size: 18px;
+      }
+
+      .side-nav-link.active {
+        background-color: var(--accent-blue);
+      }
+
+      .main-content {
+        margin-left: 250px;
+        transition: all 0.3s ease;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .side-nav {
+          width: 80px;
+        }
+
+        .side-nav.expanded {
+          width: 250px;
+        }
+
+        .side-nav-toggle {
+          display: block;
+        }
+
+        .side-nav-link span {
+          display: none;
+        }
+
+        .side-nav.expanded .side-nav-link span {
+          display: inline;
+        }
+
+        .user-name, .user-role {
+          display: none;
+        }
+
+        .side-nav.expanded .user-name,
+        .side-nav.expanded .user-role {
+          display: block;
+        }
+
+        .main-content {
+          margin-left: 80px;
+        }
+
+        .side-nav.expanded + .main-content {
+          margin-left: 250px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .side-nav {
+          width: 0;
+        }
+
+        .side-nav.expanded {
+          width: 250px;
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+
+        .side-nav.expanded + .main-content {
+          margin-left: 0;
+        }
+
+        .mobile-toggle {
+          position: fixed;
+          top: 10px;
+          left: 10px;
+          z-index: 1001;
+          background: var(--primary-blue);
+          border: none;
+          color: white;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+      }
+      /* Add these new styles to your existing engineer_dashboard.css */
+
+/* Dashboard Container */
+.dashboard-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Welcome Banner */
+  .welcome-banner {
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .welcome-banner h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
+  
+  .welcome-banner p {
+    margin: 0.5rem 0 0;
+    opacity: 0.9;
+  }
+  
+  /* Dashboard Cards */
+  .dashboard-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .dashboard-card h2 {
+    margin-top: 0;
+    color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .card-header h2 span {
+    color: var(--dark-blue);
+    font-weight: normal;
+  }
+  
+  .view-report {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .view-report:hover {
+    text-decoration: underline;
+  }
+  
+  /* Session List */
+  .session-list {
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .session-item {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .session-item h3 {
+    margin: 0;
+    color: var(--dark-blue);
+  }
+  
+  .session-item p {
+    margin: 0.25rem 0 0;
+    color: #666;
+  }
+  
+  .session-button {
+    background: var(--primary-blue);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  
+  .session-button:hover {
+    background: var(--accent-blue);
+  }
+  
+  .no-sessions {
+    text-align: center;
+    color: #666;
+    padding: 1rem;
+  }
+  
+  /* Health Cards Grid */
+  .health-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .health-card {
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 5px solid;
+    transition: transform 0.3s;
+    cursor: pointer;
+  }
+  
+  .health-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .health-card.green {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+  }
+  
+  .health-card.amber {
+    border-color: #ffc107;
+    background: rgba(255, 193, 7, 0.1);
+  }
+  
+  .health-card.red {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+  }
+  
+  .health-card h3 {
+    margin: 0 0 0.5rem;
+  }
+  
+  .health-status {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.5rem 0;
+  }
+  
+  .status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .status-badge.green {
+    background: #28a745;
+  }
+  
+  .status-badge.amber {
+    background: #ffc107;
+  }
+  
+  .status-badge.red {
+    background: #dc3545;
+  }
+  
+  .trend {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .trend.up {
+    color: #28a745;
+  }
+  
+  .trend.down {
+    color: #dc3545;
+  }
+  
+  .health-card small {
+    color: #666;
+    font-size: 0.8rem;
+  }
+  
+  /* Stats Container */
+  .stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .stat-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+  }
+  
+  .stat-card h3 {
+    margin-top: 0;
+    color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .progress-bar-container {
+    height: 10px;
+    background: #f0f0f0;
+    border-radius: 5px;
+    margin: 1rem 0;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(to right, var(--primary-blue), var(--accent-blue));
+    border-radius: 5px;
+    color: white;
+    font-size: 0.7rem;
+    text-align: center;
+    line-height: 10px;
+  }
+  
+  .activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+  }
+  
+  .activity-list li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .green-icon {
+    color: #28a745;
+  }
+  
+  .amber-icon {
+    color: #ffc107;
+  }
+  
+  /* Buttons */
+  .primary-button {
+    display: inline-block;
+    background: var(--primary-blue);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+  
+  .primary-button:hover {
+    background: var(--accent-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      padding: 1rem;
+    }
+    
+    .health-cards-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .stats-container {
+      grid-template-columns: 1fr;
+    }
+    
+    .session-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    .session-button {
+      align-self: flex-end;
+    }
+  }

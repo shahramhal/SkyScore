@@ -61,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Users.middleware.NoCacheMiddleware',  # Custom middleware to prevent caching for authenticated users
+    
 ]
 
 ROOT_URLCONF = 'Sky_Score.urls'
