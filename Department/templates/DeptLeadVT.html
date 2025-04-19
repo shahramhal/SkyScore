@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sky Score | Team Performance Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f8fc;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 220px;
+            height: 100vh;
+            background: linear-gradient(180deg, #4f2cc4 0%, #6a5af9 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0 0 0;
+            z-index: 1000;
+        }
+        .sidebar h2 {
+            font-size: 1.7em;
+            font-weight: bold;
+            margin: 0 0 32px 32px;
+            letter-spacing: 1px;
+        }
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 32px;
+            font-size: 1.1em;
+            border-left: 4px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .sidebar nav a.active, .sidebar nav a:hover {
+            background: rgba(255,255,255,0.08);
+            border-left: 4px solid #fff;
+            font-weight: bold;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 40px 32px 32px 32px;
+        }
+        .team-overview-container {
+            background: linear-gradient(120deg, #e3f0ff 60%, #c9e7ff 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+            padding: 32px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .team-header h1 {
+            color: #174b8a;
+            font-size: 2em;
+            margin: 0;
+        }
+        .switch-team {
+            background: #fff;
+            border-radius: 8px;
+            padding: 8px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .switch-team select {
+            border: none;
+            background: transparent;
+            font-size: 1em;
+            color: #174b8a;
+            font-weight: bold;
+        }
+        .team-details {
+            text-align: center;
+            margin-bottom: 16px;
+            color: #1a237e;
+            font-size: 1.1em;
+        }
+        .score-summary {
+            background: #f0f8ff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 0 auto 24px auto;
+            max-width: 480px;
+            color: #174b8a;
+            font-size: 1.1em;
+        }
+        .chart-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .chart-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 24px;
+            min-height: 320px;
+            width: 100%;
+            max-width: 480px;
+        }
+        .overview-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+            gap: 24px;
+        }
+        .overview-buttons button {
+            background: #e3e8ff;
+            color: #174b8a;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 28px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .overview-buttons button:hover {
+            background: #c9e7ff;
+        }
+        @media (max-width: 900px) {
+            .main-content { padding: 24px 10px; }
+            .team-overview-container { padding: 18px; }
+        }
+        @media (max-width: 600px) {
+            .sidebar { width: 100vw; height: auto; flex-direction: row; position: static; }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Sky Score</h2>
+        <nav>
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">Health Check</a>
+            <a href="#">Reports</a>
+            <a href="#">Settings</a>
+            <a href="#">Help</a>
+            <a href="#">Logout</a>
+        </nav>
+    </div>
+    <div class="main-content">
+        <div class="team-overview-container">
+            <div class="team-header">
+                <h1 id="team-title">{% block team_title %}{% endblock %}</h1>
+                <div class="switch-team">
+                    <label for="team-select"><strong>Other Teams:</strong></label>
+                    <select id="team-select" onchange="switchTeam()">
+                        <!-- Django: populate team options dynamically -->
+                        {% for team in teams %}
+                        <option value="{{ team.id }}" {% if team.id == current_team.id %}selected{% endif %}>{{ team.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="team-details" id="team-details">
+                <div><strong>Team Name:</strong> <span id="team-name">{% block team_name %}{% endblock %}</span></div>
+                <div><strong>Team Leader:</strong> <span id="team-leader">{% block team_leader %}{% endblock %}</span></div>
+                <div><strong>Number of Engineers:</strong> <span id="team-engineers">{% block team_engineers %}{% endblock %}</span></div>
+                <div><strong>Department:</strong> <span id="team-department">{% block team_department %}{% endblock %}</span></div>
+                <div><strong>Last Health Check:</strong> <span id="team-last-check">{% block team_last_check %}{% endblock %}</span></div>
+                <div><strong>Status:</strong> <span id="team-status">{% block team_status %}{% endblock %}</span></div>
+            </div>
+            <div class="score-summary" id="score-summary">
+                <div><strong>Average Health Score:</strong> <span id="avg-score">{% block avg_score %}{% endblock %}</span></div>
+                <div>
+                    Mission: <span id="score-mission">{% block score_mission %}{% endblock %}</span> |
+                    Fun: <span id="score-fun">{% block score_fun %}{% endblock %}</span> |
+                    Speed: <span id="score-speed">{% block score_speed %}{% endblock %}</span> |
+                    Value: <span id="score-value">{% block score_value %}{% endblock %}</span>
+                </div>
+                <div><strong>Top Performing Area:</strong> <span id="top-area">{% block top_area %}{% endblock %}</span></div>
+                <div><strong>Struggling Area:</strong> <span id="struggling-area">{% block struggling_area %}{% endblock %}</span></div>
+            </div>
+            <div class="chart-section">
+                <div class="chart-container">
+                    <!-- Chart.js or Plotly chart will be rendered here dynamically by Django/JS -->
+                    <canvas id="teamChart" style="width:100%; height:300px;"></canvas>
+                    <!-- For Plotly, you can use: <div id="teamChart"></div> -->
+                </div>
+            </div>
+            <div class="overview-buttons">
+                <button>OVERVIEW</button>
+                <button>Other Departments?</button>
+                <button>Settings</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Placeholder for team-switching logic
+        function switchTeam() {
+            const team = document.getElementById('team-select').value;
+            // Add AJAX or Django logic to fetch and update the page with the selected team's data
+            // Example: window.location.href = `/dashboard/${team}/`;
+        }
+        // Chart rendering will be handled by Django/JS
+    </script>
+</body>
+</html>

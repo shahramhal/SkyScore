@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings - Sky Score</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(to bottom, #4A00E0, #8E2DE2);
+      color: white;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      font-size: 24px;
+      margin-bottom: 40px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 10px 0;
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255,255,255,0.1);
+      border-radius: 5px;
+      padding-left: 10px;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #4A00E0;
+    }
+
+    .section {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #4A00E0;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3b00b3;
+    }
+
+    .help-section ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      width: 60%;
+      border-radius: 10px;
+    }
+
+    .close {
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Sky Score</h2>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/health">Health Check</a>
+    <a href="/reports">Reports</a>
+    <a href="/settings">Settings</a>
+    <a href="/help">Help</a>
+    <a href="/logout">Logout</a>
+  </div>
+
+  <div class="main-content">
+    <h1>Settings</h1>
+
+    <div class="section">
+      <h2>Update Profile</h2>
+      <label for="name">Name:</label>
+      <input type="text" id="name" placeholder="Enter name">
+
+      <label for="username">Username:</label>
+      <input type="text" id="username" placeholder="Enter username">
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter new password">
+
+      <button>Save Changes</button>
+    </div>
+
+    <div class="section">
+      <h2>Team Settings</h2>
+      <label for="team">Team:</label>
+      <select id="team">
+        <option>5CS16_A</option>
+        <option>5CS16_B</option>
+        <option>5CS16_C</option>
+        <option>5CS16_D</option>
+      </select>
+
+      <label for="progress-view">View Progress:</label>
+      <select id="progress-view">
+        <option>Monthly</option>
+        <option>Quarterly</option>
+        <option>Yearly</option>
+      </select>
+
+      <label for="chart-type">Data Visual:</label>
+      <select id="chart-type">
+        <option>Bar Chart</option>
+        <option>Line Chart</option>
+        <option>Pie Chart</option>
+      </select>
+
+      <button>Save Preferences</button>
+    </div>
+
+    <div class="section help-section">
+      <h2>Get Help & FAQ</h2>
+      <ul>
+        <li>How do I reset my password?</li>
+        <li>What are the data visualization options?</li>
+        <li>How can I switch teams?</li>
+      </ul>
+      <button onclick="openGuide()">View Guide</button>
+    </div>
+  </div>
+
+  <!-- Modal for Guide -->
+  <div id="guideModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeGuide()">&times;</span>
+      <h2>Sky Score User Guide</h2>
+      <p>
+        Welcome to Sky Score! This platform helps you track team health and performance.
+        <br><br>
+        - Use the sidebar to navigate between dashboard, health checks, and reports.<br>
+        - In settings, update your profile and choose how you want to view team progress.<br>
+        - Customize charts with your preferred style and reporting timeframe.<br>
+        - For help, consult the FAQ or contact support.<br><br>
+        Happy tracking!
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function openGuide() {
+      document.getElementById("guideModal").style.display = "block";
+    }
+
+    function closeGuide() {
+      document.getElementById("guideModal").style.display = "none";
+    }
+  </script>
+</body>
+</html>
