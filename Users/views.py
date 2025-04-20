@@ -34,8 +34,8 @@ def login_view(request):
         user_type = request.session.get('user_type')
         if user_type == 'Admin':
             return redirect('/admin/')
-        if user_type in ['SenManager', 'TeamLead']:
-            return redirect('manager_dashboard')
+        if user_type in ['SenManager', 'TeamLead','DeptLead']:
+            return redirect('engineer_dashboard')
         elif user_type == 'Engineer':
             return redirect('engineer_dashboard')
         else:
@@ -60,7 +60,7 @@ def login_view(request):
             if user.userType == 'Admin':
                 return redirect('/admin/') # !!!!!you should create template with this name 
             elif user.userType in ['SenManager', 'TeamLead']:
-                return redirect('manager_dashboard')# !!!!!you should create template with this name)
+                return redirect('engineer_dashboard')# !!!!!you should create template with this name)
             elif user.userType == 'Engineer':
                 return redirect('engineer_dashboard')
             else:
