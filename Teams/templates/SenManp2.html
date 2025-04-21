@@ -1,0 +1,533 @@
+<!-- templates/engineering/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering Operations Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a148c;
+            --primary-light: #7c43bd;
+            --primary-dark: #12005e;
+            --accent-color: #4a148c;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --background-light: #f8f9fa;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .header-banner {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: var(--text-light);
+            padding: 25px 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header-title {
+            font-size: 2.2em;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .main-content {
+            background-color: var(--background-light);
+            padding: 30px 40px;
+        }
+        
+        .overview-tab {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 8px 25px;
+            display: inline-block;
+            font-weight: 600;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+        
+        .welcome-message {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-right: 25px;
+            color: var(--primary-color);
+        }
+        
+        .access-bubble {
+            background-color: var(--card-bg);
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+            position: relative;
+            max-width: 300px;
+            box-shadow: var(--shadow);
+        }
+        
+        .arrow {
+            position: absolute;
+            bottom: -10px;
+            left: 30px;
+            width: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+        
+        .arrow:after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--card-bg);
+            transform: rotate(45deg);
+            top: -5px;
+            left: 5px;
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .department-title {
+            font-size: 1.8em;
+            text-align: center;
+            margin: 30px 0;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+        
+        .charts-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .chart-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            flex: 1 1 45%;
+            min-width: 300px;
+        }
+        
+        .chart-title {
+            color: var(--primary-color);
+            font-size: 1.2em;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .metrics-summary {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px 30px;
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .metrics-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 10px 0;
+        }
+        
+        .metric-item {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .metric-value {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 0 5px;
+        }
+        
+        .metrics-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+            margin: 15px 0;
+        }
+        
+        .footer-banner {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            height: 10px;
+        }
+        
+        .logo {
+            position: absolute;
+            right: 40px;
+            top: 20px;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .sky {
+            color: #ffffff;
+        }
+        
+        .score {
+            color: #e0e0e0;
+        }
+        
+        .star-icon {
+            color: #ffd700;
+            margin-left: 3px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .error-message {
+            display: none;
+            background-color: #fff3f3;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 20px 0;
+            color: #d32f2f;
+            border-radius: var(--border-radius);
+        }
+        
+        @media (max-width: 768px) {
+            .charts-section {
+                flex-direction: column;
+            }
+            
+            .chart-container {
+                flex: 1 1 100%;
+            }
+            
+            .header-banner {
+                padding: 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .logo {
+                position: relative;
+                right: auto;
+                top: auto;
+                margin-top: 15px;
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header-banner">
+            <h1 class="header-title">OTHER DEPARTMENTS?</h1>
+            <div class="logo"><span class="sky">sky</span><span class="score">score</span></div>
+        </div>
+        
+        <div class="main-content">
+            <div class="overview-tab">OVERVIEW</div>
+            
+            <div class="welcome-section">
+                <div class="welcome-message">Welcome</div>
+                <div class="access-bubble">
+                    You don't have access to team-level details.
+                    <div class="arrow"></div>
+                </div>
+            </div>
+            
+            <h2 class="department-title">The Engineering Operations Department</h2>
+            
+            <div id="loading-indicator" class="loading-indicator">
+                Loading department metrics...
+            </div>
+            
+            <div id="error-message" class="error-message">
+                Unable to load metrics data. Please try again later.
+            </div>
+            
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3 class="chart-title">The Engineering Operations Dept Metrics</h3>
+                    <canvas id="barChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="chart-title">Department Performance Progression Over Time</h3>
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="metrics-summary">
+                <div class="metrics-row">
+                    <span class="metric-item">Average Health Score: <span class="metric-value health-score">4.05</span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Mission: <span class="metric-value mission-score">4.0</span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Fun: <span class="metric-value fun-score">3.95</span><span class="star-icon">★</span></span>
+                </div>
+                <div class="metrics-divider"></div>
+                <div class="metrics-row">
+                    <span class="metric-item">Speed: <span class="metric-value speed-score">3.9</span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Value: <span class="metric-value value-score">4.15</span><span class="star-icon">★</span></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-banner"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            
+            // Fetch data from Django backend
+            fetch('/api/engineering-metrics/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Update dashboard with data
+                    updateDashboard(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching metrics:', error);
+                    
+                    // Hide loading indicator and show error message
+                    loadingIndicator.style.display = 'none';
+                    
+                    // For development purposes, use placeholder data instead of showing error
+                    const placeholderData = {
+                        bar_metrics: {
+                            categories: ['Mission', 'Plan', 'Speed', 'Value'],
+                            values: [4.0, 3.95, 3.9, 4.15]
+                        },
+                        progression_data: {
+                            dates: ['2023-01-15', '2023-01-22', '2023-02-01', '2023-02-08', '2023-02-15', '2023-02-22', '2023-03-01'],
+                            mission: [3.8, 3.85, 3.9, 3.95, 4.0, 4.1, 4.2],
+                            plan: [3.7, 3.75, 3.8, 3.85, 3.9, 3.95, 4.0],
+                            speed: [3.6, 3.7, 3.7, 3.8, 3.8, 3.9, 4.1],
+                            value: [3.9, 4.0, 4.0, 4.1, 4.1, 4.2, 4.3]
+                        },
+                        summary: {
+                            health_score: 4.05,
+                            mission: 4.0,
+                            fun: 3.95,
+                            speed: 3.9,
+                            value: 4.15
+                        }
+                    };
+                    updateDashboard(placeholderData);
+                    
+                    // Uncomment in production to show real error message
+                    // errorMessage.style.display = 'block';
+                });
+                
+            function updateDashboard(data) {
+                // Update summary metrics
+                if (data.summary) {
+                    document.querySelector('.health-score').textContent = data.summary.health_score;
+                    document.querySelector('.mission-score').textContent = data.summary.mission;
+                    document.querySelector('.fun-score').textContent = data.summary.fun;
+                    document.querySelector('.speed-score').textContent = data.summary.speed;
+                    document.querySelector('.value-score').textContent = data.summary.value;
+                }
+                
+                // Create bar chart
+                if (data.bar_metrics) {
+                    const barCtx = document.getElementById('barChart').getContext('2d');
+                    new Chart(barCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.bar_metrics.categories,
+                            datasets: [{
+                                label: 'Score',
+                                data: data.bar_metrics.values,
+                                backgroundColor: [
+                                    'rgba(74, 20, 140, 0.7)',
+                                    'rgba(124, 67, 189, 0.7)',
+                                    'rgba(94, 53, 177, 0.7)',
+                                    'rgba(49, 27, 146, 0.7)'
+                                ],
+                                borderColor: [
+                                    'rgba(74, 20, 140, 1)',
+                                    'rgba(124, 67, 189, 1)',
+                                    'rgba(94, 53, 177, 1)',
+                                    'rgba(49, 27, 146, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 5,
+                                    title: {
+                                        display: true,
+                                        text: 'Average Score',
+                                        color: '#666'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 0, 0, 0.05)'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Categories',
+                                        color: '#666'
+                                    },
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // Create line chart
+                if (data.progression_data) {
+                    const lineCtx = document.getElementById('lineChart').getContext('2d');
+                    new Chart(lineCtx, {
+                        type: 'line',
+                        data: {
+                            labels: data.progression_data.dates,
+                            datasets: [
+                                {
+                                    label: 'Mission',
+                                    data: data.progression_data.mission,
+                                    borderColor: 'rgba(74, 20, 140, 1)',
+                                    backgroundColor: 'rgba(74, 20, 140, 0.1)',
+                                    tension: 0.3,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 5
+                                },
+                                {
+                                    label: 'Plan',
+                                    data: data.progression_data.plan,
+                                    borderColor: 'rgba(124, 67, 189, 1)',
+                                    backgroundColor: 'rgba(124, 67, 189, 0.1)',
+                                    tension: 0.3,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 5
+                                },
+                                {
+                                    label: 'Speed',
+                                    data: data.progression_data.speed,
+                                    borderColor: 'rgba(186, 104, 200, 1)',
+                                    backgroundColor: 'rgba(186, 104, 200, 0.1)',
+                                    tension: 0.3,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 5
+                                },
+                                {
+                                    label: 'Value',
+                                    data: data.progression_data.value,
+                                    borderColor: 'rgba(49, 27, 146, 1)',
+                                    backgroundColor: 'rgba(49, 27, 146, 0.1)',
+                                    tension: 0.3,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 5
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                    labels: {
+                                        boxWidth: 12,
+                                        usePointStyle: true,
+                                        padding: 20
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: 3.5,
+                                    max: 4.5,
+                                    title: {
+                                        display: true,
+                                        text: 'Average Score',
+                                        color: '#666'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 0, 0, 0.05)'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Date',
+                                        color: '#666'
+                                    },
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
