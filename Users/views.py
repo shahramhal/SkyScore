@@ -14,6 +14,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.views.decorators.cache import never_cache
 from django.views.decorators.cache import cache_control
 from django.contrib.auth.decorators import login_required
+import os
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 
 # Create your views here.
@@ -32,22 +35,24 @@ def login_view(request):
     if 'user_id' in request.session:
         
         user_type = request.session.get('user_type')
-        if user_type == 'Admin':
-            return redirect('/admin/')
-        if user_type in ['SenManager', 'TeamLead']:
-            return redirect('manager_dashboard')
-        elif user_type == 'Engineer':
-            return redirect('engineer_dashboard')
-        else:
-            return redirect('home')
+        return redirect_by_UserType(user_type)
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         
         
          # Try to find the user in your custom table
-        user = authenticate(request, username=username, password=password)
-        
+        try:
+            user = authenticate(request, username=username, password=password)
+            if user is None:
+                # If not found, check the custom User model
+                messages.error(request, 'Please enter a valid username and password, or sign up for an account.')
+                return redirect('login')
+            
+        except User.DoesNotExist:
+            # If the user doesn't exist, show an error message
+            messages.error(request, 'Invalid username or password')
+            return redirect('login')   
         try:
            
             
@@ -57,20 +62,30 @@ def login_view(request):
             request.session['username'] = user.username
             
             # Redirect based on user type
-            if user.userType == 'Admin':
-                return redirect('/admin/') # !!!!!you should create template with this name 
-            elif user.userType in ['SenManager', 'TeamLead']:
-                return redirect('manager_dashboard')# !!!!!you should create template with this name)
-            elif user.userType == 'Engineer':
-                return redirect('engineer_dashboard')
-            else:
-                return redirect('home')
+            return redirect_by_UserType(user.userType)
                 
         except User.DoesNotExist:
             messages.error(request, 'Invalid username or password')
             return redirect('login')
     
     return render(request, 'login.html')
+
+#This function handles the redirection based on user type
+def redirect_by_UserType(user_type):
+    # Redirect based on user type
+    if user_type == 'Admin':
+        return redirect('/admin/')  # Redirect to admin dashboard
+    elif user_type == 'SenManager':
+        return redirect('sen_manager')  # Redirect to senior manager page
+    elif user_type == 'TeamLead':
+        return redirect('team_lead_dashboard')  # Redirect to team leader dashboard
+    elif user_type == 'DeptLead':
+        return redirect('dept_lead_dashboard') # Redirect to department leader dashboard
+    elif user_type == 'Engineer':
+        return redirect('engineer_dashboard')  # Redirect to engineer dashboard
+    else:
+        return redirect('home')  # Default redirect for other user types
+    
 @never_cache
 def signup_view(request):
     auth_backend = CustomAuthBackend()
@@ -266,3 +281,112 @@ def logout_view(request):
     # Redirect to login page
     messages.success(request, "You have been successfully logged out.")
     return response
+@never_cache
+def engineer_profile(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+    
+    try:
+        # Get full user object from database
+        user = User.objects.get(userID=request.session['user_id'])
+        context = {
+            'user': user,
+            # Also pass session data to ensure it's available
+            'session_data': request.session
+        }
+        return render(request, 'engineer_profile.html', context)
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('login')
+def update_profile(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+        
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(userID=request.session['user_id'])
+            
+            # Update user information
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.username = request.POST.get('username')
+            user.email = request.POST.get('email')
+            
+            '''''
+            # Handle profile photo
+            if 'profile_photo' in request.FILES:
+                # Delete old photo if exists
+                if user.profile_photo:
+                    if os.path.isfile(user.profile_photo.path):
+                        default_storage.delete(user.profile_photo.path)
+                
+                # Save new photo
+                photo = request.FILES['profile_photo']
+                photo_name = f"profile_photos/user_{user.userID}_{photo.name}"
+                user.profile_photo = photo_name
+                default_storage.save(photo_name, ContentFile(photo.read()))
+                
+            # Handle photo removal
+            if request.POST.get('remove_photo') == 'true' and user.profile_photo:
+                if os.path.isfile(user.profile_photo.path):
+                    default_storage.delete(user.profile_photo.path)
+                user.profile_photo = None
+                '''
+            
+            user.save()
+            
+            # Update session data if username changed
+            if user.username != request.session.get('username'):
+                request.session['username'] = user.username
+            
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('engineer_profile')
+            
+        except User.DoesNotExist:
+            request.session.flush()
+            return redirect('login')
+        except Exception as e:
+            messages.error(request, f'Error updating profile: {str(e)}')
+            return redirect('engineer_profile')
+    
+    return redirect('engineer_profile')
+
+@never_cache
+def change_password(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+    
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(userID=request.session['user_id'])
+            current_password = request.POST.get('current_password')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            
+            # Verify current password
+            if user.password != current_password:
+                messages.error(request, 'Current password is incorrect')
+                return render(request, 'change_password.html', {'user': user})
+            
+            # Verify new passwords match
+            if new_password != confirm_password:
+                messages.error(request, 'New passwords do not match')
+                return render(request, 'change_password.html', {'user': user})
+            
+            # Update password
+            user.password = new_password
+            user.save()
+            
+            messages.success(request, 'Password updated successfully!')
+            return redirect('engineer_profile')
+            
+        except User.DoesNotExist:
+            request.session.flush()
+            return redirect('login')
+    
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+        return render(request, 'engineer_change_password.html', {'user': user})
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('login')
