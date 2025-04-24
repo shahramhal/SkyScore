@@ -3,6 +3,10 @@
     --primary-blue: #4a3b99;
     --dark-blue: #362b73;
     --accent-blue: #6a42c1;
+    
+      --sidebar-width: 250px;
+    
+    
   }
   
   html, body {
@@ -152,7 +156,7 @@
     }
     
     .form-group input {
-      font-size: 100px; /* Better for mobile touch targets */
+      font-size: 16px; 
       padding: 12px;
     }
   }

@@ -1,0 +1,212 @@
+/* CSS variables for easy color management */
+:root {
+    --primary-blue: #4a3b99; /* Main blue color */
+    --dark-blue: #362b73; /* Darker blue for gradients */
+    --accent-blue: #6a42c1; /* Accent blue for active states */
+  }
+
+  /* Basic body styling */
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+  }
+
+  /* Side navigation container */
+  .side-nav {
+    position: fixed; /* Fixed position so it stays in place */
+    left: 0;
+    top: 0;
+    height: 100vh; /* Full viewport height */
+    width: 250px; /* Default width */
+    background: linear-gradient(
+      /* Gradient background */ to bottom,
+      var(--primary-blue),
+      var(--dark-blue)
+    );
+    color: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    z-index: 1000; /* Ensure it stays above other content */
+    transition: all 0.3s ease; /* Smooth transitions for animations */
+    overflow-y: auto; /* Scrollable if content overflows */
+  }
+
+  /* Header section at the top of the sidebar */
+  .side-nav-header {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
+  }
+
+  /* Logo styling */
+  .side-nav-logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+  }
+
+  /* Toggle button for mobile (hidden by default) */
+  .side-nav-toggle {
+    display: none; /* Hidden on desktop */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  /* User profile section */
+  .user-profile {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
+  }
+
+  /* User avatar circle */
+  .user-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%; /* Makes it circular */
+    background-color: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  /* User name text */
+  .user-name {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+
+  /* User role text (lighter color) */
+  .user-role {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+    text-align: center;
+  }
+
+  /* Menu list styling */
+  .side-nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Individual menu items */
+  .side-nav-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Item dividers */
+  }
+
+  /* Menu links */
+  .side-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s; /* Smooth hover transition */
+  }
+
+  /* Hover effect for menu items */
+  .side-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Light overlay */
+  }
+
+  /* Icon styling within menu items */
+  .side-nav-link i {
+    margin-right: 10px;
+    font-size: 18px;
+  }
+
+  /* Active menu item styling */
+  .side-nav-link.active {
+    background-color: var(--accent-blue); /* Highlight color */
+  }
+
+  /* Mobile toggle button (hidden by default) */
+  .mobile-toggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001; /* Above the sidebar */
+    background: var(--primary-blue);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular button */
+    display: none; /* Hidden on desktop */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  }
+
+  /* Medium screens (tablets) */
+  @media (max-width: 768px) {
+    /* Collapse sidebar to icon-only mode */
+    .side-nav {
+      width: 80px; /* Narrow width for icons only */
+    }
+
+    /* Expanded state for sidebar */
+    .side-nav.expanded {
+      width: 250px; /* Full width when expanded */
+    }
+
+    /* Show the toggle button */
+    .side-nav-toggle {
+      display: block;
+    }
+
+    /* Hide text labels by default */
+    .side-nav-link span {
+      display: none;
+    }
+
+    /* Show text labels when expanded */
+    .side-nav.expanded .side-nav-link span {
+      display: inline;
+    }
+
+    /* Hide user details by default */
+    .user-name,
+    .user-role {
+      display: none;
+    }
+
+    /* Show user details when expanded */
+    .side-nav.expanded .user-name,
+    .side-nav.expanded .user-role {
+      display: block;
+    }
+  }
+
+  /* Small screens (mobile phones) */
+  @media (max-width: 576px) {
+    /* Hide sidebar completely by default */
+    .side-nav {
+      width: 0;
+    }
+
+    /* Show full sidebar when expanded */
+    .side-nav.expanded {
+      width: 250px;
+    }
+
+    /* Show the mobile toggle button */
+    .mobile-toggle {
+      display: flex;
+    }
+  }

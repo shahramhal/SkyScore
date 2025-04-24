@@ -1,4 +1,7 @@
 /* Profile specific styles */
+.main-content {
+  margin-left: var(--sidebar-width, 250px);
+}
 .profile-container {
     padding: 2rem;
     max-width: 1200px;
