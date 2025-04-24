@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Senior Manager Settings | Sky Score</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary-blue: #4a3b99;
+        --dark-blue: #362b73;
+        --accent-blue: #6a42c1;
+        --light-gray: #f4f4f4;
+        --white: #ffffff;
+        --status-active: #4caf50;
+        --status-moderate: #ff9800;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: var(--light-gray);
+        display: flex;
+      }
+
+      .side-nav {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 250px;
+        background: linear-gradient(to bottom, var(--primary-blue), var(--dark-blue));
+        color: white;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        overflow-y: auto;
+      }
+
+      .side-nav-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .user-profile {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+        width: calc(100% - 250px);
+      }
+
+      .settings-container {
+        background-color: var(--white);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .update-info-section,
+      .settings-section {
+        margin-bottom: 30px;
+      }
+
+      .update-info-section h3,
+      .settings-section h3 {
+        color: var(--primary-blue);
+        margin-bottom: 15px;
+      }
+
+      label {
+        font-size: 16px;
+        color: #333;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-blue);
+        color: white;
+      }
+
+      .button-group {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .side-nav-menu {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+      }
+
+      .side-nav-link {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        text-decoration: none;
+        color: white;
+        font-size: 18px;
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+
+      .side-nav-link:hover,
+      .side-nav-link.active {
+        background-color: var(--accent-blue);
+      }
+
+      .side-nav-link i {
+        margin-right: 10px;
+      }
+
+      .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      .status-active {
+        background-color: var(--status-active);
+      }
+
+      .status-moderate {
+        background-color: var(--status-moderate);
+      }
+
+      .team-status {
+        padding: 10px 0;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .settings-card {
+        background-color: var(--light-gray);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+      }
+
+      .toggle-switch input {
+        display: none;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 20px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      .toggle-switch input:checked + .slider {
+        background-color: var(--primary-blue);
+      }
+
+      .toggle-switch input:checked + .slider:before {
+        transform: translateX(20px);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="side-nav">
+      <div class="side-nav-header">
+        <a href="{% url 'engineer_dashboard' %}" class="side-nav-logo">Sky Score</a>
+        <button class="side-nav-toggle"><i class="fas fa-bars"></i></button>
+      </div>
+      <div class="user-profile">
+        <div class="user-avatar">{% if user %} {{ user.username|slice:":1"|upper }} {% else %} U {% endif %}</div>
+        <div class="user-name">{% if user %} {{ user.first_name }} {{ user.last_name }} {% else %} Guest {% endif %}</div>
+        <div class="user-role">{% if user %} Senior Manager {% else %} Guest User {% endif %}</div>
+      </div>
+      <ul class="side-nav-menu">
+        <li><a href="{% url 'engineer_dashboard' %}" class="side-nav-link"><i class="fas fa-home"></i>Dashboard</a></li>
+        <li><a href="#" class="side-nav-link"><i class="fas fa-chart-line"></i>Reports</a></li>
+        <li><a href="#" class="side-nav-link"><i class="fas fa-users"></i>Departments</a></li>
+        <li><a href="#" class="side-nav-link active"><i class="fas fa-cog"></i>Settings</a></li>
+        <li><a href="{% url 'logout' %}" class="side-nav-link"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+      </ul>
+    </nav>
+
+    <div class="main-content">
+      <div class="settings-container">
+        <h2>Senior Manager Settings</h2>
+
+        <div class="update-info-section">
+          <h3>Update Your Information</h3>
+          <form action="{% url 'update_profile' %}" method="POST">
+            {% csrf_token %}
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required />
+
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required />
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required />
+
+            <button type="submit" class="btn btn-primary">Confirm Updates</button>
+          </form>
+        </div>
+
+        <div class="settings-section">
+          <h3>Department & Team Progress Overview</h3>
+          <div class="team-status"><span class="status-indicator status-active"></span> TEAM 5CS16_A STATUS: ACTIVE</div>
+          <div class="team-status"><span class="status-indicator status-moderate"></span> TEAM 5CS16_B STATUS: MODERATE</div>
+          <div class="team-status"><span class="status-indicator status-moderate"></span> TEAM 5CS16_C STATUS: MODERATE</div>
+          <div class="team-status"><span class="status-indicator status-active"></span> TEAM 5CS16_D STATUS: ACTIVE</div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Notification Settings</h3>
+          <div class="settings-card">
+            <div class="card-header">
+              <span>Health Score Alerts</span>
+              <label class="toggle-switch"><input type="checkbox" checked /><span class="slider"></span></label>
+            </div>
+            <p>Get alerts when team scores drop below thresholds.</p>
+          </div>
+          <div class="settings-card">
+            <div class="card-header">
+              <span>Weekly Report Email</span>
+              <label class="toggle-switch"><input type="checkbox" checked /><span class="slider"></span></label>
+            </div>
+            <p>Receive summary reports via email.</p>
+          </div>
+          <div class="settings-card">
+            <div class="card-header">
+              <span>Dashboard Notifications</span>
+              <label class="toggle-switch"><input type="checkbox" /><span class="slider"></span></label>
+            </div>
+            <p>Enable browser alerts for key changes.</p>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn btn-secondary">OVERVIEW</button>
+          <button class="btn btn-primary">Our Guide</button>
+          <button class="btn btn-primary">Continue to Health Check</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

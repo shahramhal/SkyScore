@@ -1,161 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Delivering Value - Sky Score</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings - Sky Score</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
-      background-color: #d3d3d3;
-      text-align: center;
-    }
-
-    h1 {
-      text-decoration: underline;
-      font-weight: bold;
-    }
-
-    .logo {
-      position: absolute;
-      top: 9px;
-      right: 30px;
-    }
-
-    .traffic-section {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
       display: flex;
-      justify-content: space-around;
-      margin-top: 40px;
     }
 
-    .traffic-light {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(to bottom, #370060, #7a3ead);
+      color: white;
+      height: 100vh;
+      padding: 20px;
     }
 
-    .traffic-light img {
-      width: 50px;
+    .sidebar h2 {
+      font-size: 24px;
+      margin-bottom: 40px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 10px 0;
+      text-decoration: none;
       margin-bottom: 10px;
     }
 
-    .dropdown-section {
-      margin: 30px 0;
-      display: flex;
-      justify-content: center;
-      gap: 50px;
-    }
-
-    select {
-      padding: 10px;
-      font-size: 14px;
+    .sidebar a:hover {
+      background: rgba(255,255,255,0.1);
       border-radius: 5px;
-      border: 2px solid #888;
-      font-weight: bold;
+      padding-left: 10px;
     }
 
-    .input-section {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 20px;
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 40px;
     }
 
-    textarea {
-      width: 250px;
-      height: 80px;
-      border: 2px dashed #888;
-      border-radius: 15px;
-      padding: 10px;
-      font-size: 14px;
-      resize: none;
-      font-family: Arial, sans-serif;
-      background-image: url('https://static.canva.com/static/images/og_image.png'); /* Example Canva BG */
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.8;
+    h1 {
+      color: #370060;
     }
 
-    .label {
-      font-weight: bold;
+    .section {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+
+    label {
+      display: block;
       margin-top: 10px;
-    }
-
-    .next-link {
-      margin-top: 30px;
-      display: inline-block;
       font-weight: bold;
-      font-size: 16px;
     }
 
-    .next-link a {
-      color: blue;
-      text-decoration: none;
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
 
-    .next-link a:hover {
-      text-decoration: underline;
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #4d0188;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #7a3ead;
+    }
+
+    .help-section ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      width: 60%;
+      border-radius: 10px;
+    }
+
+    .close {
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-
-  <div class="logo">
-    <img src="C:\Users\User\Downloads\so16\Screenshot 2025-04-11 192509.png" alt="Sky Score Logo" width="120">
+  <div class="sidebar">
+    <h2>Sky Score</h2>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/health">Health Check</a>
+    <a href="/reports">Reports</a>
+    <a href="/settings">Settings</a>
+    <a href="/help">Help</a>
+    <a href="/logout">Logout</a>
   </div>
 
-  <h1>1. DELIVERING VALUE</h1>
+  <div class="main-content">
+    <h1>Settings</h1>
 
-  <div class="traffic-section">
-    <div class="traffic-light">
-      <img src="C:\Users\User\Downloads\so16\Screenshot 2025-04-11 192444.png" alt="Green Light" />
-      <p><strong>We deliver great stuff!</strong><br>We're proud of it and our stakeholders are really happy.</p>
-    </div>
-    <div class="traffic-light">
-      <img src="C:\Users\User\Downloads\so16\Screenshot 2025-04-11 192410.png" alt="Red Light" />
-      <p><strong>We deliver crap.</strong> We feel ashamed to deliver it. Our stakeholders hate us.</p>
-    </div>
-  </div>
+    <div class="section">
+      <h2>Update Profile</h2>
+      <label for="name">Name:</label>
+      <input type="text" id="name" placeholder="Enter name">
 
-  <div class="dropdown-section">
-    <div>
-      <div class="label">Select Trend</div>
-      <select>
-        <option>Select Trend</option>
-        <option>Red</option>
-        <option>Yellow</option>
-        <option>Green</option>
+      <label for="username">Username:</label>
+      <input type="text" id="username" placeholder="Enter username">
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter new password">
+
+      <button>Save Changes</button>
+    </div>
+
+    <div class="section">
+      <h2>Team Settings</h2>
+      <label for="team">Team:</label>
+      <select id="team">
+        <option>5CS16_A</option>
+        <option>5CS16_B</option>
+        <option>5CS16_C</option>
+        <option>5CS16_D</option>
       </select>
-    </div>
-    <div>
-      <div class="label">Select State</div>
-      <select>
-        <option>Select State</option>
-        <option>Worsening (Red)</option>
-        <option>Progressing more (Yellow)</option>
-        <option>Steady/fixed (Green)</option>
+
+      <label for="progress-view">View Progress:</label>
+      <select id="progress-view">
+        <option>Monthly</option>
+        <option>Quarterly</option>
+        <option>Yearly</option>
       </select>
+
+      <label for="chart-type">Data Visual:</label>
+      <select id="chart-type">
+        <option>Bar Chart</option>
+        <option>Line Chart</option>
+        <option>Pie Chart</option>
+      </select>
+
+      <button>Save Preferences</button>
+    </div>
+
+    <div class="section help-section">
+      <h2>Get Help & FAQ</h2>
+      <ul>
+        <li>How do I reset my password?</li>
+        <li>What are the data visualization options?</li>
+        <li>How can I switch teams?</li>
+      </ul>
+      <button onclick="openGuide()">View Guide</button>
     </div>
   </div>
 
-  <div class="input-section">
-    <div>
-      <div class="label">Solutions or Ideas for the team:</div>
-      <textarea></textarea>
-    </div>
-    <div>
-      <div class="label">Comments:</div>
-      <textarea></textarea>
-    </div>
-    <div>
-      <div class="label">Feedback for actions we can take as a team:</div>
-      <textarea></textarea>
+  <!-- Modal for Guide -->
+  <div id="guideModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeGuide()">&times;</span>
+      <h2>Sky Score User Guide</h2>
+      <p>
+        Welcome to Sky Score! This platform helps you track team health and performance.
+        <br><br>
+        - Use the sidebar to navigate between dashboard, health checks, and reports.<br>
+        - In settings, update your profile and choose how you want to view team progress.<br>
+        - Customize charts with your preferred style and reporting timeframe.<br>
+        - For help, consult the FAQ or contact support.<br><br>
+        Happy tracking!
+      </p>
     </div>
   </div>
 
-  <div class="next-link">
-    <a href="#">Next ></a>
-  </div>
+  <script>
+    function openGuide() {
+      document.getElementById("guideModal").style.display = "block";
+    }
 
+    function closeGuide() {
+      document.getElementById("guideModal").style.display = "none";
+    }
+  </script>
 </body>
 </html>
