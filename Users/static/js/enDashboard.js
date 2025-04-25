@@ -1,5 +1,4 @@
-document
-        .querySelector(".side-nav-toggle")
+document.querySelector(".side-nav-toggle")
         .addEventListener("click", function () {
           document.querySelector(".side-nav").classList.toggle("expanded");
         });

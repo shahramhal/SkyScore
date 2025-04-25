@@ -1,0 +1,189 @@
+/* Left side navigation bar styles */
+.side-nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 250px;
+    background: linear-gradient(to bottom, var(--primary-blue), var(--dark-blue));
+    color: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    overflow-y: auto;
+  }
+
+  .side-nav-header {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .side-nav-logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+  }
+
+  .side-nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .user-profile {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .user-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .user-name {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+
+  .user-role {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+  }
+
+  .side-nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .side-nav-item {
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .side-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .side-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .side-nav-link i {
+    margin-right: 10px;
+    font-size: 18px;
+  }
+
+  .side-nav-link.active {
+    background-color: var(--accent-blue);
+  }
+
+  .main-content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .side-nav {
+      width: 80px;
+    }
+
+    .side-nav.expanded {
+      width: 250px;
+    }
+
+    .side-nav-toggle {
+      display: block;
+    }
+
+    .side-nav-link span {
+      display: none;
+    }
+
+    .side-nav.expanded .side-nav-link span {
+      display: inline;
+    }
+
+    .user-name, .user-role {
+      display: none;
+    }
+
+    .side-nav.expanded .user-name,
+    .side-nav.expanded .user-role {
+      display: block;
+    }
+
+    .main-content {
+      margin-left: 80px;
+    }
+
+    .side-nav.expanded + .main-content {
+      margin-left: 250px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .side-nav {
+      width: 0;
+    }
+
+    .side-nav.expanded {
+      width: 250px;
+    }
+
+    .main-content {
+      margin-left: 0;
+    }
+
+    .side-nav.expanded + .main-content {
+      margin-left: 0;
+    }
+
+    .mobile-toggle {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1001;
+      background: var(--primary-blue);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+  }
+  /* Add these new styles to your existing engineer_dashboard.css */
