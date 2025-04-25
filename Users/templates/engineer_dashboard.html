@@ -142,37 +142,49 @@
 
           <div class="health-cards-grid">
             <!-- Example Health Card (repeat for each metric) -->
-            <div class="health-card green">
-              <h3>Codebase Health</h3>
-              <div class="health-status">
-                <span class="team-status"
-                  >Team: <span class="status-badge green">Green</span></span
-                >
-                <span class="trend up"
-                  ><i class="fas fa-arrow-up"></i> Improving</span
-                >
+            <div class="health-cards-grid">
+              {% for card in health_cards %}
+              <div class="health-card {% if card.voted and card.vote_value >= 7 %}green{% elif card.voted and card.vote_value >= 4 %}amber{% elif card.voted %}red{% else %}amber{% endif %}">
+                  <h3>{{ card.cardname }}</h3>
+                  <div class="health-status">
+                      <span class="team-status">
+                          Team: 
+                          <span class="status-badge {% if card.voted and card.vote_value >= 7 %}green{% elif card.voted and card.vote_value >= 4 %}amber{% elif card.voted %}red{% else %}amber{% endif %}">
+                              {% if card.voted and card.vote_value >= 7 %}Green{% elif card.voted and card.vote_value >= 4 %}Amber{% elif card.voted %}Red{% else %}Amber{% endif %}
+                          </span>
+                      </span>
+                      <span class="trend {% if card.progress_status == 'Improving' %}up{% elif card.progress_status == 'Declining' %}down{% endif %}">
+                          {% if card.progress_status == 'Improving' %}
+                              <i class="fas fa-arrow-up"></i> Improving
+                          {% elif card.progress_status == 'Declining' %}
+                              <i class="fas fa-arrow-down"></i> Declining
+                          {% else %}
+                              <i class="fas fa-minus"></i> Stable
+                          {% endif %}
+                      </span>
+                  </div>
+                  <small>
+                      {% if card.voted %}
+                          Last voted: {{ card.last_voted|default:"Recently" }}
+                      {% else %}
+                          Your vote pending
+                      {% endif %}
+                  </small>
               </div>
-              <small>Last voted: 5 Mar 2025</small>
-            </div>
-
-            <div class="health-card amber">
-              <h3>Testing</h3>
-              <div class="health-status">
-                <span class="team-status"
-                  >Team: <span class="status-badge amber">Amber</span></span
-                >
-                <span class="trend down"
-                  ><i class="fas fa-arrow-down"></i> Declining</span
-                >
+              {% empty %}
+              <div class="health-card amber">
+                  <h3>No health check cards available</h3>
+                  <div class="health-status">
+                      <span class="team-status">Contact your team lead</span>
+                  </div>
               </div>
-              <small>Your vote pending</small>
-            </div>
-
-            <!-- Add more health cards as needed -->
+              {% endfor %}
           </div>
 
+            
+
           <div class="text-center">
-            <a href="{% url 'engineer_dashboard' %}" class="primary-button">
+            <a href="{% url 'votingDashboard' %}" class="primary-button">
               Vote for All Cards
             </a>
           </div>
@@ -183,7 +195,9 @@
           <div class="stat-card">
             <h3><i class="fas fa-clipboard-check"></i> Your Voting Progress</h3>
             <div class="progress-bar-container">
-              <div class="progress-bar" style="width: 70%">7/10 cards</div>
+              <div class="progress-bar" style="width: {{ progress_percentage }}%">
+                {{ votes_completed }}{{ total_cards }} 
+              </div>
             </div>
             <p>3 cards remaining for current session</p>
           </div>
@@ -191,15 +205,18 @@
           <div class="stat-card">
             <h3><i class="fas fa-history"></i> Recent Activity</h3>
             <ul class="activity-list">
-              <li>
-                <i class="fas fa-check-circle green-icon"></i> Voted on
-                "Codebase Health" (5 Mar)
-              </li>
-              <li>
-                <i class="fas fa-exclamation-circle amber-icon"></i> Pending:
-                "Testing", "Release Process"
-              </li>
-            </ul>
+              {% for card in health_cards %}
+                  {% if card.voted %}
+                  <li>
+                      <i class="fas fa-check-circle green-icon"></i> Voted on "{{ card.cardname }}" (Recently)
+                  </li>
+                  {% else %}
+                  <li>
+                      <i class="fas fa-exclamation-circle amber-icon"></i> Pending: "{{ card.cardname }}"
+                  </li>
+                  {% endif %}
+              {% endfor %}
+          </ul>
           </div>
         </div>
       </div>

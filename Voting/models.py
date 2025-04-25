@@ -25,10 +25,13 @@ class Healthcheckcard(models.Model):
     cardid = models.AutoField(db_column='cardID', primary_key=True)  # Field name made lowercase.
     cardname = models.TextField(db_column='cardName', blank=True, null=True)  # Field name made lowercase.
     description = models.TextField(blank=True, null=True)
+   
 
     class Meta:
         managed = False
         db_table = 'HealthCheckCard'
+
+   
         
     def __str__(self):  # Fixed the typo in _str__ -> __str__
         return self.cardname
@@ -39,6 +42,7 @@ class Vote(models.Model):
     cardid = models.ForeignKey(Healthcheckcard, models.DO_NOTHING, db_column='cardID', blank=True, null=True)  # Field name made lowercase.
     votevalue = models.IntegerField(db_column='voteValue', blank=True, null=True)  # Field name made lowercase.
     progressstatus = models.TextField(db_column='progressStatus', blank=True, null=True)  # Field name made lowercase.
+    comments = models.TextField(db_column='comments', blank=True, null=True)
 
     class Meta:
         managed = False

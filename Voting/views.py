@@ -143,7 +143,9 @@ def submit_vote(request, card_id):
         cardid=current_card,
         defaults={
             'votevalue': vote_value,
-            'progressstatus': progress_status
+            'progressstatus': progress_status,
+            'comments': comments
+            
         }
     )
     

@@ -20,3 +20,33 @@ class User(models.Model):
     
     def __str__(self):
         return self.username
+class Healthcheckcard(models.Model):
+    cardid = models.AutoField(db_column='cardID', primary_key=True)  # Field name made lowercase.
+    cardname = models.TextField(db_column='cardName', blank=True, null=True)  # Field name made lowercase.
+    description = models.TextField(blank=True, null=True)
+    feedback = models.TextField(db_column='feedback', blank=True, null=True)
+    solutions = models.TextField(db_column='solutions',blank=True, null=True)
+    comments = models.TextField(db_column='comments',blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'HealthCheckCard'
+
+   
+        
+    def __str__(self):  # Fixed the typo in _str__ -> __str__
+        return self.cardname
+
+class Vote(models.Model):
+    voteid = models.AutoField(db_column='voteID', primary_key=True)  # Field name made lowercase.
+    userid = models.ForeignKey(User, models.DO_NOTHING, db_column='userID', blank=True, null=True)  # Field name made lowercase.
+    cardid = models.ForeignKey(Healthcheckcard, models.DO_NOTHING, db_column='cardID', blank=True, null=True)  # Field name made lowercase.
+    votevalue = models.IntegerField(db_column='voteValue', blank=True, null=True)  # Field name made lowercase.
+    progressstatus = models.TextField(db_column='progressStatus', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Vote'
+
+    def __str__(self):
+        return f"Vote {self.voteid} by {self.userid.username} on {self.cardid.cardname}"

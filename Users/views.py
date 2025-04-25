@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import User                    
+from .models import User ,Healthcheckcard, Vote                   
 from django.contrib.auth import authenticate 
 from .backends import CustomAuthBackend
 from .backends import CustomPasswordResetTokenGenerator
@@ -255,14 +255,37 @@ def engineer_dashboard(request):
     if 'user_id' not in request.session:
         return redirect('login')
     
+    
     try:
         # Get full user object from database
         user = User.objects.get(userID=request.session['user_id'])
+        
+        # Get health check cards with votes for this user
+        health_cards = Healthcheckcard.objects.all()
+        
+        # For each card, check if the user has voted
+        for card in health_cards:
+            try:
+                vote = Vote.objects.get(userid=user, cardid=card)
+                card.voted = True
+                card.vote_value = vote.votevalue
+                card.progress_status = vote.progressstatus
+            except Vote.DoesNotExist:
+                card.voted = False
+        total_cards = health_cards.count()
+        votes_completed = Vote.objects.filter(userid=user).count()
+        progress_percentage = (votes_completed / total_cards * 100) if total_cards > 0 else 0
+
         context = {
+            
             'user': user,
-            # Also pass session data to ensure it's available
+            'health_cards': health_cards,
+            'total_cards': total_cards,
+            'votes_completed': votes_completed,
+            'progress_percentage': progress_percentage,
+             # Also pass session data to ensure it's available
             'session_data': request.session
-        }
+                }
         return render(request, 'engineer_dashboard.html', context)
     except User.DoesNotExist:
         request.session.flush()
