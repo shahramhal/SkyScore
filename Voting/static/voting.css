@@ -1,0 +1,280 @@
+body {
+    /* background-color: #e6f3f7; */
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.main-content {
+    margin-left: var(--sidebar-width, 250px);
+    padding: 20px;
+    transition: margin-left 0.3s;
+}
+
+.voting-container {
+    padding: 0rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+h2 {
+    text-decoration: underline;
+}
+
+.logo {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #b83280;
+}
+
+.voting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.voting-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.voting-header .date {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.session-badge {
+    background-color: white;
+    color: #6366f1;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.section {
+    width: 30%;
+    min-width: 280px;
+    margin: 10px;
+}
+
+.traffic {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.traffic img {
+    width: 50px;
+    vertical-align: middle;
+}
+
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+textarea {
+    resize: vertical;
+    height: 80px;
+}
+
+.card-info {
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.rating-options {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.rating-option {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.rating-option:hover {
+    background-color: #f0f0f0;
+}
+
+.rating-option.selected {
+    border: 2px solid #6366f1;
+    background-color: #e0e7ff;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-back {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-next,
+.btn-submit {
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+    color: white;
+}
+
+.progress-bar-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.progress-bar {
+    height: 20px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    line-height: 20px;
+    font-size: 14px;
+}
+
+.vote-cards {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 0rem;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+}
+
+.vote-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-selector {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.card-item {
+    padding: 10px 15px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.card-item.active {
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+    color: white;
+}
+
+/* Radio button styling */
+.radio-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.radio-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+}
+
+.radio-label {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.radio-description {
+    text-align: center;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+/* Color-specific styling */
+.green-option .radio-label {
+    color: #22c55e;
+}
+
+.amber-option .radio-label {
+    color: #eab308;
+}
+
+.red-option .radio-label {
+    color: #ef4444;
+}
+
+/* Add to your voting.css file */
+.messages-container {
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}

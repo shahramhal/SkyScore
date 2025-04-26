@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import User                    
+from .models import User ,Healthcheckcard, Vote                   
 from django.contrib.auth import authenticate 
 from .backends import CustomAuthBackend
 from .backends import CustomPasswordResetTokenGenerator
@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.utils import timezone
 
 
 # Create your views here.
@@ -145,11 +146,7 @@ def signup_view(request):
     
     # Render the sign-up page
     return render(request, 'signup.html')
-def dashboard(request):
-    # Check if user is authenticated
-    if not request.user.is_authenticated:
-        return redirect('login')
-    return render(request, 'dashboard.html')
+
 
 password_reset_token_generator = CustomPasswordResetTokenGenerator()
 def forgotPassword(request):
@@ -255,14 +252,52 @@ def engineer_dashboard(request):
     if 'user_id' not in request.session:
         return redirect('login')
     
+    
     try:
         # Get full user object from database
         user = User.objects.get(userID=request.session['user_id'])
+        
+        # Get health check cards with votes for this user
+        health_cards = Healthcheckcard.objects.all()
+        
+        # For each card, check if the user has voted
+        for card in health_cards:
+            try:
+                vote = Vote.objects.filter(userid=user, cardid=card).order_by('-votingdate').first()
+                card.voted = True
+                card.vote_value = vote.votevalue
+                card.progress_status = vote.progressstatus
+                card.comments = vote.comments
+                card.last_voted = vote.votingdate
+            except Vote.DoesNotExist:
+                card.voted = False
+        
+        
+        current_session_date = timezone.now().date()
+        votes_completed = Vote.objects.filter(
+            userid=user,
+            votingdate=current_session_date
+        ).values('cardid').distinct().count()
+        total_cards = health_cards.count()
+        
+        # Calculate percentage (capped at 100%)
+        progress_percentage = min(
+            (votes_completed / total_cards * 100) if total_cards > 0 else 0,
+            100
+        )
+
+
         context = {
+            
             'user': user,
-            # Also pass session data to ensure it's available
-            'session_data': request.session
-        }
+            'health_cards': health_cards,
+            'total_cards': total_cards,
+            'votes_completed': votes_completed,
+            'progress_percentage': progress_percentage,
+             # Also pass session data to ensure it's available
+            'session_data': request.session,
+            'active_page': 'dashboard'
+                }
         return render(request, 'engineer_dashboard.html', context)
     except User.DoesNotExist:
         request.session.flush()
@@ -292,7 +327,8 @@ def engineer_profile(request):
         context = {
             'user': user,
             # Also pass session data to ensure it's available
-            'session_data': request.session
+            'session_data': request.session,
+            'active_page': 'profile'
         }
         return render(request, 'engineer_profile.html', context)
     except User.DoesNotExist:
