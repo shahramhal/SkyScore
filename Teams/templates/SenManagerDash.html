@@ -1,321 +1,255 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sky Score - Departments</title>
-  <style>
-    :root {
-      --purple-dark: #4a148c;
-      --purple-main: #6a1b9a;
-      --purple-light: #ede7f6;
-      --background: #f9f9fc;
-      --white: #ffffff;
-      --card-shadow: rgba(0, 0, 0, 0.05);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    body {
-      display: flex;
-      min-height: 100vh;
-      background-color: var(--background);
-      color: #333;
-    }
-
-    .sidebar {
-      width: 240px;
-      background: linear-gradient(to bottom, var(--purple-main), var(--purple-dark));
-      color: white;
-      padding: 30px 0;
-      position: fixed;
-      height: 100%;
-    }
-
-    .sidebar .profile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 40px;
-    }
-
-    .sidebar .profile-pic {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background-color: white;
-      color: var(--purple-main);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .sidebar .profile-name {
-      font-weight: 600;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    .sidebar .profile-role {
-      font-size: 13px;
-      color: #e0e0e0;
-      text-align: center;
-    }
-
-    .nav-links {
-      list-style: none;
-      padding: 20px;
-    }
-
-    .nav-links li {
-      margin-bottom: 18px;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: white;
-      font-size: 16px;
-      display: block;
-      padding: 12px 16px;
-      border-radius: 8px;
-      transition: background 0.2s ease;
-    }
-
-    .nav-links a:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .main-content {
-      margin-left: 240px;
-      padding: 50px 60px;
-      flex: 1;
-    }
-
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-
-    .header-bar h1 {
-      font-size: 28px;
-      font-weight: 600;
-    }
-
-    .guide-btn {
-      background-color: var(--purple-main);
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      font-size: 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .guide-btn:hover {
-      background-color: #5e35b1;
-    }
-
-    .department {
-      background-color: var(--white);
-      border-radius: 12px;
-      margin-bottom: 25px;
-      box-shadow: 0 8px 24px var(--card-shadow);
-      transition: 0.3s ease;
-      overflow: hidden;
-    }
-
-    .department h3 {
-      background: var(--purple-main);
-      color: white;
-      padding: 18px 24px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    .department:hover h3 {
-      background: #5e35b1;
-    }
-
-    .teams {
-      display: none;
-      padding: 20px 30px;
-      background-color: var(--purple-light);
-    }
-
-    .teams ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .teams li {
-      margin-bottom: 12px;
-    }
-
-    .teams a {
-      text-decoration: none;
-      color: var(--purple-main);
-      font-weight: 500;
-      font-size: 15px;
-      transition: 0.2s ease;
-    }
-
-    .teams a:hover {
-      color: #4a148c;
-      text-decoration: underline;
-    }
-
-    .department.active .teams {
-      display: block;
-    }
-
-    /* Modal (Guide Pop-up) */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.4);
-    }
-
-    .modal-content {
-      background: white;
-      width: 500px;
-      max-width: 90%;
-      margin: 10% auto;
-      padding: 30px;
-      border-radius: 12px;
-      position: relative;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-    }
-
-    .modal-content h2 {
-      margin-bottom: 10px;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      color: #777;
-    }
-
-    .close-btn:hover {
-      color: #000;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="sidebar">
-    <div class="profile">
-      <div class="profile-pic">N</div>
-      <div class="profile-name">name5 surname5</div>
-      <div class="profile-role">Engineer</div>
-    </div>
-    <ul class="nav-links">
-      <li><a href="#">Dashboard</a></li>
-      <li><a href="#">Health Check</a></li>
-      <li><a href="#">Reports</a></li>
-      <li><a href="#">Profile</a></li>
-      <li><a href="#">Settings</a></li>
-      <li><a href="#">Help</a></li>
-      <li><a href="#">Logout</a></li>
-    </ul>
-  </div>
-
-  <div class="main-content">
-    <div class="header-bar">
-      <h1>Departments & Teams</h1>
-      <button class="guide-btn" onclick="openGuide()">Our Guide</button>
-    </div>
-
-    <div class="department" onclick="toggleTeams(this)">
-      <h3>Engineering</h3>
-      <div class="teams">
-        <ul>
-          <li><a href="#">Frontend Squad</a></li>
-          <li><a href="#">Backend Crew</a></li>
-          <li><a href="#">DevOps Unit</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="department" onclick="toggleTeams(this)">
-      <h3>Marketing</h3>
-      <div class="teams">
-        <ul>
-          <li><a href="#">Content Creators</a></li>
-          <li><a href="#">SEO Team</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="department" onclick="toggleTeams(this)">
-      <h3>Product</h3>
-      <div class="teams">
-        <ul>
-          <li><a href="#">User Experience</a></li>
-          <li><a href="#">Release Squad</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="department" onclick="toggleTeams(this)">
-      <h3>HR</h3>
-      <div class="teams">
-        <ul>
-          <li><a href="#">Recruitment</a></li>
-          <li><a href="#">Training & Dev</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pop-up Modal -->
-  <div id="guideModal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeGuide()">&times;</span>
-      <h2>Team Health Guide</h2>
-      <p>Use this page to view your department teams. Click each department to expand the list of teams. You can change team names and link each to their detail view.</p>
-      <p>The sidebar lets you navigate through other modules. If you're unsure, use the help section or this guide anytime.</p>
-    </div>
-  </div>
-
-  <script>
-    function toggleTeams(dept) {
-      dept.classList.toggle('active');
-    }
-
-    function openGuide() {
-      document.getElementById('guideModal').style.display = 'block';
-    }
-
-    function closeGuide() {
-      document.getElementById('guideModal').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-      const modal = document.getElementById('guideModal');
-      if (event.target === modal) {
-        modal.style.display = 'none';
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Senior Manager Overview</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-blue: #4a3b99;
+        --dark-blue: #362b73;
+        --accent-blue: #6a42c1;
+        --gradient-bg: linear-gradient(to right, #4a3b99, #6a42c1);
+        --light-gray: #f0f2f5;
       }
-    }
-  </script>
 
-</body>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: var(--light-gray);
+        display: flex;
+      }
+
+      .side-nav {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 250px;
+        background: linear-gradient(to bottom, var(--primary-blue), var(--dark-blue));
+        color: white;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+
+      .side-nav-header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .side-nav-logo {
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+      }
+
+      .user-profile {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .user-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background-color: var(--accent-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .user-name,
+      .user-role {
+        margin: 0;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .side-nav-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .side-nav-link {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        transition: background 0.3s;
+      }
+
+      .side-nav-link:hover,
+      .side-nav-link.active {
+        background-color: var(--accent-blue);
+      }
+
+      .side-nav-link i {
+        margin-right: 10px;
+      }
+
+      .main-container {
+        margin-left: 250px;
+        padding: 30px;
+        width: 100%;
+      }
+
+      .overview-container {
+        background: var(--gradient-bg);
+        border-radius: 15px;
+        padding: 30px;
+        color: white;
+      }
+
+      .overview-header h1 {
+        margin: 0;
+        font-size: 26px;
+      }
+
+      .overview-header p {
+        margin: 10px 0 20px;
+        font-size: 14px;
+      }
+
+      .warning {
+        background-color: #fff;
+        color: #b70000;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+      }
+
+      .department-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .department-item {
+        background-color: rgba(255, 255, 255, 0.15);
+        padding: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .department-item:hover {
+        background-color: rgba(255, 255, 255, 0.25);
+      }
+
+      .team-list {
+        margin-top: 10px;
+        padding-left: 15px;
+      }
+
+      .team-item {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        padding: 10px;
+        margin: 5px 0;
+        font-size: 14px;
+      }
+
+      .bottom-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+      }
+
+      .bottom-actions button {
+        padding: 10px 20px;
+        background-color: white;
+        color: var(--primary-blue);
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="side-nav">
+      <div class="side-nav-header">
+        <a href="#" class="side-nav-logo">Sky Score</a>
+      </div>
+      <div class="user-profile">
+        <div class="user-avatar">U</div>
+        <p class="user-name">Guest User</p>
+        <p class="user-role">Senior Manager</p>
+      </div>
+      <ul class="side-nav-menu">
+        <li><a href="#" class="side-nav-link active"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="#" class="side-nav-link"><i class="fas fa-heart"></i> Health Check</a></li>
+        <li><a href="#" class="side-nav-link"><i class="fas fa-chart-line"></i> Reports</a></li>
+        <li><a href="#" class="side-nav-link"><i class="fas fa-user"></i> Profile</a></li>
+        <li><a href="#" class="side-nav-link"><i class="fas fa-cog"></i> Settings</a></li>
+        <li><a href="#" class="side-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+      <div class="overview-container">
+        <div class="overview-header">
+          <h1>Senior Manager Overview</h1>
+          <p>Get a Clear View of the Departments below! Click a Department to see its teams.</p>
+        </div>
+
+        <div class="warning">
+          <i class="fas fa-exclamation-triangle"></i>&nbsp; You don't have access to team-level details.
+        </div>
+
+        <div class="department-item" onclick="toggleTeams('{{ department.departmentid }}')">
+            {{ department.departmentname }}
+          </div>
+          
+          <!-- Example of dynamically generated teams list -->
+          <div id="{{ department.departmentid }}" style="display: none;">
+            <ul>
+              <li>Team 1</li>
+              <li>Team 2</li>
+              <li>Team 3</li>
+            </ul>
+          </div>
+
+        <div class="bottom-actions">
+          <button>Our Guide</button>
+          <button>COMPARISON</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function toggleTeams(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      // Toggle the display of the element (team list)
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+  }
+    </script>
+  </body>
 </html>

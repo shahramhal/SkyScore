@@ -3,33 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Side Navigation with Settings</title>
+    <title>Senior Manager Settings | Sky Score</title>
 
-    <!-- Font Awesome for Icons -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
 
     <style>
-      /* Custom Properties for easy theme management */
       :root {
         --primary-blue: #4a3b99;
         --dark-blue: #362b73;
         --accent-blue: #6a42c1;
         --light-gray: #f4f4f4;
         --white: #ffffff;
+        --status-allowed: #4caf50;
+        --status-notallowed: #b90c0c;
       }
 
-      /* Base page styling */
       body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background-color: var(--light-gray);
         display: flex;
       }
 
-      /* Side navigation styling */
       .side-nav {
         position: fixed;
         left: 0;
@@ -43,7 +41,6 @@
         overflow-y: auto;
       }
 
-      /* Header section at top of sidebar */
       .side-nav-header {
         padding: 20px;
         display: flex;
@@ -52,7 +49,6 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* User profile */
       .user-profile {
         padding: 20px;
         display: flex;
@@ -61,14 +57,12 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Main content area */
       .main-content {
         margin-left: 250px;
         padding: 20px;
         width: calc(100% - 250px);
       }
 
-      /* Settings Container */
       .settings-container {
         background-color: var(--white);
         padding: 20px;
@@ -76,35 +70,29 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
-      /* Update Info Section */
-      .update-info-section {
-        margin-bottom: 20px;
+      .update-info-section,
+      .settings-section {
+        margin-bottom: 30px;
       }
 
-      .update-info-section h3 {
+      .update-info-section h3,
+      .settings-section h3 {
         color: var(--primary-blue);
         margin-bottom: 15px;
       }
 
-      .update-info-section label {
+      label {
         font-size: 16px;
         color: #333;
       }
 
-      .update-info-section input {
+      input[type="text"] {
         width: 100%;
         padding: 10px;
         margin-bottom: 15px;
         border-radius: 5px;
         border: 1px solid #ddd;
         font-size: 16px;
-      }
-
-      /* Button group for updating */
-      .button-group {
-        margin-top: 20px;
-        display: flex;
-        justify-content: space-between;
       }
 
       .btn {
@@ -125,20 +113,16 @@
         color: white;
       }
 
-      .btn-primary:hover,
-      .btn-secondary:hover {
-        opacity: 0.9;
+      .button-group {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
       }
 
-      /* Side navigation links */
       .side-nav-menu {
         list-style: none;
         padding: 0;
         margin-top: 20px;
-      }
-
-      .side-nav-item {
-        margin-bottom: 10px;
       }
 
       .side-nav-link {
@@ -161,162 +145,163 @@
         margin-right: 10px;
       }
 
-      .side-nav-logo {
-        font-size: 24px;
-        font-weight: bold;
-        color: white;
+      .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
       }
 
-      .side-nav-toggle {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 24px;
+      .status-active {
+        background-color: var(--status-allowed);
+      }
+
+      .status-moderate {
+        background-color: var(--status-notallowed);
+      }
+
+      .team-status {
+        padding: 10px 0;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .settings-card {
+        background-color: var(--light-gray);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+      }
+
+      .toggle-switch input {
+        display: none;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 20px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      .toggle-switch input:checked + .slider {
+        background-color: var(--primary-blue);
+      }
+
+      .toggle-switch input:checked + .slider:before {
+        transform: translateX(20px);
+      }
+      
+      .ambersec{
+        font-size: 15px;
+        background: #fff3cd;
+        border-left: 5px solid #ffecb5;
+        padding: 12px;
+        margin-bottom: 25px;
+        border-radius: 6px;
+        color: #856404;
+        
       }
     </style>
   </head>
-
   <body>
-    <!-- Side Navigation Component -->
     <nav class="side-nav">
       <div class="side-nav-header">
         <a href="{% url 'engineer_dashboard' %}" class="side-nav-logo">Sky Score</a>
-        <button class="side-nav-toggle">
-          <i class="fas fa-bars"></i>
-        </button>
+        <button class="side-nav-toggle"><i class="fas fa-bars"></i></button>
       </div>
-
       <div class="user-profile">
-        <div class="user-avatar">
-          {% if user %} {{ user.username|slice:":1"|upper }} {% else %} U {% endif %}
-        </div>
-        <div class="user-name">
-          {% if user %} {{ user.first_name }} {{ user.last_name }} {% else %} Guest User {% endif %}
-        </div>
-        <div class="user-role">
-          {% if user %} {{ user.userType }} {% else %} Guest User {% endif %}
-        </div>
+        <div class="user-avatar">{% if user %} {{ user.username|slice:":1"|upper }} {% else %} U {% endif %}</div>
+        <div class="user-name">{% if user %} {{ user.first_name }} {{ user.last_name }} {% else %} Guest {% endif %}</div>
+        <div class="user-role">{% if user %} Senior Manager {% else %} Guest User {% endif %}</div>
       </div>
-
       <ul class="side-nav-menu">
-        <li class="side-nav-item">
-          <a href="{% url 'engineer_dashboard' %}" class="side-nav-link">
-            <i class="fas fa-home"></i>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        <li class="side-nav-item">
-          <a href="#" class="side-nav-link">
-            <i class="fas fa-heart"></i>
-            <span>Health Check</span>
-          </a>
-        </li>
-        <li class="side-nav-item">
-          <a href="#" class="side-nav-link">
-            <i class="fas fa-chart-line"></i>
-            <span>Reports</span>
-          </a>
-        </li>
-        <li class="side-nav-item">
-          <a href="#" class="side-nav-link">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-          </a>
-        </li>
-        <li class="side-nav-item">
-          <a href="#" class="side-nav-link active">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-          </a>
-        </li>
-        <li class="side-nav-item">
-          <a href="{% url 'logout' %}" class="side-nav-link">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
-          </a>
-        </li>
+        <li><a href="{% url 'engineer_dashboard' %}" class="side-nav-link"><i class="fas fa-home"></i>Dashboard</a></li>
+        <li><a href="#" class="side-nav-link"><i class="fas fa-chart-line"></i>Reports</a></li>
+        <li><a href="#" class="side-nav-link"><i class="fas fa-users"></i>Departments</a></li>
+        <li><a href="#" class="side-nav-link active"><i class="fas fa-cog"></i>Settings</a></li>
+        <li><a href="{% url 'logout' %}" class="side-nav-link"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
       </ul>
     </nav>
 
-    <!-- Main content with Settings page -->
     <div class="main-content">
       <div class="settings-container">
-        <h2>Settings</h2>
+        <h2>Team Leader Settings</h2>
 
-        <!-- Update Info Section -->
-        <div class="update-info-section">
-          <h3>Update Your Information</h3>
-          <form action="{% url 'update_profile' %}" method="POST">
-            {% csrf_token %}
-            <label for="first_name">First Name:</label>
-            <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required />
 
-            <label for="last_name">Last Name:</label>
-            <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required />
-
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" value="{{ user.username }}" required />
-
-            <button type="submit" class="btn btn-primary">Confirm Updates</button>
-          </form>
-        </div>
-
-        
-
-        <!-- Notification Settings Section -->
         <div class="settings-section">
-          <h3 class="section-title">Notification Settings</h3>
-          <div class="settings-card">
-            <div class="card-header">
-              <span class="card-title">Health Score Alerts</span>
-              <label class="toggle-switch">
-                <input type="checkbox" checked />
-                <span class="slider"></span>
-              </label>
-            </div>
-            <p class="settings-description">
-              Configure alerts when health scores for teams fall below certain thresholds.
-            </p>
-          </div>
-          <div class="settings-card">
-            <div class="card-header">
-              <span class="card-title">Weekly Report Email</span>
-              <label class="toggle-switch">
-                <input type="checkbox" checked />
-                <span class="slider"></span>
-              </label>
-            </div>
-            <p class="settings-description">
-              Receive weekly summary reports of team health metrics via email.
-            </p>
-          </div>
-          <div class="settings-card">
-            <div class="card-header">
-              <span class="card-title">Dashboard Notifications</span>
-              <label class="toggle-switch">
-                <input type="checkbox" />
-                <span class="slider"></span>
-              </label>
-            </div>
-            <p class="settings-description">
-              Enable browser notifications for significant health score changes.
-            </p>
-          </div>
+            <h3>Permissions</h3>
+            <div class="team-status"><span class="status-indicator status-active"></span>View Team-level progress and reports</div>
+            <div class="team-status"><span class="status-indicator status-active"></span>View team status</div>
+            <div class="team-status"><span class="status-indicator status-active"></span>Update personal profile information</div>
+            <div class="team-status"><span class="status-indicator status-moderate"></span>View departmental-level progress and reports</div>
+            <div class="team-status"><span class="status-indicator status-moderate"></span>Add or remove teams</div>
+            <div class="team-status"><span class="status-indicator status-moderate"></span>Directly modify health score data</div>
         </div>
-
-        <!-- Assistance Section -->
-        <div class="assistance-section">
-          <span class="notification-icon">🔔</span>
-          <p class="assistance-text">
-            Need Assistance? If you need help at any point, you can visit this guide page to the left or contact your system administrator.
+        
+        <div class = "ambersec">
+          <p>For urgent help, please contact the admin directly. For all other personal or Team-level configuration options, use the settings provided below.
           </p>
+          
         </div>
 
-        <!-- Button Group Section -->
+        <button class = "btn btn-primary"> Contact Admin </button>
+
+        <div class="settings-section">
+          <h3>Notification Settings</h3>
+          <div class="settings-card">
+            <div class="card-header">
+              <span>Health Score Alerts</span>
+              <label class="toggle-switch"><input type="checkbox" checked /><span class="slider"></span></label>
+            </div>
+            <p>Get alerts when team scores drop below thresholds.</p>
+          </div>
+
+          <div class="settings-card">
+            <div class="card-header">
+              <span>Regular Voting Notification</span>
+              <label class="toggle-switch"><input type="checkbox" checked /><span class="slider"></span></label>
+            </div>
+            <p>Receive summary reports via email.</p>
+          </div>
+          <div class="settings-card">
+            <div class="card-header">
+              <span>Dashboard Notifications</span>
+              <label class="toggle-switch"><input type="checkbox" /><span class="slider"></span></label>
+            </div>
+            <p>Enable browser alerts for key changes.</p>
+          </div>
+        </div>
+
         <div class="button-group">
-          <button class="btn btn-secondary" id="overviewBtn">OVERVIEW</button>
-          <button class="btn btn-primary" id="guideBtn">Our Guide</button>
-          <button class="btn btn-primary" id="continueBtn">Continue to Health Check</button>
+          <button class="btn btn-secondary">OVERVIEW</button>
+          <button class="btn btn-primary">Our Guide</button>
+          <button class="btn btn-primary">Continue to Health Check</button>
         </div>
       </div>
     </div>

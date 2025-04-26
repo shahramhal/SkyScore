@@ -1,21 +1,14 @@
 from django.db import models
 
+
 # Create your models here.
 
+    
+class Department(models.Model):
+    departmentid = models.AutoField(db_column='departmentID', primary_key=True, blank=True, null=True)  # Field name made lowercase.
+    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userID', blank=True, null=True)  # Field name made lowercase.
+    departmentname = models.TextField(db_column='departmentName', blank=True, null=True)  # Field name made lowercase.
 
-class HealthCheckCardUsage(models.Model):
-    cardName = models.CharField(max_length=100)
-    value = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.cardName} - {self.value}"
-
-
-class DepartmentPerformance(models.Model):
-    department = models.CharField(max_length=100)
-    category = models.CharField(max_length=100)  # e.g., Mission, Fun, etc.
-    score = models.FloatField()
-    contribution = models.FloatField()  # for pie chart (optional)
-
-    def __str__(self):
-        return f"{self.department} - {self.category}"
+    class Meta:
+        managed = False
+        db_table = 'Department'
