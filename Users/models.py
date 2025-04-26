@@ -24,8 +24,8 @@ class Healthcheckcard(models.Model):
     cardid = models.AutoField(db_column='cardID', primary_key=True)  # Field name made lowercase.
     cardname = models.TextField(db_column='cardName', blank=True, null=True)  # Field name made lowercase.
     description = models.TextField(blank=True, null=True)
-    feedback = models.TextField(db_column='feedback', blank=True, null=True)
-    solutions = models.TextField(db_column='solutions',blank=True, null=True)
+    # feedback = models.TextField(db_column='feedback', blank=True, null=True)
+    # solutions = models.TextField(db_column='solutions',blank=True, null=True)
     comments = models.TextField(db_column='comments',blank=True, null=True)
 
     class Meta:
@@ -43,6 +43,9 @@ class Vote(models.Model):
     cardid = models.ForeignKey(Healthcheckcard, models.DO_NOTHING, db_column='cardID', blank=True, null=True)  # Field name made lowercase.
     votevalue = models.IntegerField(db_column='voteValue', blank=True, null=True)  # Field name made lowercase.
     progressstatus = models.TextField(db_column='progressStatus', blank=True, null=True)  # Field name made lowercase.
+    votingdate = models.DateField(db_column='voting_date', blank=True, null=True)  # Field name made lowercase.
+    comments = models.TextField(db_column='comments', blank=True, null=True)
+
 
     class Meta:
         managed = False

@@ -1,212 +1,217 @@
-/* CSS variables for easy color management */
-:root {
-    --primary-blue: #4a3b99; /* Main blue color */
-    --dark-blue: #362b73; /* Darker blue for gradients */
-    --accent-blue: #6a42c1; /* Accent blue for active states */
-  }
+/* Left side navigation bar styles */
+.side-nav {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 250px;
+  background: linear-gradient(to bottom, var(--primary-blue), var(--dark-blue));
+  color: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+}
 
-  /* Basic body styling */
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-  }
+.side-nav-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-  /* Side navigation container */
+.side-nav-logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.side-nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.user-profile {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--accent-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.user-role {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.side-nav-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.side-nav-item {
+  padding: 0;
+  margin: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.side-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s;
+  will-change: background-color;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+
+
+/* Smooth transitions after DOM loads */
+body:not(.dom-loaded) .side-nav-link {
+  transition: none !important;
+}
+
+
+
+.side-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.side-nav-link.active {
+  background-color: var(--accent-blue);
+  position: relative;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.side-nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: white;
+}
+
+.side-nav-link.active i {
+  color: white;
+}
+
+.side-nav-link.active span {
+  font-weight: bold;
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .side-nav {
-    position: fixed; /* Fixed position so it stays in place */
-    left: 0;
-    top: 0;
-    height: 100vh; /* Full viewport height */
-    width: 250px; /* Default width */
-    background: linear-gradient(
-      /* Gradient background */ to bottom,
-      var(--primary-blue),
-      var(--dark-blue)
-    );
-    color: white;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    z-index: 1000; /* Ensure it stays above other content */
-    transition: all 0.3s ease; /* Smooth transitions for animations */
-    overflow-y: auto; /* Scrollable if content overflows */
+    width: 80px;
   }
 
-  /* Header section at the top of the sidebar */
-  .side-nav-header {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
+  .side-nav.expanded {
+    width: 250px;
   }
 
-  /* Logo styling */
-  .side-nav-logo {
-    font-size: 22px;
-    font-weight: bold;
-    color: white;
-    text-decoration: none;
-  }
-
-  /* Toggle button for mobile (hidden by default) */
   .side-nav-toggle {
-    display: none; /* Hidden on desktop */
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
+    display: block;
   }
 
-  /* User profile section */
-  .user-profile {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
+  .side-nav-link span {
+    display: none;
   }
 
-  /* User avatar circle */
-  .user-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%; /* Makes it circular */
-    background-color: var(--accent-blue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    font-size: 24px;
-    font-weight: bold;
+  .side-nav.expanded .side-nav-link span {
+    display: inline;
   }
 
-  /* User name text */
-  .user-name {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 5px;
-  }
-
-  /* User role text (lighter color) */
+  .user-name,
   .user-role {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-    text-align: center;
+    display: none;
   }
 
-  /* Menu list styling */
-  .side-nav-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .side-nav.expanded .user-name,
+  .side-nav.expanded .user-role {
+    display: block;
   }
 
-  /* Individual menu items */
-  .side-nav-item {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Item dividers */
+  .main-content {
+    margin-left: 80px;
   }
 
-  /* Menu links */
-  .side-nav-link {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    color: white;
-    text-decoration: none;
-    transition: all 0.3s; /* Smooth hover transition */
+  .side-nav.expanded+.main-content {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: 576px) {
+  .side-nav {
+    width: 0;
   }
 
-  /* Hover effect for menu items */
-  .side-nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Light overlay */
+  .side-nav.expanded {
+    width: 250px;
   }
 
-  /* Icon styling within menu items */
-  .side-nav-link i {
-    margin-right: 10px;
-    font-size: 18px;
+  .main-content {
+    margin-left: 0;
   }
 
-  /* Active menu item styling */
-  .side-nav-link.active {
-    background-color: var(--accent-blue); /* Highlight color */
+  .side-nav.expanded+.main-content {
+    margin-left: 0;
   }
 
-  /* Mobile toggle button (hidden by default) */
   .mobile-toggle {
     position: fixed;
     top: 10px;
     left: 10px;
-    z-index: 1001; /* Above the sidebar */
+    z-index: 1001;
     background: var(--primary-blue);
     border: none;
     color: white;
     width: 40px;
     height: 40px;
-    border-radius: 50%; /* Circular button */
-    display: none; /* Hidden on desktop */
+    border-radius: 50%;
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
+}
 
-  /* Medium screens (tablets) */
-  @media (max-width: 768px) {
-    /* Collapse sidebar to icon-only mode */
-    .side-nav {
-      width: 80px; /* Narrow width for icons only */
-    }
-
-    /* Expanded state for sidebar */
-    .side-nav.expanded {
-      width: 250px; /* Full width when expanded */
-    }
-
-    /* Show the toggle button */
-    .side-nav-toggle {
-      display: block;
-    }
-
-    /* Hide text labels by default */
-    .side-nav-link span {
-      display: none;
-    }
-
-    /* Show text labels when expanded */
-    .side-nav.expanded .side-nav-link span {
-      display: inline;
-    }
-
-    /* Hide user details by default */
-    .user-name,
-    .user-role {
-      display: none;
-    }
-
-    /* Show user details when expanded */
-    .side-nav.expanded .user-name,
-    .side-nav.expanded .user-role {
-      display: block;
-    }
-  }
-
-  /* Small screens (mobile phones) */
-  @media (max-width: 576px) {
-    /* Hide sidebar completely by default */
-    .side-nav {
-      width: 0;
-    }
-
-    /* Show full sidebar when expanded */
-    .side-nav.expanded {
-      width: 250px;
-    }
-
-    /* Show the mobile toggle button */
-    .mobile-toggle {
-      display: flex;
-    }
-  }
+/* Add these new styles to your existing engineer_dashboard.css */

@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.utils import timezone
 
 
 # Create your views here.
@@ -145,11 +146,7 @@ def signup_view(request):
     
     # Render the sign-up page
     return render(request, 'signup.html')
-def dashboard(request):
-    # Check if user is authenticated
-    if not request.user.is_authenticated:
-        return redirect('login')
-    return render(request, 'dashboard.html')
+
 
 password_reset_token_generator = CustomPasswordResetTokenGenerator()
 def forgotPassword(request):
@@ -266,15 +263,29 @@ def engineer_dashboard(request):
         # For each card, check if the user has voted
         for card in health_cards:
             try:
-                vote = Vote.objects.get(userid=user, cardid=card)
+                vote = Vote.objects.filter(userid=user, cardid=card).order_by('-votingdate').first()
                 card.voted = True
                 card.vote_value = vote.votevalue
                 card.progress_status = vote.progressstatus
+                card.comments = vote.comments
+                card.last_voted = vote.votingdate
             except Vote.DoesNotExist:
                 card.voted = False
+        
+        
+        current_session_date = timezone.now().date()
+        votes_completed = Vote.objects.filter(
+            userid=user,
+            votingdate=current_session_date
+        ).values('cardid').distinct().count()
         total_cards = health_cards.count()
-        votes_completed = Vote.objects.filter(userid=user).count()
-        progress_percentage = (votes_completed / total_cards * 100) if total_cards > 0 else 0
+        
+        # Calculate percentage (capped at 100%)
+        progress_percentage = min(
+            (votes_completed / total_cards * 100) if total_cards > 0 else 0,
+            100
+        )
+
 
         context = {
             
@@ -284,7 +295,8 @@ def engineer_dashboard(request):
             'votes_completed': votes_completed,
             'progress_percentage': progress_percentage,
              # Also pass session data to ensure it's available
-            'session_data': request.session
+            'session_data': request.session,
+            'active_page': 'dashboard'
                 }
         return render(request, 'engineer_dashboard.html', context)
     except User.DoesNotExist:
@@ -315,7 +327,8 @@ def engineer_profile(request):
         context = {
             'user': user,
             # Also pass session data to ensure it's available
-            'session_data': request.session
+            'session_data': request.session,
+            'active_page': 'profile'
         }
         return render(request, 'engineer_profile.html', context)
     except User.DoesNotExist:
