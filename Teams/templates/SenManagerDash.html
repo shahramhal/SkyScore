@@ -4,7 +4,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<<<<<<< HEAD
     <title>Senior Manager Overview</title>
     <link
       rel="stylesheet"
@@ -187,232 +186,10 @@
         border-radius: 5px;
         font-weight: bold;
         cursor: pointer;
-=======
-    <title>Sky Score - Departments</title>
-    <style>
-      :root {
-        --purple-dark: #4a148c;
-        --purple-main: #6a1b9a;
-        --purple-light: #ede7f6;
-        --background: #f9f9fc;
-        --white: #ffffff;
-        --card-shadow: rgba(0, 0, 0, 0.05);
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Segoe UI", sans-serif;
-      }
-
-      body {
-        display: flex;
-        min-height: 100vh;
-        background-color: var(--background);
-        color: #333;
-      }
-
-      .sidebar {
-        width: 240px;
-        background: linear-gradient(
-          to bottom,
-          var(--purple-main),
-          var(--purple-dark)
-        );
-        color: white;
-        padding: 30px 0;
-        position: fixed;
-        height: 100%;
-      }
-
-      .sidebar .profile {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 40px;
-      }
-
-      .sidebar .profile-pic {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background-color: white;
-        color: var(--purple-main);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-
-      .sidebar .profile-name {
-        font-weight: 600;
-        text-align: center;
-        font-size: 16px;
-      }
-
-      .sidebar .profile-role {
-        font-size: 13px;
-        color: #e0e0e0;
-        text-align: center;
-      }
-
-      .nav-links {
-        list-style: none;
-        padding: 20px;
-      }
-
-      .nav-links li {
-        margin-bottom: 18px;
-      }
-
-      .nav-links a {
-        text-decoration: none;
-        color: white;
-        font-size: 16px;
-        display: block;
-        padding: 12px 16px;
-        border-radius: 8px;
-        transition: background 0.2s ease;
-      }
-
-      .nav-links a:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-
-      .main-content {
-        margin-left: 240px;
-        padding: 50px 60px;
-        flex: 1;
-      }
-
-      .header-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-      }
-
-      .header-bar h1 {
-        font-size: 28px;
-        font-weight: 600;
-      }
-
-      .guide-btn {
-        background-color: var(--purple-main);
-        color: white;
-        border: none;
-        padding: 10px 18px;
-        font-size: 14px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.2s ease;
-      }
-
-      .guide-btn:hover {
-        background-color: #5e35b1;
-      }
-
-      .department {
-        background-color: var(--white);
-        border-radius: 12px;
-        margin-bottom: 25px;
-        box-shadow: 0 8px 24px var(--card-shadow);
-        transition: 0.3s ease;
-        overflow: hidden;
-      }
-
-      .department h3 {
-        background: var(--purple-main);
-        color: white;
-        padding: 18px 24px;
-        font-size: 18px;
-        cursor: pointer;
-      }
-
-      .department:hover h3 {
-        background: #5e35b1;
-      }
-
-      .teams {
-        display: none;
-        padding: 20px 30px;
-        background-color: var(--purple-light);
-      }
-
-      .teams ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      .teams li {
-        margin-bottom: 12px;
-      }
-
-      .teams a {
-        text-decoration: none;
-        color: var(--purple-main);
-        font-weight: 500;
-        font-size: 15px;
-        transition: 0.2s ease;
-      }
-
-      .teams a:hover {
-        color: #4a148c;
-        text-decoration: underline;
-      }
-
-      .department.active .teams {
-        display: block;
-      }
-
-      /* Modal (Guide Pop-up) */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 999;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-      }
-
-      .modal-content {
-        background: white;
-        width: 500px;
-        max-width: 90%;
-        margin: 10% auto;
-        padding: 30px;
-        border-radius: 12px;
-        position: relative;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-      }
-
-      .modal-content h2 {
-        margin-bottom: 10px;
-      }
-
-      .close-btn {
-        position: absolute;
-        top: 12px;
-        right: 16px;
-        font-size: 22px;
-        font-weight: bold;
-        cursor: pointer;
-        color: #777;
-      }
-
-      .close-btn:hover {
-        color: #000;
->>>>>>> 7db597e2870cd9def8c2a55240fc87424d3bfc6a
       }
     </style>
   </head>
   <body>
-<<<<<<< HEAD
     <!-- Sidebar -->
     <nav class="side-nav">
       <div class="side-nav-header">
@@ -429,7 +206,7 @@
         <li><a href="#" class="side-nav-link"><i class="fas fa-chart-line"></i> Reports</a></li>
         <li><a href="#" class="side-nav-link"><i class="fas fa-user"></i> Profile</a></li>
         <li><a href="#" class="side-nav-link"><i class="fas fa-cog"></i> Settings</a></li>
-        <li><a href="#" class="side-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <li><a href="{% url 'logout'%}" class="side-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
       </ul>
     </nav>
 
@@ -461,74 +238,10 @@
         <div class="bottom-actions">
           <button>Our Guide</button>
           <button>COMPARISON</button>
-=======
-    <div class="sidebar">
-      <div class="profile">
-        <div class="profile-pic">N</div>
-        <div class="profile-name">name5 surname5</div>
-        <div class="profile-role">Engineer</div>
-      </div>
-      <ul class="nav-links">
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Health Check</a></li>
-        <li><a href="#">Reports</a></li>
-        <li><a href="#">Profile</a></li>
-        <li><a href="{% url 'get_settings'%}">Settings</a></li>
-        <li><a href="#">Help</a></li>
-        <li><a href="{% url 'logout'%}">Logout</a></li>
-      </ul>
-    </div>
-
-    <div class="main-content">
-      <div class="header-bar">
-        <h1>Departments & Teams</h1>
-        <button class="guide-btn" onclick="openGuide()">Our Guide</button>
-      </div>
-
-      <div class="department" onclick="toggleTeams(this)">
-        <h3>Engineering</h3>
-        <div class="teams">
-          <ul>
-            <li><a href="#">Frontend Squad</a></li>
-            <li><a href="#">Backend Crew</a></li>
-            <li><a href="#">DevOps Unit</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="department" onclick="toggleTeams(this)">
-        <h3>Marketing</h3>
-        <div class="teams">
-          <ul>
-            <li><a href="#">Content Creators</a></li>
-            <li><a href="#">SEO Team</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="department" onclick="toggleTeams(this)">
-        <h3>Product</h3>
-        <div class="teams">
-          <ul>
-            <li><a href="#">User Experience</a></li>
-            <li><a href="#">Release Squad</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="department" onclick="toggleTeams(this)">
-        <h3>HR</h3>
-        <div class="teams">
-          <ul>
-            <li><a href="#">Recruitment</a></li>
-            <li><a href="#">Training & Dev</a></li>
-          </ul>
->>>>>>> 7db597e2870cd9def8c2a55240fc87424d3bfc6a
         </div>
       </div>
     </div>
 
-<<<<<<< HEAD
     <script>
       function toggleTeams(id) {
     const el = document.getElementById(id);
@@ -537,44 +250,6 @@
       el.style.display = el.style.display === 'none' ? 'block' : 'none';
     }
   }
-=======
-    <!-- Pop-up Modal -->
-    <div id="guideModal" class="modal">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeGuide()">&times;</span>
-        <h2>Team Health Guide</h2>
-        <p>
-          Use this page to view your department teams. Click each department to
-          expand the list of teams. You can change team names and link each to
-          their detail view.
-        </p>
-        <p>
-          The sidebar lets you navigate through other modules. If you're unsure,
-          use the help section or this guide anytime.
-        </p>
-      </div>
-    </div>
-
-    <script>
-      function toggleTeams(dept) {
-        dept.classList.toggle("active");
-      }
-
-      function openGuide() {
-        document.getElementById("guideModal").style.display = "block";
-      }
-
-      function closeGuide() {
-        document.getElementById("guideModal").style.display = "none";
-      }
-
-      window.onclick = function (event) {
-        const modal = document.getElementById("guideModal");
-        if (event.target === modal) {
-          modal.style.display = "none";
-        }
-      };
->>>>>>> 7db597e2870cd9def8c2a55240fc87424d3bfc6a
     </script>
   </body>
 </html>
