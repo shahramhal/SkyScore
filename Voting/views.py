@@ -13,46 +13,94 @@ def votingDashboard(request):
     user = User.objects.get(userID=request.session['user_id'])
     
     # Get active session
+    current_session_date = timezone.now().date()
     active_session, created = Session.objects.get_or_create(
-        sessiondate=timezone.now().date(),
+        sessiondate=current_session_date,
         defaults={
             'description': f"Health Check Session - {timezone.now().strftime('%B %Y')}"
         }
     )
     
-    # Get user's votes for this session
+    # Get user's votes for current session
     user_votes = Vote.objects.filter(
         userid=user.userID,
-        cardid__in=health_cards
+        votingdate=current_session_date
     )
     
+    # Get voting history - INCLUDE current session in history
+    # Remove the exclude() to show all sessions including today's
+    voting_sessions = Session.objects.all().order_by('-sessiondate')[:10]  # Show last 10 sessions
+    
+    # Add vote count to each session
+    for session in voting_sessions:
+        session.vote_count = Vote.objects.filter(
+            votingdate=session.sessiondate
+        ).count()
+    
     # Calculate progress
-    current_session_date = timezone.now().date()
-    votes_completed = Vote.objects.filter(
-        userid=user,
-        votingdate=current_session_date
-    ).values('cardid').distinct().count()
+    votes_completed = user_votes.values('cardid').distinct().count()
     total_cards = health_cards.count()
     progress_percentage = min(
-            (votes_completed / total_cards * 100) if total_cards > 0 else 0,
-            100
+        (votes_completed / total_cards * 100) if total_cards > 0 else 0,
+        100
+    )
+    
+    # Get the current card status for each card
+    for card in health_cards:
+        vote = Vote.objects.filter(
+            userid=user.userID,
+            cardid=card.cardid,
+            votingdate=current_session_date
+        ).first()
+        
+        if vote:
+            card.voted = True
+            card.vote_value = vote.votevalue
+            card.progress_status = vote.progressstatus
+        else:
+            card.voted = False
+    
+    # Calculate team summary statistics for each card
+    for card in health_cards:
+        # Get all votes for this card in the current session
+        card_votes = Vote.objects.filter(
+            cardid=card.cardid,
+            votingdate=current_session_date
         )
-    # Add this: Get the first card as current_card if no card is selected
+        
+        # Count votes by value
+        card.green_count = card_votes.filter(votevalue=3).count()
+        card.amber_count = card_votes.filter(votevalue=2).count()
+        card.red_count = card_votes.filter(votevalue=1).count()
+        
+        total_votes = card.green_count + card.amber_count + card.red_count
+        
+        # Calculate percentages
+        if total_votes > 0:
+            card.green_percentage = (card.green_count / total_votes) * 100
+            card.amber_percentage = (card.amber_count / total_votes) * 100
+            card.red_percentage = (card.red_count / total_votes) * 100
+        else:
+            card.green_percentage = 0
+            card.amber_percentage = 0
+            card.red_percentage = 0
+    
+    # Get the first card as current_card if no card is selected
     current_card = health_cards.first() if health_cards.exists() else None
     
     context = {
         'user': user,
         'health_check_cards': health_cards,
         'active_session': active_session,
+        'voting_sessions': voting_sessions,
         'votes_completed': votes_completed,
         'total_cards': total_cards,
         'progress_percentage': progress_percentage,
-        'current_card': current_card  ,
+        'current_card': current_card,
         'active_page': 'health_cards'
     }
     
     return render(request, 'votingDashboard.html', context)
-
 # Vote for a specific card
 
 def vote_card(request, card_id):
@@ -178,18 +226,72 @@ def submit_vote(request, card_id):
     
     return redirect('votingDashboard')
 def start_new_session(request):
-    # End current active session
-    Session.objects.filter(is_active=True).update(is_active=False)
-    
     # Create new session
     new_session = Session.objects.create(
-        description=f"Voting Session - {timezone.now().strftime('%Y-%m-%d %H:%M')}",
-        is_active=True
+        description=f"Health Check Session - {timezone.now().strftime('%B %d, %Y')}",
+        sessiondate=timezone.now().date()
     )
     messages.success(request, "New voting session started!")
-    return redirect('engineer_dashboard')
+    return redirect('votingDashboard')
+
 
 def end_current_session(request):
     Session.objects.filter(is_active=True).update(is_active=False)
     messages.success(request, "Current voting session ended!")
     return redirect('engineer_dashboard')
+
+def view_session(request, session_id):
+    # Get the session
+    session = get_object_or_404(Session, sessionid=session_id)
+    
+    # Get current user
+    user = User.objects.get(userID=request.session['user_id'])
+    
+    # Get all health check cards
+    health_cards = Healthcheckcard.objects.all()
+    
+    # Get user's votes for this session
+    user_votes = Vote.objects.filter(
+        userid=user.userID,
+        votingdate=session.sessiondate
+    )
+    
+    # Calculate progress for this session
+    votes_completed = user_votes.values('cardid').distinct().count()
+    total_cards = health_cards.count()
+    progress_percentage = min(
+        (votes_completed / total_cards * 100) if total_cards > 0 else 0,
+        100
+    )
+    
+    # Get the card status for each card in this session
+    for card in health_cards:
+        vote = Vote.objects.filter(
+            userid=user.userID,
+            cardid=card.cardid,
+            votingdate=session.sessiondate
+        ).first()
+        
+        if vote:
+            card.voted = True
+            card.vote_value = vote.votevalue
+            card.progress_status = vote.progressstatus
+        else:
+            card.voted = False
+    
+    # Add this: Get the first card as current_card if no card is selected
+    current_card = health_cards.first() if health_cards.exists() else None
+    
+    context = {
+        'user': user,
+        'health_check_cards': health_cards,
+        'active_session': session,
+        'votes_completed': votes_completed,
+        'total_cards': total_cards,
+        'progress_percentage': progress_percentage,
+        'current_card': current_card,
+        'active_page': 'health_cards',
+        'is_historical': True
+    }
+    
+    return render(request, 'votingDashboard.html', context)

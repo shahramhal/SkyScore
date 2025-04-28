@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Health Check Voting</title>
+    <title>Voting Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
     <link rel="stylesheet" href="{% static 'voting.css' %}" />
@@ -20,7 +20,9 @@
       <div class="message {{ message.tags }}">{{ message }}</div>
       {% endfor %}
     </div>
-    {% endif %} {%include "navbar.html" %}
+    {% endif %} 
+    
+    {%include "navbar.html" %}
 
     <!-- Main Content Area -->
     <div class="main-content">
@@ -28,197 +30,112 @@
         <!-- Voting Header -->
         <div class="voting-header">
           <div>
-            <h1>Vote for "{{ current_card.cardname }}"</h1>
+            <h1>Voting Dashboard</h1>
             <div class="date">{% now "F j, Y" %}</div>
           </div>
-          <div class="session-badge">Session: {% now "F j, Y" %}</div>
+          <div class="session-badge">Current Session: {% now "F j, Y" %}</div>
         </div>
 
-        <!-- Card Selection -->
-        <div class="vote-cards">
-          <h3>Health Check Cards</h3>
-          <div class="card-selector">
-            {% for card in health_check_cards %}
-            <div
-              class="card-item {% if card.cardid == current_card.cardid %}active{% endif %}"
-              onclick="window.location='{% url 'vote_card' card.cardid %}'"
-            >
-              {{ card.cardname }}
-            </div>
-            {%endfor %}
-          </div>
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <a href="{% url 'vote_card' health_check_cards.first.cardid %}" class="btn btn-start">
+            <i class="fas fa-play"></i> Start Voting
+          </a>
+          <a href="{% url 'start_new_session' %}" class="btn btn-new">
+            <i class="fas fa-plus"></i> New Voting Session
+          </a>
         </div>
 
-        <!-- Card Info -->
-        <div class="card-info">
-          <p>{{ current_card.description }}</p>
-        </div>
-
-        <!-- Voting Form -->
-        <form
-          method="post"
-          action="{% url 'submit_vote' current_card.cardid %}"
-          class="vote-form"
-        >
-          {% csrf_token %}
-
-          <h3>How would you rate this area?</h3>
-          <div class="radio-container">
-            <div class="radio-option green-option">
-              <input
-                type="radio"
-                id="green"
-                name="voteValue"
-                value="3"
-                required
-              />
-              <label for="green" class="radio-label">Green</label>
-              <p class="radio-description">Everything is good</p>
-            </div>
-
-            <div class="radio-option amber-option">
-              <input type="radio" id="amber" name="voteValue" value="2" />
-              <label for="amber" class="radio-label">Amber</label>
-              <p class="radio-description">Some concerns</p>
-            </div>
-
-            <div class="radio-option red-option">
-              <input type="radio" id="red" name="voteValue" value="1" />
-              <label for="red" class="radio-label">Red</label>
-              <p class="radio-description">Serious issues</p>
-            </div>
-          </div>
-
-          <h3>Is this area getting better or worse?</h3>
-          <div class="radio-container">
-            <div class="radio-option green-option">
-              <input
-                type="radio"
-                id="better"
-                name="progressStatus"
-                value="Better"
-                required
-              />
-              <label for="better" class="radio-label">Better</label>
-              <p class="radio-description">Improving</p>
-            </div>
-
-            <div class="radio-option amber-option">
-              <input
-                type="radio"
-                id="same"
-                name="progressStatus"
-                value="Same"
-              />
-              <label for="same" class="radio-label">Same</label>
-              <p class="radio-description">No change</p>
-            </div>
-
-            <div class="radio-option red-option">
-              <input
-                type="radio"
-                id="worse"
-                name="progressStatus"
-                value="Worse"
-              />
-              <label for="worse" class="radio-label">Worse</label>
-              <p class="radio-description">Declining</p>
-            </div>
-          </div>
-
-          <div class="container">
-            <div class="section">
-              <label>Solutions or Ideas for the team:</label>
-              <textarea
-                name="solutions"
-                placeholder="Enter ideas..."
-              ></textarea>
-            </div>
-
-            <div class="section">
-              <label>Comments:</label>
-              <textarea
-                name="comments"
-                placeholder="Enter comments..."
-              ></textarea>
-            </div>
-
-            <div class="section">
-              <label>Feedback for actions we can take as a team:</label>
-              <textarea
-                name="feedback"
-                placeholder="Enter feedback..."
-              ></textarea>
-            </div>
-          </div>
-
-          <!-- Progress Bar -->
-          <h3>Your Voting Progress</h3>
+        <!-- Current Progress -->
+        <div class="current-progress">
+          <h3><i class="fas fa-chart-line"></i> Current Session Progress</h3>
           <div class="progress-bar-container">
             <div class="progress-bar" style="width: {{ progress_percentage }}%">
               {{ votes_completed }}/{{ total_cards }} cards
             </div>
           </div>
+        </div>
 
-          <!-- Navigation Buttons -->
-          <div class="nav-buttons">
-            <a href="{% url 'votingDashboard' %}" class="btn btn-back"
-              >Back to Dashboard</a
-            >
-
-            {% if has_previous %}
-            <a
-              href="{% url 'vote_card' previous_card.cardid %}"
-              class="btn btn-back"
-              >Previous Card</a
-            >
-            {% endif %} {% if has_next %}
-            <button
-              type="submit"
-              name="action"
-              value="next"
-              class="btn btn-next"
-            >
-              Save & Next
-            </button>
-            {% else %}
-            <button
-              type="submit"
-              name="action"
-              value="submit"
-              class="btn btn-submit"
-            >
-              Submit All Votes
-            </button>
-            {% endif %}
+        <!-- Card Selection -->
+        <div class="vote-cards">
+          <h3><i class="fas fa-list-check"></i> Health Check Cards</h3>
+          <div class="card-selector">
+            {% for card in health_check_cards %}
+            <div class="card-item" data-description="{{ card.description }}">
+              <span class="card-name">{{ card.cardname }}</span>
+              <span class="card-status 
+                {% if card.voted and card.vote_value == 3 %}green{% elif card.voted and card.vote_value == 2 %}amber{% elif card.voted and card.vote_value == 1 %}red{% else %}not-voted{% endif %}">
+                {% if card.voted %}
+                  {% if card.vote_value == 3 %}Green{% elif card.vote_value == 2 %}Amber{% elif card.vote_value == 1 %}Red{% endif %}
+                {% else %}
+                  Not Voted
+                {% endif %}
+              </span>
+            </div>
+            {% endfor %}
           </div>
-        </form>
+        </div>
+
+        <!-- Voting History -->
+        <div class="voting-history">
+          <h3><i class="fas fa-history"></i> Voting History</h3>
+          <div class="history-list">
+            {% for session in voting_sessions %}
+            <div class="history-item {% if session.sessiondate == current_session_date %}current-session{% endif %}" onclick="window.location='{% url 'view_session' session.sessionid %}'">
+              <div class="history-details">
+                <h4>{{ session.description }} {% if session.sessiondate == current_session_date %}<span class="badge-current">Current</span>{% endif %}</h4>
+                <span class="history-date">{{ session.sessiondate|date:"F j, Y" }}</span>
+              </div>
+              <div class="history-stats">
+                <span class="vote-count">{{ session.vote_count }} votes</span>
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+            {% empty %}
+            <div class="no-history">
+              <i class="fas fa-info-circle"></i>
+              <p>No voting history available</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Team Summary -->
+        <div class="team-summary">
+          <h3><i class="fas fa-users"></i> Team Summary</h3>
+          <div class="summary-grid">
+            {% for card in health_check_cards %}
+            <div class="summary-card" data-description="{{ card.description }}" data-toggle="tooltip" title="{{ card.description }}">
+              <h4>{{ card.cardname }}</h4>
+              <div class="status-distribution">
+                <div class="status-bar">
+                  <div class="green-bar" style="width: {{ card.green_percentage|default:'0' }}%"></div>
+                  <div class="amber-bar" style="width: {{ card.amber_percentage|default:'0' }}%"></div>
+                  <div class="red-bar" style="width: {{ card.red_percentage|default:'0' }}%"></div>
+                </div>
+                <div class="status-legend">
+                  <span class="green-dot">{{ card.green_count|default:'0' }}</span>
+                  <span class="amber-dot">{{ card.amber_count|default:'0' }}</span>
+                  <span class="red-dot">{{ card.red_count|default:'0' }}</span>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+          <a href="{% url 'engineer_dashboard' %}" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+          </a>
+        </div>
       </div>
     </div>
+    <div id="card-tooltip" class="card-tooltip"></div>
 
-    <script>
-      // JavaScript for the side navigation toggle
-      document.addEventListener("DOMContentLoaded", function () {
-        const sideNavToggle = document.querySelector(".side-nav-toggle");
-        const mobileToggle = document.querySelector(".mobile-toggle");
-        const sideNav = document.querySelector(".side-nav");
-        const mainContent = document.querySelector(".main-content");
-
-        function toggleNav() {
-          sideNav.classList.toggle("collapsed");
-          mainContent.classList.toggle("expanded");
-        }
-
-        if (sideNavToggle) {
-          sideNavToggle.addEventListener("click", toggleNav);
-        }
-
-        if (mobileToggle) {
-          mobileToggle.addEventListener("click", function () {
-            sideNav.classList.toggle("mobile-open");
-          });
-        }
-      });
-    </script>
+    <script src={% static 'js/Voting.js' %}></script>
+      
+   
   </body>
 </html>
