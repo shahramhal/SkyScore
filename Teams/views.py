@@ -292,3 +292,13 @@ def get_summary_data(department):
         'lastCheckDate': last_check_date
     }
 
+
+def team_lead_dashboard(request):
+    teams = Team.objects.all()
+    return render(request, 'TeamLeaderp1.html', { 'teams': teams})
+
+def team_progress(request):
+    teams = Team.objects.all()
+    return render(request, 'TeamOverview.html', { 'teams': teams})
+
+
