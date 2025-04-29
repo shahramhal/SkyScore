@@ -1,20 +1,21 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Senior Manager Settings | Sky Score</title>
+    <title>Team Leader Settings | Sky Score</title>
 
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      href="{% static 'css/navbar.css' %}"
     />
 
     <style>
       :root {
-        --primary-blue: #4a3b99;
-        --dark-blue: #362b73;
-        --accent-blue: #6a42c1;
+        --primary-blue: #4a148c;
+        --dark-blue: #12005e;
+        --accent-blue: #7c43bd;
         --light-gray: #f4f4f4;
         --white: #ffffff;
         --status-allowed: #4caf50;
@@ -230,24 +231,9 @@
     </style>
   </head>
   <body>
-    <nav class="side-nav">
-      <div class="side-nav-header">
-        <a href="{% url 'engineer_dashboard' %}" class="side-nav-logo">Sky Score</a>
-        <button class="side-nav-toggle"><i class="fas fa-bars"></i></button>
-      </div>
-      <div class="user-profile">
-        <div class="user-avatar">{% if user %} {{ user.username|slice:":1"|upper }} {% else %} U {% endif %}</div>
-        <div class="user-name">{% if user %} {{ user.first_name }} {{ user.last_name }} {% else %} Guest {% endif %}</div>
-        <div class="user-role">{% if user %} Senior Manager {% else %} Guest User {% endif %}</div>
-      </div>
-      <ul class="side-nav-menu">
-        <li><a href="{% url 'engineer_dashboard' %}" class="side-nav-link"><i class="fas fa-home"></i>Dashboard</a></li>
-        <li><a href="#" class="side-nav-link"><i class="fas fa-chart-line"></i>Reports</a></li>
-        <li><a href="#" class="side-nav-link"><i class="fas fa-users"></i>Departments</a></li>
-        <li><a href="#" class="side-nav-link active"><i class="fas fa-cog"></i>Settings</a></li>
-        <li><a href="{% url 'logout' %}" class="side-nav-link"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
-      </ul>
-    </nav>
+
+    {%include "navbar.html" %}
+    
 
     <div class="main-content">
       <div class="settings-container">

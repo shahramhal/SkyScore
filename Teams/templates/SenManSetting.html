@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,20 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Senior Manager Settings | Sky Score</title>
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link 
+    rel="stylesheet" href="{% static 'css/navbar.css' %}" />
 
     <style>
       :root {
-        --primary-blue: #4a3b99;
-        --dark-blue: #362b73;
-        --accent-blue: #6a42c1;
+        
+        
+       
         --light-gray: #f4f4f4;
         --white: #ffffff;
-        --status-active: #4caf50;
-        --status-moderate: #ff9800;
+        --status-allowed: #4caf50;
+        --status-notallowed: #b90c0c;
+        --primary-blue: #4a148c;
+        --dark-blue: #12005e;
+        --accent-blue: #7c43bd;
       }
 
       body {
@@ -154,11 +156,11 @@
       }
 
       .status-active {
-        background-color: var(--status-active);
+        background-color: var(--status-allowed);
       }
 
       .status-moderate {
-        background-color: var(--status-moderate);
+        background-color: var(--status-notallowed);
       }
 
       .team-status {
@@ -216,56 +218,47 @@
       .toggle-switch input:checked + .slider:before {
         transform: translateX(20px);
       }
+      
+      .ambersec{
+        font-size: 15px;
+        background: #fff3cd;
+        border-left: 5px solid #ffecb5;
+        padding: 12px;
+        margin-bottom: 25px;
+        border-radius: 6px;
+        color: #856404;
+        
+      }
     </style>
   </head>
   <body>
-    <nav class="side-nav">
-      <div class="side-nav-header">
-        <a href="{% url 'engineer_dashboard' %}" class="side-nav-logo">Sky Score</a>
-        <button class="side-nav-toggle"><i class="fas fa-bars"></i></button>
-      </div>
-      <div class="user-profile">
-        <div class="user-avatar">{% if user %} {{ user.username|slice:":1"|upper }} {% else %} U {% endif %}</div>
-        <div class="user-name">{% if user %} {{ user.first_name }} {{ user.last_name }} {% else %} Guest {% endif %}</div>
-        <div class="user-role">{% if user %} Senior Manager {% else %} Guest User {% endif %}</div>
-      </div>
-      <ul class="side-nav-menu">
-        <li><a href="{% url 'engineer_dashboard' %}" class="side-nav-link"><i class="fas fa-home"></i>Dashboard</a></li>
-        <li><a href="#" class="side-nav-link"><i class="fas fa-chart-line"></i>Reports</a></li>
-        <li><a href="#" class="side-nav-link"><i class="fas fa-users"></i>Departments</a></li>
-        <li><a href="#" class="side-nav-link active"><i class="fas fa-cog"></i>Settings</a></li>
-        <li><a href="{% url 'logout' %}" class="side-nav-link"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
-      </ul>
-    </nav>
+
+    {%include "navbar.html" %}
+
+
+    
 
     <div class="main-content">
       <div class="settings-container">
         <h2>Senior Manager Settings</h2>
 
-        <div class="update-info-section">
-          <h3>Update Your Information</h3>
-          <form action="{% url 'update_profile' %}" method="POST">
-            {% csrf_token %}
-            <label for="first_name">First Name:</label>
-            <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required />
-
-            <label for="last_name">Last Name:</label>
-            <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required />
-
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" value="{{ user.username }}" required />
-
-            <button type="submit" class="btn btn-primary">Confirm Updates</button>
-          </form>
-        </div>
 
         <div class="settings-section">
-          <h3>Department & Team Progress Overview</h3>
-          <div class="team-status"><span class="status-indicator status-active"></span> TEAM 5CS16_A STATUS: ACTIVE</div>
-          <div class="team-status"><span class="status-indicator status-moderate"></span> TEAM 5CS16_B STATUS: MODERATE</div>
-          <div class="team-status"><span class="status-indicator status-moderate"></span> TEAM 5CS16_C STATUS: MODERATE</div>
-          <div class="team-status"><span class="status-indicator status-active"></span> TEAM 5CS16_D STATUS: ACTIVE</div>
+            <h3>Permissions</h3>
+            <div class="team-status"><span class="status-indicator status-active"></span>View department-level progress and reports</div>
+            <div class="team-status"><span class="status-indicator status-active"></span>View team statuses within departments</div>
+            <div class="team-status"><span class="status-indicator status-active"></span>Update personal profile information</div>
+            <div class="team-status"><span class="status-indicator status-moderate"></span>Add or remove teams</div>
+            <div class="team-status"><span class="status-indicator status-moderate"></span>Directly modify health score data</div>
         </div>
+        
+        <div class = "ambersec">
+          <p>For urgent help, please contact the admin directly. For all other personal or departmental configuration options, use the settings provided below.
+          </p>
+          
+        </div>
+
+        <button class = "btn btn-primary"> Contact Admin </button>
 
         <div class="settings-section">
           <h3>Notification Settings</h3>
@@ -295,7 +288,7 @@
         <div class="button-group">
           <button class="btn btn-secondary">OVERVIEW</button>
           <button class="btn btn-primary">Our Guide</button>
-          <button class="btn btn-primary">Continue to Health Check</button>
+          
         </div>
       </div>
     </div>

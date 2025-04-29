@@ -1,571 +1,554 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sky Engineering Health Check</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    body {
-      background-color: #f5f5f5;
-    }
-    
-    .container {
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    /* Header Section */
-    .header {
-      background: linear-gradient(to right, #1a4b8c, #2868c8);
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .logo-text {
-      font-size: 1.5rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    }
-    
-    .sky-score {
-      font-size: 2rem;
-      color: #ff6b4a;
-      font-weight: bold;
-    }
-    
-    /* Main Content */
-    .main-content {
-      flex: 1;
-      background: linear-gradient(to bottom, #2868c8, #5b9bd5);
-      padding: 2rem;
-      color: white;
-    }
-    
-    .settings-panel {
-      background-color: white;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    
-    .panel-title {
-      font-size: 1.5rem;
-      color: #1a4b8c;
-      font-weight: 600;
-    }
-    
-    .update-login-btn {
-      background-color: #1a4b8c;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 0.3rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-weight: 500;
-    }
-    
-    .update-login-btn:hover {
-      background-color: #15407a;
-    }
-    
-    .welcome-banner {
-      background-color: #f5f8ff;
-      border-radius: 0.8rem;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      position: relative;
-      border: 1px solid #d1e3ff;
-    }
-    
-    .welcome-title {
-      font-size: 1.2rem;
-      color: #1a4b8c;
-      margin-bottom: 0.75rem;
-      font-weight: 600;
-    }
-    
-    .welcome-text {
-      color: #505050;
-      line-height: 1.5;
-      font-size: 0.95rem;
-    }
-    
-    .settings-section {
-      margin-bottom: 2rem;
-    }
-    
-    .section-title {
-      font-size: 1.1rem;
-      color: #1a4b8c;
-      margin-bottom: 1rem;
-      font-weight: 600;
-    }
-    
-    .settings-card {
-      background-color: #f9fbff;
-      border-radius: 0.8rem;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-      border: 1px solid #e6edf8;
-    }
-    
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    
-    .card-title {
-      font-weight: 600;
-      color: #333;
-    }
-    
-    .toggle-switch {
-      position: relative;
-      display: inline-block;
-      width: 50px;
-      height: 24px;
-    }
-    
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .4s;
-      border-radius: 24px;
-    }
-    
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    
-    input:checked + .slider {
-      background-color: #2196F3;
-    }
-    
-    input:checked + .slider:before {
-      transform: translateX(26px);
-    }
-    
-    .team-status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .status-indicator {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-    
-    .status-active {
-      background-color: #4caf50;
-    }
-    
-    .status-moderate {
-      background-color: #ff9800;
-    }
-    
-    .status-text {
-      font-size: 0.9rem;
-      color: #505050;
-    }
-    
-    .assistance-section {
-      background-color: #f5f8ff;
-      border-radius: 0.8rem;
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 2rem;
-      border: 1px solid #d1e3ff;
-    }
-    
-    .assistance-text {
-      color: #505050;
-      font-size: 0.95rem;
-      flex: 1;
-    }
-    
-    .notification-icon {
-      color: #ff9800;
-      font-size: 1.2rem;
-      margin-right: 1rem;
-    }
-    
-    .button-group {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 2rem;
-    }
-    
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      transition: all 0.3s;
-    }
-    
-    .btn-primary {
-      background-color: #1a4b8c;
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background-color: #15407a;
-    }
-    
-    .btn-secondary {
-      background-color: #e0e0e0;
-      color: #333;
-    }
-    
-    .btn-secondary:hover {
-      background-color: #d0d0d0;
-    }
-    
-    /* Footer */
-    .footer {
-      background-color: #1a4b8c;
-      color: white;
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .menu-btn {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: #333;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      cursor: pointer;
-      border: none;
-    }
-    
-    /* Guide Modal */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-    }
-    
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-    
-    .modal-content {
-      background-color: white;
-      border-radius: 1rem;
-      padding: 2rem;
-      width: 80%;
-      max-width: 600px;
-      max-height: 80vh;
-      overflow-y: auto;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      transform: translateY(-20px);
-      transition: all 0.3s;
-    }
-    
-    .modal-overlay.active .modal-content {
-      transform: translateY(0);
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    
-    .modal-title {
-      font-size: 1.5rem;
-      color: #1a4b8c;
-      font-weight: 600;
-    }
-    
-    .close-modal {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #666;
-    }
-    
-    .close-modal:hover {
-      color: #333;
-    }
-    
-    .guide-content {
-      color: #505050;
-      line-height: 1.6;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEPARTMENT SUMMARY DASHBOARD</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+    <style>
+        :root {
+            --primary-color: #4a148c;
+            --primary-light: #7c43bd;
+            --primary-dark: #12005e;
+            --accent-color: #4a148c;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --background-light: #f8f9fa;
+            --card-bg: #ffffff;
+            --primary-blue: #4a148c;
+            --dark-blue: #12005e;
+            --accent-blue: #7c43bd;
+            --green: #4caf50;
+            --red: #f44336;
+            --orange: #ff9800;
+
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-left: var(--sidebar-width, 250px);
+        }
+        
+        .header-banner {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: var(--text-light);
+            padding: 25px 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header-title {
+            font-size: 2.2em;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .main-content {
+            background-color: var(--background-light);
+            padding: 30px 40px;
+            margin-right: var(--sidebar-width, 250px);
+        }
+        
+        .overview-tab {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 8px 25px;
+            display: inline-block;
+            font-weight: 600;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .department-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .department-selector {
+            flex-grow: 1;
+            max-width: 350px;
+        }
+        
+        .department-dropdown {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+        
+        .department-title {
+            font-size: 1.8em;
+            text-align: center;
+            margin: 30px 0;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .summary-card-title {
+            font-size: 1.1em;
+            color: var(--text-dark);
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .summary-card-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+        
+        .trend-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .trend-up {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--green);
+        }
+        
+        .trend-down {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: var(--red);
+        }
+        
+        .trend-neutral {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--orange);
+        }
+        
+        .charts-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .chart-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            flex: 1 1 45%;
+            min-width: 300px;
+        }
+        
+        .chart-title {
+            color: var(--primary-color);
+            font-size: 1.2em;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .team-summary-section {
+            margin-top: 40px;
+        }
+        
+        .team-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .team-summary-table th,
+        .team-summary-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .team-summary-table th {
+            background-color: rgba(74, 20, 140, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .team-summary-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .team-summary-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .score-cell {
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .health-indicator {
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .health-good {
+            background-color: var(--green);
+        }
+        
+        .health-warning {
+            background-color: var(--orange);
+        }
+        
+        .health-critical {
+            background-color: var(--red);
+        }
+        
+        .vote-summary {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .vote-item {
+            text-align: center;
+            background-color: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            min-width: 120px;
+        }
+        
+        .vote-count {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 5px 0;
+        }
+        
+        .vote-label {
+            font-size: 0.9em;
+            color: var(--text-dark);
+        }
+        
+        .footer-banner {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            height: 10px;
+        }
+        
+        .logo {
+            position: absolute;
+            right: 40px;
+            top: 20px;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .sky {
+            color: #ffffff;
+        }
+        
+        .score {
+            color: #e0e0e0;
+        }
+        
+        .star-icon {
+            color: #ffd700;
+            margin-left: 3px;
+        }
+        
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .error-message {
+            display: none;
+            background-color: #fff3f3;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 20px 0;
+            color: #d32f2f;
+            border-radius: var(--border-radius);
+        }
+        
+        @media (max-width: 768px) {
+            .charts-section {
+                flex-direction: column;
+            }
+            
+            .chart-container {
+                flex: 1 1 100%;
+            }
+            
+            .header-banner {
+                padding: 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .logo {
+                position: relative;
+                right: auto;
+                top: auto;
+                margin-top: 15px;
+                display: block;
+            }
+            
+            .vote-summary {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .vote-item {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header Section -->
-    <div class="header">
-      <div class="logo-text">TEAM LEADER</div>
-      <h1>Team Leader Settings</h1>
-      <div class="sky-score">sky<span style="color: white;">score</span></div>
-    </div>
-    
-    <!-- Main Content -->
-    <div class="main-content">
-      <div class="settings-panel">
-        <div class="panel-header">
-          <h2 class="panel-title">Health Check Settings</h2>
-          <button class="update-login-btn" id="updateLoginBtn">UPDATE LOG IN DETAILS</button>
-        </div>
-        
-        <div class="welcome-banner">
-          <h3 class="welcome-title">Welcome to the Sky Engineering Health Check Website!</h3>
-          <p class="welcome-text">This tool helps Sky Engineering teams assess their operational health using the Spotify Health Check technique. Users can rate various aspects of their team's performance and visualize the results. Use Our guide to get started.</p>
-        </div>
-        
-        <div class="settings-section">
-          <h3 class="section-title">Status Overview</h3>
-          
-          <div class="team-status">
-            <span class="status-indicator status-active"></span>
-            <span class="status-text">TEAM 5CS16_A STATUS: ACTIVE</span>
-          </div>
-          
-          <div class="team-status">
-            <span class="status-indicator status-moderate"></span>
-            <span class="status-text">TEAM 5CS16_B STATUS: MODERATELY ACTIVE</span>
-          </div>
-          
-          <div class="team-status">
-            <span class="status-indicator status-moderate"></span>
-            <span class="status-text">TEAM 5CS16_C STATUS: MODERATELY ACTIVE</span>
-          </div>
-          
-          <div class="team-status">
-            <span class="status-indicator status-active"></span>
-            <span class="status-text">TEAM 5CS16_D STATUS: ACTIVE</span>
-          </div>
-        </div>
-        
-        <div class="settings-section">
-          <h3 class="section-title">Notification Settings</h3>
-          
-          <div class="settings-card">
-            <div class="card-header">
-              <span class="card-title">Health Score Alerts</span>
-              <label class="toggle-switch">
-                <input type="checkbox" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-            <p class="settings-description">Configure alerts when health scores for teams fall below certain thresholds.</p>
-          </div>
-          
-          <div class="settings-card">
-            <div class="card-header">
-              <span class="card-title">Weekly Report Email</span>
-              <label class="toggle-switch">
-                <input type="checkbox" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-            <p class="settings-description">Receive weekly summary reports of team health metrics via email.</p>
-          </div>
-          
-          <div class="settings-card">
-            <div class="card-header">
-              <span class="card-title">Dashboard Notifications</span>
-              <label class="toggle-switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-              </label>
-            </div>
-            <p class="settings-description">Enable browser notifications for significant health score changes.</p>
-          </div>
-        </div>
-        
-        <div class="assistance-section">
-          <span class="notification-icon">🔔</span>
-          <p class="assistance-text">Need Assistance? If you need help at any point, you can visit this guide page to the left or contact your system administrator.</p>
-        </div>
-        
-        <div class="button-group">
-          <button class="btn btn-secondary" id="overviewBtn">OVERVIEW</button>
-          <button class="btn btn-primary" id="guideBtn">Our Guide</button>
-          <button class="btn btn-primary" id="continueBtn">Continue to Health Check</button>
-        </div>
+    {% include "navbar.html" %}
+
+    <div class="dashboard-container">
+      <div class="header-banner">
+          <h1 class="header-title">DEPARTMENT SUMMARY</h1>
+          <div class="logo"><span class="sky">sky</span><span class="score">score</span></div>
       </div>
-    </div>
-    
-    <!-- Footer -->
-    <div class="footer">
-      <div>© 2025 Sky Engineering</div>
-      <button class="menu-btn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-    
-    <!-- Guide Modal -->
-    <div class="modal-overlay" id="guideModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 class="modal-title">Sky Engineering Health Check Guide</h2>
-          <button class="close-modal" id="closeModal">&times;</button>
-        </div>
-        <div class="guide-content">
-          <!-- Guide content can be added here later -->
-          <p>This is where you can add detailed guide information later. The content of this guide will help team leaders understand how to properly use the Sky Engineering Health Check tool and interpret results.</p>
-          <p>The guide will provide step-by-step instructions on:</p>
-          <ul>
-            <li>Completing the health check assessment</li>
-            <li>Interpreting team health scores</li>
-            <li>Implementing improvements based on results</li>
-            <li>Tracking progress over time</li>
-          </ul>
-          <p>You can easily update this content later as needed.</p>
-        </div>
+      
+      <div class="main-content">
+          <div class="overview-tab">DEPARTMENT OVERVIEW</div>
+          
+          <div class="department-controls">
+              <div class="department-selector">
+                  <select id="department-dropdown" class="department-dropdown" onchange="changeDepartment()">
+                      {% for dept in departments %}
+                          <option value="{{ dept.departmentid }}" {% if dept.departmentid == default_department.departmentid %}selected{% endif %}>
+                              {{ dept.departmentname }}
+                          </option>
+                      {% endfor %}
+                  </select>
+              </div>
+          </div>
+          
+          <h2 id="current-department" class="department-title">
+              {% if default_department %}
+                  {{ default_department.departmentname }} Department
+              {% else %}
+                  No Departments Available
+              {% endif %}
+          </h2>
+          
+          <div id="loading-indicator" class="loading-indicator">
+              Loading department data...
+          </div>
+          
+          <div id="error-message" class="error-message">
+              Unable to load department data. Please try again later.
+          </div>
+          
+          <div class="vote-summary">
+              <div class="vote-item">
+                  <div class="vote-count" id="total-votes">--</div>
+                  <div class="vote-label">Total Health Checks</div>
+              </div>
+              <div class="vote-item">
+                  <div class="vote-count" id="participation-rate">--</div>
+                  <div class="vote-label">Participation Rate</div>
+              </div>
+              <div class="vote-item">
+                  <div class="vote-count" id="last-check-date">--</div>
+                  <div class="vote-label">Last Health Check</div>
+              </div>
+          </div>
+          
+          <div class="summary-cards">
+              <div class="summary-card">
+                  <h3 class="summary-card-title">Overall Health Score</h3>
+                  <div class="summary-card-value" id="health-score">--</div>
+                  <div class="trend-badge trend-up" id="health-trend">--</div>
+              </div>
+              <div class="summary-card">
+                  <h3 class="summary-card-title">Mission Score</h3>
+                  <div class="summary-card-value" id="mission-score">--</div>
+                  <div class="trend-badge trend-neutral" id="mission-trend">--</div>
+              </div>
+              <div class="summary-card">
+                  <h3 class="summary-card-title">Speed Score</h3>
+                  <div class="summary-card-value" id="speed-score">--</div>
+                  <div class="trend-badge trend-up" id="speed-trend">--</div>
+              </div>
+              <div class="summary-card">
+                  <h3 class="summary-card-title">Value Score</h3>
+                  <div class="summary-card-value" id="value-score">--</div>
+                  <div class="trend-badge trend-down" id="value-trend">--</div>
+              </div>
+          </div>
+          
+          <div class="charts-section">
+              <div class="chart-container">
+                  <h3 class="chart-title">Health Score Trend</h3>
+                  <canvas id="trendChart"></canvas>
+              </div>
+              <div class="chart-container">
+                  <h3 class="chart-title">Performance Metrics</h3>
+                  <canvas id="radarChart"></canvas>
+              </div>
+          </div>
+          
+          <div class="team-summary-section">
+              <h3 class="chart-title">Teams in Department</h3>
+              <table class="team-summary-table">
+                  <thead>
+                      <tr>
+                          <th>Team Name</th>
+                          <th>Health</th>
+                          <th>Mission</th>
+                          <th>Speed</th>
+                          <th>Value</th>
+                          <th>Trend</th>
+                      </tr>
+                  </thead>
+                  <tbody id="team-table-body">
+                      <!-- Team data will be populated by JavaScript -->
+                  </tbody>
+              </table>
+          </div>
       </div>
-    </div>
+      
+      <div class="footer-banner"></div>
   </div>
 
-  <script>
-    // DOM Elements
-    const guideBtn = document.getElementById('guideBtn');
-    const guideModal = document.getElementById('guideModal');
-    const closeModal = document.getElementById('closeModal');
-    const updateLoginBtn = document.getElementById('updateLoginBtn');
-    const overviewBtn = document.getElementById('overviewBtn');
-    const continueBtn = document.getElementById('continueBtn');
-
-    // Event Listeners
-    guideBtn.addEventListener('click', openGuideModal);
-    closeModal.addEventListener('click', closeGuideModal);
-    guideModal.addEventListener('click', function(e) {
-      if (e.target === guideModal) {
-        closeGuideModal();
-      }
-    });
-
-    // Button click handlers for navigation
-    updateLoginBtn.addEventListener('click', function() {
-      alert('Navigate to Update Login Details page');
-      // Implement actual navigation later
-      // window.location.href = 'update-login.html';
-    });
-
-    overviewBtn.addEventListener('click', function() {
-      alert('Navigate to Overview page');
-      // Implement actual navigation later
-      // window.location.href = 'overview.html';
-    });
-
-    continueBtn.addEventListener('click', function() {
-      alert('Navigate to Health Check page');
-      // Implement actual navigation later
-      // window.location.href = 'health-check.html';
-    });
-
-    // Functions
-    function openGuideModal() {
-      guideModal.classList.add('active');
-      document.body.style.overflow = 'hidden'; // Prevent scrolling while modal is open
-    }
-
-    function closeGuideModal() {
-      guideModal.classList.remove('active');
-      document.body.style.overflow = 'auto'; // Enable scrolling again
-    }
-
-    // Toggle switches functionality
-    const toggleSwitches = document.querySelectorAll('.toggle-switch input');
-    toggleSwitches.forEach(toggle => {
-      toggle.addEventListener('change', function() {
-        // You can add custom functionality here
-        const setting = this.closest('.card-header').querySelector('.card-title').innerText;
-        console.log(`${setting} is now ${this.checked ? 'enabled' : 'disabled'}`);
-      });
-    });
-
-    // Close the modal with Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && guideModal.classList.contains('active')) {
-        closeGuideModal();
-      }
-    });
-  </script>
-</body>
-</html>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            
+            // Get the department ID from the dropdown
+            const departmentDropdown = document.getElementById('department-dropdown');
+            const deptId = departmentDropdown.value;
+            
+            // Load initial department data
+            if (deptId) {
+                fetchDepartmentData(deptId);
+            } else {
+                errorMessage.style.display = 'block';
+                loadingIndicator.style.display = 'none';
+            }
+        });
+        
+        function changeDepartment() {
+            const departmentDropdown = document.getElementById('department-dropdown');
+            const currentDepartment = document.getElementById('current-department');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Get selected department
+            const selectedDeptId = departmentDropdown.value;
+            const selectedDeptName = departmentDropdown.options[departmentDropdown.selectedIndex].text;
+            
+            // Update title
+            currentDepartment.textContent = selectedDeptName;
+            
+            // Hide error message if visible
+            errorMessage.style.display = 'none';
+            
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            
+            // Fetch department data
+            fetchDepartmentData(selectedDeptId);
+        }
+        
+        function fetchDepartmentData(deptId) {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Build URL with CSRF token for security
+            const url = `/api/department-data/?dept=${deptId}`;
+            
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Update dashboard with department data
+                    updateDashboardData(data);
+                    loadingIndicator.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error fetching department data:', error);
+                    errorMessage.style.display = 'block';
+                    loadingIndicator.style.display = 'none';
+                });
+        }
+        
+        function updateDashboardData(data) {
+            // Update summary metrics
+            if (data.summary) {
+                document.getElementById('total-votes').textContent = data.summary.totalVotes;
+                document.getElementById('participation-rate').textContent = data.summary.participationRate + '%';
+                document.getElementById('last-check-date').textContent = data.summary.lastCheckDate;
+            }
+            
+            // Update score cards (if data exists)
+            if (data.teams && data.teams.length > 0) {
+                const avgHealth = data.teams.reduce
