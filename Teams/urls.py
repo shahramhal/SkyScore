@@ -6,7 +6,7 @@ urlpatterns = [
     path('senmanager/', views.getsenman_overview, name='SenManagerDash'),
     path('department-summary/',views.department_summary, name='department_summary'),
     path('api/department-data/', views.department_data, name='department_data'),
-     # Add your Teams app URLs here if needed
+    path('senmanagerprog/', views.getsenmanprogress, name='SenManp2'),
     # path('', include('Teams.urls')),
 
 ]

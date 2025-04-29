@@ -20,6 +20,12 @@ def getsenman_overview(request):
     return render(request, 'SenManagerDash.html', {'departments': departments})
 
 
+def getsenmanprogress(request):
+    departments = Department.objects.all()
+    teams = Team.objects.all()
+    return render(request, 'SenManp2.html', {'departments': departments, 'teams': teams})
+
+
 def department_summary(request):
     """
     View to render the department summary dashboard.
@@ -100,12 +106,15 @@ def calculate_department_metrics(department):
     
     # Get teams in this department
     teams = Team.objects.filter(departmentid=department.departmentid)
-    team_ids = [team.teamid for team in teams]
     
-    # Get votes for these teams
+    # Get users in these teams
+    users_in_dept = User.objects.filter(team__in=teams).distinct()
+    
+    # Get votes for users in this department
     current_votes = Vote.objects.filter(
         cardid__cardname__in=['Health', 'Mission', 'Speed', 'Value'],
-        votingdate__gte=one_month_ago
+        votingdate__gte=one_month_ago,
+        userid__in=users_in_dept
     ).select_related('cardid')
     
     # Calculate average scores
@@ -119,7 +128,8 @@ def calculate_department_metrics(department):
     previous_votes = Vote.objects.filter(
         cardid__cardname__in=['Health', 'Mission', 'Speed', 'Value'],
         votingdate__gte=two_months_ago,
-        votingdate__lt=one_month_ago
+        votingdate__lt=one_month_ago,
+        userid__in=users_in_dept
     ).select_related('cardid')
     
     prev_health_score = previous_votes.filter(cardid__cardname='Health').aggregate(avg=Avg('votevalue'))['avg'] or 0
@@ -128,10 +138,10 @@ def calculate_department_metrics(department):
     health_trend = round(health_score - prev_health_score, 1)
     
     return {
-        'health_score': round(health_score, 2),
-        'mission_score': round(mission_score, 2),
-        'speed_score': round(speed_score, 2),
-        'value_score': round(value_score, 2),
+        'health_score': round(health_score, 1),
+        'mission_score': round(mission_score, 1),
+        'speed_score': round(speed_score, 1),
+        'value_score': round(value_score, 1),
         'health_trend': health_trend
     }
 
@@ -143,10 +153,11 @@ def calculate_team_metrics(team):
     one_month_ago = today - timedelta(days=30)
     two_months_ago = one_month_ago - timedelta(days=30)
     
-    # Get latest votes for this team
+    # Get votes for this team
     current_votes = Vote.objects.filter(
         cardid__cardname__in=['Health', 'Mission', 'Speed', 'Value'],
-        votingdate__gte=one_month_ago
+        votingdate__gte=one_month_ago,
+        userid__in=User.objects.filter(team=team)  # Filter by users in this team
     ).select_related('cardid')
     
     # Calculate average scores
@@ -159,7 +170,8 @@ def calculate_team_metrics(team):
     previous_votes = Vote.objects.filter(
         cardid__cardname='Health',
         votingdate__gte=two_months_ago,
-        votingdate__lt=one_month_ago
+        votingdate__lt=one_month_ago,
+        userid__in=User.objects.filter(team=team)  # Filter by users in this team
     )
     prev_health_score = previous_votes.aggregate(avg=Avg('votevalue'))['avg'] or 0
     
@@ -167,10 +179,10 @@ def calculate_team_metrics(team):
     trend = round(health_score - prev_health_score, 1)
     
     return {
-        'health_score': round(health_score, 2),
-        'mission_score': round(mission_score, 2),
-        'speed_score': round(speed_score, 2),
-        'value_score': round(value_score, 2),
+        'health_score': round(health_score, 1),  # Make sure values are properly rounded
+        'mission_score': round(mission_score, 1),
+        'speed_score': round(speed_score, 1),
+        'value_score': round(value_score, 1),
         'trend': trend
     }
 

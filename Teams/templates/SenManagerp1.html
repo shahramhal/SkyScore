@@ -472,6 +472,8 @@
   </div>
 
     <script>
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const loadingIndicator = document.getElementById('loading-indicator');
             const errorMessage = document.getElementById('error-message');
@@ -503,7 +505,7 @@
             const selectedDeptName = departmentDropdown.options[departmentDropdown.selectedIndex].text;
             
             // Update title
-            currentDepartment.textContent = selectedDeptName;
+            currentDepartment.textContent = selectedDeptName + " Department";
             
             // Hide error message if visible
             errorMessage.style.display = 'none';
@@ -549,6 +551,253 @@
                 document.getElementById('last-check-date').textContent = data.summary.lastCheckDate;
             }
             
-            // Update score cards (if data exists)
+            // Calculate average scores from teams data
+            let avgHealth = 0;
+            let avgMission = 0;
+            let avgSpeed = 0;
+            let avgValue = 0;
+            
             if (data.teams && data.teams.length > 0) {
-                const avgHealth = data.teams.reduce
+                const totalTeams = data.teams.length;
+                
+                // Sum up scores from all teams
+                data.teams.forEach(team => {
+                    avgHealth += parseFloat(team.health) || 0;
+                    avgMission += parseFloat(team.mission) || 0;
+                    avgSpeed += parseFloat(team.speed) || 0;
+                    avgValue += parseFloat(team.value) || 0;
+                });
+                
+                // Calculate averages
+                avgHealth = (avgHealth / totalTeams).toFixed(1);
+                avgMission = (avgMission / totalTeams).toFixed(1);
+                avgSpeed = (avgSpeed / totalTeams).toFixed(1);
+                avgValue = (avgValue / totalTeams).toFixed(1);
+                
+                // Update score cards
+                document.getElementById('health-score').textContent = avgHealth;
+                document.getElementById('mission-score').textContent = avgMission;
+                document.getElementById('speed-score').textContent = avgSpeed;
+                document.getElementById('value-score').textContent = avgValue;
+                
+                // Update trend badges
+                updateTrendBadge('health-trend', data.teams);
+                updateTrendBadge('mission-trend', data.teams);
+                updateTrendBadge('speed-trend', data.teams);
+                updateTrendBadge('value-trend', data.teams);
+                
+                // Update team table
+                updateTeamTable(data.teams);
+            }
+            
+            // Update charts
+            if (data.trends) {
+                updateTrendChart(data.trends);
+            }
+            
+            if (data.radar) {
+                updateRadarChart(data.radar);
+            }
+        }
+        
+        function updateTrendBadge(elementId, teams) {
+            const element = document.getElementById(elementId);
+            let totalTrend = 0;
+            
+            // Calculate overall trend based on team trends
+            teams.forEach(team => {
+                totalTrend += parseFloat(team.trend) || 0;
+            });
+            
+            const avgTrend = (totalTrend / teams.length).toFixed(1);
+            
+            // Update badge text
+            if (avgTrend > 0) {
+                element.textContent = `+${avgTrend}`;
+                element.className = 'trend-badge trend-up';
+            } else if (avgTrend < 0) {
+                element.textContent = avgTrend;
+                element.className = 'trend-badge trend-down';
+            } else {
+                element.textContent = '0.0';
+                element.className = 'trend-badge trend-neutral';
+            }
+        }
+        
+        function updateTeamTable(teams) {
+            const tableBody = document.getElementById('team-table-body');
+            tableBody.innerHTML = '';
+            
+            teams.forEach(team => {
+                const row = document.createElement('tr');
+                
+                // Team name cell
+                const nameCell = document.createElement('td');
+                nameCell.textContent = team.name;
+                row.appendChild(nameCell);
+                
+                // Health score cell
+                const healthCell = document.createElement('td');
+                healthCell.className = 'score-cell';
+                
+                // Add health indicator
+                const healthIndicator = document.createElement('span');
+                healthIndicator.className = 'health-indicator';
+                if (team.health >= 7.5) {
+                    healthIndicator.classList.add('health-good');
+                } else if (team.health >= 5) {
+                    healthIndicator.classList.add('health-warning');
+                } else {
+                    healthIndicator.classList.add('health-critical');
+                }
+                
+                healthCell.appendChild(healthIndicator);
+                healthCell.appendChild(document.createTextNode(team.health));
+                row.appendChild(healthCell);
+                
+                // Mission score cell
+                const missionCell = document.createElement('td');
+                missionCell.className = 'score-cell';
+                missionCell.textContent = team.mission;
+                row.appendChild(missionCell);
+                
+                // Speed score cell
+                const speedCell = document.createElement('td');
+                speedCell.className = 'score-cell';
+                speedCell.textContent = team.speed;
+                row.appendChild(speedCell);
+                
+                // Value score cell
+                const valueCell = document.createElement('td');
+                valueCell.className = 'score-cell';
+                valueCell.textContent = team.value;
+                row.appendChild(valueCell);
+                
+                // Trend cell
+                const trendCell = document.createElement('td');
+                trendCell.className = 'score-cell';
+                
+                if (team.trend > 0) {
+                    trendCell.textContent = `+${team.trend}`;
+                    trendCell.style.color = 'var(--green)';
+                } else if (team.trend < 0) {
+                    trendCell.textContent = team.trend;
+                    trendCell.style.color = 'var(--red)';
+                } else {
+                    trendCell.textContent = '0.0';
+                    trendCell.style.color = 'var(--orange)';
+                }
+                
+                row.appendChild(trendCell);
+                
+                // Add row to table
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function updateTrendChart(trendData) {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            
+            // Check if chart already exists and destroy it
+            if (window.trendChart) {
+                window.trendChart.destroy();
+            }
+            
+            window.trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trendData.months,
+                    datasets: [{
+                        label: 'Health Score',
+                        data: trendData.healthScores,
+                        borderColor: 'var(--primary-color)',
+                        backgroundColor: 'rgba(74, 20, 140, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: 'var(--primary-color)',
+                        pointRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateRadarChart(radarData) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            // Check if chart already exists and destroy it
+            if (window.radarChart) {
+                window.radarChart.destroy();
+            }
+            
+            window.radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: radarData.categories,
+                    datasets: [{
+                        label: 'Score',
+                        data: radarData.scores,
+                        backgroundColor: 'rgba(74, 20, 140, 0.2)',
+                        borderColor: 'var(--primary-color)',
+                        pointBackgroundColor: 'var(--primary-color)',
+                        pointRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: {
+                                stepSize: 2,
+                                display: false
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
