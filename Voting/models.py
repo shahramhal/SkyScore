@@ -25,7 +25,7 @@ class Healthcheckcard(models.Model):
     cardid = models.AutoField(db_column='cardID', primary_key=True)  # Field name made lowercase.
     cardname = models.TextField(db_column='cardName', blank=True, null=True)  # Field name made lowercase.
     description = models.TextField(blank=True, null=True)
-   
+    last_updated = models.DateField(db_column='last_update', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -43,6 +43,8 @@ class Vote(models.Model):
     votevalue = models.IntegerField(db_column='voteValue', blank=True, null=True)  # Field name made lowercase.
     progressstatus = models.TextField(db_column='progressStatus', blank=True, null=True)  # Field name made lowercase.
     comments = models.TextField(db_column='comments', blank=True, null=True)
+    votingdate = models.DateField(db_column='voting_date', blank=True, null=True)  # Field name made lowercase.
+    
 
     class Meta:
         managed = False
@@ -52,15 +54,13 @@ class Vote(models.Model):
         return f"Vote {self.voteid} by {self.userid.username} on {self.cardid.cardname}"
 
 class Session(models.Model):
-    sessionid = models.AutoField(db_column='sessionID', primary_key=True)  # Field name made lowercase.
-    voteid = models.ForeignKey('Vote', models.DO_NOTHING, db_column='voteID', blank=True, null=True)  # Field name made lowercase.
-    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userID', blank=True, null=True)  # Field name made lowercase.
-    sessiondate = models.DateField(db_column='sessionDate', blank=True, null=True)  # Field name made lowercase.
+    sessionid = models.AutoField(db_column='sessionID', primary_key=True)
+    sessiondate = models.DateField(db_column='sessionDate', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'Session'
-        
+
     def __str__(self):
         return f"Session {self.sessionid} on {self.sessiondate}"

@@ -1,324 +1,327 @@
 .action-container {
-    display: flex;
-    justify-content: center;
-    margin: 50px 0;
-  }
-  .health-check-button {
-    background-color: rgba(100, 150, 200, 0.5);
-    color: black;
-    text-decoration: none;
-    padding: 15px 30px;
-    border-radius: 30px;
-    font-weight: bold;
-    text-align: center;
-    transition: background-color 0.3s;
-  }
+  display: flex;
+  justify-content: center;
+  margin: 50px 0;
+}
 
-  .health-check-button:hover {
-    background-color: rgba(100, 150, 200, 0.7);
-  }
+.health-check-button {
+  background-color: rgba(100, 150, 200, 0.5);
+  color: black;
+  text-decoration: none;
+  padding: 15px 30px;
+  border-radius: 30px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s;
+}
 
-    
-     
-  .main-content {
-    margin-left: var(--sidebar-width, 250px);
-  }
+.health-check-button:hover {
+  background-color: rgba(100, 150, 200, 0.7);
+}
+
+
+
+.main-content {
+  margin-left: var(--sidebar-width, 250px);
+}
+
 /* Dashboard Container */
 .dashboard-container {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    
-  }
-  
-  /* Welcome Banner */
-  .welcome-banner {
-    background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
-    color: white;
-    padding: 2rem;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-    text-align: center;
-  }
-  
-  .welcome-banner h1 {
-    margin: 0;
-    font-size: 2rem;
-  }
-  
-  .welcome-banner p {
-    margin: 0.5rem 0 0;
-    opacity: 0.9;
-  }
-  
-  /* Dashboard Cards */
-  .dashboard-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .dashboard-card h2 {
-    margin-top: 0;
-    color: var(--primary-blue);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .card-header h2 span {
-    color: var(--dark-blue);
-    font-weight: normal;
-  }
-  
-  .view-report {
-    color: var(--accent-blue);
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .view-report:hover {
-    text-decoration: underline;
-  }
-  
-  /* Session List */
-  .session-list {
-    display: grid;
-    gap: 1rem;
-  }
-  
-  .session-item {
-    background: #f8f9fa;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+}
+
+/* Welcome Banner */
+.welcome-banner {
+  background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+  color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.welcome-banner h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.welcome-banner p {
+  margin: 0.5rem 0 0;
+  opacity: 0.9;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card h2 {
+  margin-top: 0;
+  color: var(--primary-blue);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.card-header h2 span {
+  color: var(--dark-blue);
+  font-weight: normal;
+}
+
+.view-report {
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.view-report:hover {
+  text-decoration: underline;
+}
+
+/* Session List */
+.session-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.session-item {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.session-item h3 {
+  margin: 0;
+  color: var(--dark-blue);
+}
+
+.session-item p {
+  margin: 0.25rem 0 0;
+  color: #666;
+}
+
+.session-button {
+  background: var(--primary-blue);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.session-button:hover {
+  background: var(--accent-blue);
+}
+
+.no-sessions {
+  text-align: center;
+  color: #666;
+  padding: 1rem;
+}
+
+/* Health Cards Grid */
+.health-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.health-card {
+  width: 240%;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 5px solid;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.health-card:hover {
+  transform: translateY(-3px);
+}
+
+.health-card.green {
+  border-color: #28a745;
+  background: rgba(40, 167, 69, 0.1);
+}
+
+.health-card.amber {
+  border-color: #ffc107;
+  background: rgba(255, 193, 7, 0.1);
+}
+
+.health-card.red {
+  border-color: #dc3545;
+  background: rgba(220, 53, 69, 0.1);
+}
+
+.health-card h3 {
+  margin: 0 0 0.5rem;
+}
+
+.health-status {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+}
+
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.status-badge.green {
+  background: #28a745;
+}
+
+.status-badge.amber {
+  background: #ffc107;
+}
+
+.status-badge.red {
+  background: #dc3545;
+}
+
+.trend {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.trend.up {
+  color: #28a745;
+}
+
+.trend.down {
+  color: #dc3545;
+}
+
+.health-card small {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+/* Stats Container */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.stat-card h3 {
+  margin-top: 0;
+  color: var(--primary-blue);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-bar-container {
+  height: 20px;
+  background: #f0f0f0;
+  border-radius: 5px;
+  margin: 1rem 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(to right, var(--primary-blue), var(--accent-blue));
+  border-radius: 5px;
+  color: white;
+  font-size: 0.7rem;
+  text-align: center;
+  line-height: 10px;
+}
+
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+}
+
+.activity-list li {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.green-icon {
+  color: #28a745;
+}
+
+.amber-icon {
+  color: #ffc107;
+}
+
+/* Buttons */
+.primary-button {
+  display: inline-block;
+  background: var(--primary-blue);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.primary-button:hover {
+  background: var(--accent-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dashboard-container {
     padding: 1rem;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
-  
-  .session-item h3 {
-    margin: 0;
-    color: var(--dark-blue);
-  }
-  
-  .session-item p {
-    margin: 0.25rem 0 0;
-    color: #666;
-  }
-  
-  .session-button {
-    background: var(--primary-blue);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s;
-  }
-  
-  .session-button:hover {
-    background: var(--accent-blue);
-  }
-  
-  .no-sessions {
-    text-align: center;
-    color: #666;
-    padding: 1rem;
-  }
-  
-  /* Health Cards Grid */
+
   .health-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    grid-template-columns: 1fr;
   }
-  
-  .health-card {
-    padding: 1rem;
-    border-radius: 8px;
-    border-left: 5px solid;
-    transition: transform 0.3s;
-    cursor: pointer;
-  }
-  
-  .health-card:hover {
-    transform: translateY(-3px);
-  }
-  
-  .health-card.green {
-    border-color: #28a745;
-    background: rgba(40, 167, 69, 0.1);
-  }
-  
-  .health-card.amber {
-    border-color: #ffc107;
-    background: rgba(255, 193, 7, 0.1);
-  }
-  
-  .health-card.red {
-    border-color: #dc3545;
-    background: rgba(220, 53, 69, 0.1);
-  }
-  
-  .health-card h3 {
-    margin: 0 0 0.5rem;
-  }
-  
-  .health-status {
-    display: flex;
-    justify-content: space-between;
-    margin: 0.5rem 0;
-  }
-  
-  .status-badge {
-    padding: 0.25rem 0.5rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .status-badge.green {
-    background: #28a745;
-  }
-  
-  .status-badge.amber {
-    background: #ffc107;
-  }
-  
-  .status-badge.red {
-    background: #dc3545;
-  }
-  
-  .trend {
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-  
-  .trend.up {
-    color: #28a745;
-  }
-  
-  .trend.down {
-    color: #dc3545;
-  }
-  
-  .health-card small {
-    color: #666;
-    font-size: 0.8rem;
-  }
-  
-  /* Stats Container */
+
   .stats-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: 1fr;
   }
-  
-  .stat-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-  }
-  
-  .stat-card h3 {
-    margin-top: 0;
-    color: var(--primary-blue);
-    display: flex;
-    align-items: center;
+
+  .session-item {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.5rem;
   }
-  
-  .progress-bar-container {
-    height: 10px;
-    background: #f0f0f0;
-    border-radius: 5px;
-    margin: 1rem 0;
+
+  .session-button {
+    align-self: flex-end;
   }
-  
-  .progress-bar {
-    height: 100%;
-    background: linear-gradient(to right, var(--primary-blue), var(--accent-blue));
-    border-radius: 5px;
-    color: white;
-    font-size: 0.7rem;
-    text-align: center;
-    line-height: 10px;
-  }
-  
-  .activity-list {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0 0;
-  }
-  
-  .activity-list li {
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .green-icon {
-    color: #28a745;
-  }
-  
-  .amber-icon {
-    color: #ffc107;
-  }
-  
-  /* Buttons */
-  .primary-button {
-    display: inline-block;
-    background: var(--primary-blue);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s;
-  }
-  
-  .primary-button:hover {
-    background: var(--accent-blue);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .dashboard-container {
-      padding: 1rem;
-    }
-    
-    .health-cards-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .stats-container {
-      grid-template-columns: 1fr;
-    }
-    
-    .session-item {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
-    
-    .session-button {
-      align-self: flex-end;
-    }
-  }
+}

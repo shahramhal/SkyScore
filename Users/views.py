@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.utils import timezone
 
 
 # Create your views here.
@@ -76,7 +77,7 @@ def redirect_by_UserType(user_type):
     if user_type == 'Admin':
         return redirect('/admin/')  # Redirect to admin dashboard
     elif user_type == 'SenManager':
-        return redirect('sen_manager')  # Redirect to senior manager page
+        return redirect('SenManagerDash')  # Redirect to senior manager page
     elif user_type == 'TeamLead':
         return redirect('team_lead_dashboard')  # Redirect to team leader dashboard
     elif user_type == 'DeptLead':
@@ -145,11 +146,7 @@ def signup_view(request):
     
     # Render the sign-up page
     return render(request, 'signup.html')
-def dashboard(request):
-    # Check if user is authenticated
-    if not request.user.is_authenticated:
-        return redirect('login')
-    return render(request, 'dashboard.html')
+
 
 password_reset_token_generator = CustomPasswordResetTokenGenerator()
 def forgotPassword(request):
@@ -251,10 +248,10 @@ def passwordResetConfirm(request):
 
 @never_cache
 # @login_required(login_url='login')
+@never_cache
 def engineer_dashboard(request):
     if 'user_id' not in request.session:
         return redirect('login')
-    
     
     try:
         # Get full user object from database
@@ -265,31 +262,47 @@ def engineer_dashboard(request):
         
         # For each card, check if the user has voted
         for card in health_cards:
-            try:
-                vote = Vote.objects.get(userid=user, cardid=card)
+            vote = Vote.objects.filter(userid=user, cardid=card).order_by('-votingdate').first()
+            if vote is not None:
                 card.voted = True
                 card.vote_value = vote.votevalue
                 card.progress_status = vote.progressstatus
-            except Vote.DoesNotExist:
+                card.comments = vote.comments if vote.comments else ""
+                card.last_voted = vote.votingdate
+            else:
                 card.voted = False
+                card.vote_value = None
+                card.progress_status = ""
+                card.comments = ""
+                card.last_voted = None
+        
+        current_session_date = timezone.now().date()
+        votes_completed = Vote.objects.filter(
+            userid=user,
+            votingdate=current_session_date
+        ).values('cardid').distinct().count()
         total_cards = health_cards.count()
-        votes_completed = Vote.objects.filter(userid=user).count()
-        progress_percentage = (votes_completed / total_cards * 100) if total_cards > 0 else 0
+        
+        # Calculate percentage (capped at 100%)
+        progress_percentage = min(
+            (votes_completed / total_cards * 100) if total_cards > 0 else 0,
+            100
+        )
 
         context = {
-            
             'user': user,
             'health_cards': health_cards,
             'total_cards': total_cards,
             'votes_completed': votes_completed,
             'progress_percentage': progress_percentage,
-             # Also pass session data to ensure it's available
-            'session_data': request.session
-                }
+            'session_data': request.session,
+            'active_page': 'dashboard'
+        }
         return render(request, 'engineer_dashboard.html', context)
     except User.DoesNotExist:
         request.session.flush()
         return redirect('login')
+    
     
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 
@@ -315,7 +328,8 @@ def engineer_profile(request):
         context = {
             'user': user,
             # Also pass session data to ensure it's available
-            'session_data': request.session
+            'session_data': request.session,
+            'active_page': 'profile'
         }
         return render(request, 'engineer_profile.html', context)
     except User.DoesNotExist:
