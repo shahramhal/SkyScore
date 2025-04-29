@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import User, Healthcheckcard, Vote, Session
 from django.utils import timezone
@@ -9,7 +10,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import User, Healthcheckcard, Vote, Session
 from django.utils import timezone
 from django.contrib import messages
-from django.db.models import Count, Q # Добавлен Q для фильтрации
+from django.db.models import Count, Q 
+
 
 # Voting Dashboard
 def votingDashboard(request):
@@ -17,21 +19,15 @@ def votingDashboard(request):
     health_cards = Healthcheckcard.objects.all()
 
     # Get current user
-    # Убедитесь, что 'user_id' есть в сессии
+    #
     if 'user_id' not in request.session:
-         # Перенаправить на логин или показать ошибку
-         # messages.error(request, "Please log in to view the dashboard.")
-         # return redirect('login_page_name') # Замените 'login_page_name' на ваш URL логина
-         # Временное решение для теста, если сессия не установлена:
-         return HttpResponse("User not logged in.", status=401) # Или используйте тестового юзера
+        
+         return HttpResponse("User not logged in.", status=401) 
 
     try:
         user = User.objects.get(userID=request.session['user_id'])
     except User.DoesNotExist:
-         # Обработка случая, если юзер удален, а сессия осталась
-         # messages.error(request, "User not found.")
-         # del request.session['user_id']
-         # return redirect('login_page_name')
+         
          return HttpResponse("User not found.", status=404)
 
     # Get active session
@@ -60,14 +56,12 @@ def votingDashboard(request):
     # Get the current card status for each card based on *user's* vote
     # Also calculate *user's* summary stats for the Card Summary section
     for card in health_cards:
-        vote = user_votes_current_session.filter(cardid=card).first() # Ищем голос юзера по этой карте
-
+        vote = user_votes_current_session.filter(cardid=card).first() 
         if vote:
             card.voted = True
             card.vote_value = vote.votevalue
             card.progress_status = vote.progressstatus
-            # Считаем голоса ТОЛЬКО текущего юзера для этой карты в текущей сессии
-            # (хотя для одной карты у одного юзера будет только 1 голос)
+            
             card.green_count = 1 if vote.votevalue == 3 else 0
             card.amber_count = 1 if vote.votevalue == 2 else 0
             card.red_count = 1 if vote.votevalue == 1 else 0
@@ -79,7 +73,7 @@ def votingDashboard(request):
             card.amber_count = 0
             card.red_count = 0
 
-        # Устанавливаем проценты для отображения (будет либо 100% одного цвета, либо 0)
+        
         total_user_votes_for_card = card.green_count + card.amber_count + card.red_count
         if total_user_votes_for_card > 0:
              card.green_percentage = (card.green_count / total_user_votes_for_card) * 100
@@ -91,17 +85,14 @@ def votingDashboard(request):
              card.red_percentage = 0
 
 
-    # Get voting history - only sessions where the current user participated
+    
     user_voted_session_dates = Vote.objects.filter(userid=user).values_list('votingdate', flat=True).distinct()
-    # Убираем текущую дату, если она есть, чтобы избежать дублирования с active_session (опционально)
-    # user_voted_session_dates = user_voted_session_dates.exclude(votingdate=current_session_date)
-
-    # Получаем объекты Session для этих дат
+    
     voting_sessions = Session.objects.filter(
         sessiondate__in=user_voted_session_dates
-    ).order_by('-sessiondate')[:10] # Показываем последние 10 сессий, где юзер голосовал
+    ).order_by('-sessiondate')[:10] 
 
-    # Добавляем количество голосов *пользователя* в каждой сессии (опционально, если нужно в списке истории)
+  
     for session in voting_sessions:
         session.user_vote_count = Vote.objects.filter(
             userid=user,
@@ -114,14 +105,14 @@ def votingDashboard(request):
     context = {
         'user': user,
         'health_check_cards': health_cards,
-        'active_session': active_session, # Текущая сессия для заголовка и прогресса
-        'voting_sessions': voting_sessions, # Отфильтрованный список сессий для истории
+        'active_session': active_session, 
+        'voting_sessions': voting_sessions, 
         'votes_completed': votes_completed,
         'total_cards': total_cards,
         'progress_percentage': progress_percentage,
         'current_card': current_card,
         'active_page': 'health_cards',
-        'is_historical': False # Явно указываем, что это не исторический просмотр
+        'is_historical': False 
     }
 
     return render(request, 'votingDashboard.html', context)
@@ -284,8 +275,7 @@ def view_session(request, session_id):
     user_votes_in_session = Vote.objects.filter(
         userid=user,
         votingdate=session.sessiondate
-    ).select_related('cardid') # Оптимизация: сразу получаем данные карты
-
+    ).select_related('cardid') 
     # Calculate progress for this user in this session
     votes_completed = user_votes_in_session.values('cardid').distinct().count()
     total_cards = health_cards.count()
@@ -296,16 +286,15 @@ def view_session(request, session_id):
 
     # Get the card status for each card based on *user's* vote in this session
     # Also prepare data for the Card Summary section (showing user's vote)
-    user_votes_dict = {vote.cardid_id: vote for vote in user_votes_in_session} # Словарь для быстрого доступа
+    user_votes_dict = {vote.cardid_id: vote for vote in user_votes_in_session} 
 
     for card in health_cards:
-        vote = user_votes_dict.get(card.cardid) # Ищем голос юзера по ID карты
-
+        vote = user_votes_dict.get(card.cardid) 
         if vote:
             card.voted = True
             card.vote_value = vote.votevalue
             card.progress_status = vote.progressstatus
-            # Считаем голоса ТОЛЬКО текущего юзера для Card Summary
+           
             card.green_count = 1 if vote.votevalue == 3 else 0
             card.amber_count = 1 if vote.votevalue == 2 else 0
             card.red_count = 1 if vote.votevalue == 1 else 0
@@ -317,7 +306,6 @@ def view_session(request, session_id):
             card.amber_count = 0
             card.red_count = 0
 
-        # Устанавливаем проценты для отображения
         total_user_votes_for_card = card.green_count + card.amber_count + card.red_count
         if total_user_votes_for_card > 0:
              card.green_percentage = (card.green_count / total_user_votes_for_card) * 100
@@ -333,15 +321,15 @@ def view_session(request, session_id):
 
     context = {
         'user': user,
-        'health_check_cards': health_cards, # Карты со статусом голоса *юзера*
-        'active_session': session, # Просматриваемая историческая сессия
-        'user_session_votes': user_votes_in_session, # Детальные голоса юзера для этой сессии
-        'votes_completed': votes_completed, # Прогресс юзера в этой сессии
+        'health_check_cards': health_cards,
+        'active_session': session, 
+        'user_session_votes': user_votes_in_session, 
+        'votes_completed': votes_completed, 
         'total_cards': total_cards,
         'progress_percentage': progress_percentage,
         'current_card': current_card,
-        'active_page': 'health_cards', # Или другое значение, если нужно выделить в навигации
-        'is_historical': True # Флаг для шаблона, что это просмотр истории
+        'active_page': 'health_cards', 
+        'is_historical': True 
     }
 
     return render(request, 'votingDashboard.html', context)
