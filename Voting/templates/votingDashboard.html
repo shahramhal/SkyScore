@@ -38,12 +38,12 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-          <a href="{% url 'vote_card' health_check_cards.first.cardid %}" class="btn btn-start">
+          <button class="btn btn-start" onclick="window.location='{% url 'vote_card' health_check_cards.first.cardid %}'">
             <i class="fas fa-play"></i> Start Voting
-          </a>
-          <a href="{% url 'start_new_session' %}" class="btn btn-new">
+          </button>
+          <button class="btn btn-new" onclick="window.location='{% url 'start_new_session' %}'">
             <i class="fas fa-plus"></i> New Voting Session
-          </a>
+          </button>
         </div>
 
         <!-- Current Progress -->
@@ -61,7 +61,7 @@
           <h3><i class="fas fa-list-check"></i> Health Check Cards</h3>
           <div class="card-selector">
             {% for card in health_check_cards %}
-            <div class="card-item" data-description="{{ card.description }}">
+            <div class="card-item" data-description="{{ card.description }}" onclick="showTooltip(this)">
               <span class="card-name">{{ card.cardname }}</span>
               <span class="card-status 
                 {% if card.voted and card.vote_value == 3 %}green{% elif card.voted and card.vote_value == 2 %}amber{% elif card.voted and card.vote_value == 1 %}red{% else %}not-voted{% endif %}">
@@ -102,10 +102,10 @@
 
         <!-- Team Summary -->
         <div class="team-summary">
-          <h3><i class="fas fa-users"></i> Team Summary</h3>
+          <h3><i class="fas fa-line"></i> Card Summary</h3>
           <div class="summary-grid">
             {% for card in health_check_cards %}
-            <div class="summary-card" data-description="{{ card.description }}" data-toggle="tooltip" title="{{ card.description }}">
+            <div class="summary-card" data-description="{{ card.description }}" onclick="showTooltip(this)">
               <h4>{{ card.cardname }}</h4>
               <div class="status-distribution">
                 <div class="status-bar">
@@ -126,16 +126,21 @@
 
         <!-- Navigation Buttons -->
         <div class="nav-buttons">
-          <a href="{% url 'engineer_dashboard' %}" class="btn btn-back">
+          <button class="btn btn-back" onclick="window.location='{% url 'engineer_dashboard' %}'">
             <i class="fas fa-arrow-left"></i> Back to Dashboard
-          </a>
+          </button>
         </div>
       </div>
     </div>
-    <div id="card-tooltip" class="card-tooltip"></div>
+    <div id="card-tooltip" class="card-tooltip">
+      <div class="tooltip-header">
+        <span>Description</span>
+        <span class="tooltip-close">&times;</span>
+      </div>
+      <div class="tooltip-body"></div>
+    </div>
 
-    <script src={% static 'js/Voting.js' %}></script>
-      
-   
+    <script src={% static 'js/voting.js' %}></script>
+
   </body>
 </html>

@@ -147,10 +147,8 @@ textarea {
     cursor: pointer;
 }
 
-.btn-back {
-    background-color: #f0f0f0;
-    color: #333;
-}
+
+
 
 .btn-next,
 .btn-submit {
@@ -297,7 +295,8 @@ textarea {
 }
 
 .btn-start,
-.btn-new {
+.btn-new,
+.btn-back {
     padding: 12px 20px;
     border-radius: 8px;
     font-weight: 600;
@@ -320,9 +319,14 @@ textarea {
 }
 
 .btn-start:hover,
-.btn-new:hover {
+.btn-new:hover .btn-back:hover {
     opacity: 0.9;
     transform: translateY(-2px);
+}
+
+.btn-back {
+    background-color: #f0f0f0;
+    color: #333;
 }
 
 /* Current Progress */
@@ -652,4 +656,58 @@ textarea {
 
 .tooltip-close:hover {
     color: #666;
+}
+
+.session-vote-details {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.session-vote-details h3 {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.detail-item {
+    border-bottom: 1px dashed #eee;
+    padding: 10px 0;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item h4 {
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.detail-item p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.detail-item strong {
+    color: #000;
+}
+
+.vote-value-display {
+    font-weight: bold;
+}
+
+.green-text {
+    color: #28a745;
+}
+
+.amber-text {
+    color: #ffc107;
+}
+
+.red-text {
+    color: #dc3545;
 }
