@@ -1,11 +1,14 @@
 <!-- templates/engineering/dashboard.html -->
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Engineering Operations Dashboard</title>
+    <title>SENMAN DEPT OVERVIEW PAGE</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link 
+    rel="stylesheet" href="{% static 'css/navbar.css' %}" />
     <style>
         :root {
             --primary-color: #4a148c;
@@ -16,6 +19,11 @@
             --text-light: #ffffff;
             --background-light: #f8f9fa;
             --card-bg: #ffffff;
+            --primary-blue: #4a148c;
+            --dark-blue: #12005e;
+            --accent-blue: #7c43bd;
+
+
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
         }
@@ -30,12 +38,14 @@
         }
         
         .dashboard-container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0;
             box-shadow: var(--shadow);
             border-radius: var(--border-radius);
             overflow: hidden;
+            margin-left: var(--sidebar-width, 250px);
+
         }
         
         .header-banner {
@@ -44,6 +54,7 @@
             padding: 25px 40px;
             text-align: center;
             position: relative;
+            
         }
         
         .header-title {
@@ -53,10 +64,12 @@
             letter-spacing: 1px;
         }
         
-        .main-content {
-            background-color: var(--background-light);
-            padding: 30px 40px;
-        }
+        
+    .main-content {
+        background-color: var(--background-light);
+        padding: 30px 40px;
+        margin-right: var(--sidebar-width, 250px) ;
+    }
         
         .overview-tab {
             background-color: rgba(255, 255, 255, 0.9);
@@ -260,6 +273,12 @@
     </style>
 </head>
 <body>
+
+
+    {%include "navbar.html" %}
+
+  
+
     <div class="dashboard-container">
         <div class="header-banner">
             <h1 class="header-title">OTHER DEPARTMENTS?</h1>
@@ -271,10 +290,7 @@
             
             <div class="welcome-section">
                 <div class="welcome-message">Welcome</div>
-                <div class="access-bubble">
-                    You don't have access to team-level details.
-                    <div class="arrow"></div>
-                </div>
+                
             </div>
             
             <h2 class="department-title">The Engineering Operations Department</h2>
