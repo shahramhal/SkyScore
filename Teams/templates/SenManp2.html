@@ -270,12 +270,123 @@
                 display: block;
             }
         }
+        .department-selector {
+        margin-bottom: 20px;
+        }
+        .department-selector select {
+        padding: 8px 12px;
+        border-radius: var(--border-radius);
+        border: 1px solid #ddd;
+        background-color: white;
+        font-size: 14px;
+        color: var(--primary-color);
+        cursor: pointer;}
+    
+        .department-selector label {
+        margin-right: 10px;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+        
     </style>
 </head>
 <body>
+    <nav class="side-nav">
+        <!-- Header with logo and toggle button -->
+        <div class="side-nav-header">
+          <!-- Django URL template tag for dynamic routing -->
+          <a href="{% url 'SenManagerDash' %}" class="side-nav-logo"
+            >Sky Score</a
+          >
+          <!-- Toggle button for collapsing sidebar -->
+          <button class="side-nav-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+    
+        <!-- User Profile Section with Django Template Logic -->
+        <div class="user-profile">
+          <!-- Avatar with user's initial (or 'U' for guest) -->
+          <div class="user-avatar">
+            {% if user %} {{ user.username|slice:":1"|upper }}
+            <!-- First letter of username -->
+            {% else %} U
+            <!-- Default for guest users -->
+            {% endif %}
+          </div>
+    
+          <!-- User's full name (or 'Guest User') -->
+          <div class="user-name">
+            {% if user %} {{ user.first_name }} {{ user.last_name }}
+            <!-- Combined name -->
+            {% else %} Guest User {% endif %}
+          </div>
+    
+          <!-- User role from Django model -->
+          <div class="user-role">
+            {% if user %} {{ user.userType }}
+            <!-- Custom user type field -->
+            {% else %} Guest User {% endif %}
+          </div>
+        </div>
+    
+        <!-- Navigation Menu -->
+        <ul class="side-nav-menu">
+          <!-- Dashboard Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'engineer_dashboard' %}" 
+                 class="side-nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                  <i class="fas fa-home"></i>
+                  <span>Dashboard</span>
+              </a>
+          </li>
+      
+          <!-- Health Check Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'votingDashboard' %}" 
+                 class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'voting' %}active{% endif %}">
+                  <i class="fas fa-heart"></i>
+                  <span>Health Check</span>
+              </a>
+          </li>
+      
+          <!-- Reports Link -->
+          <li class="side-nav-item">
+              <a href="#" 
+                 class="side-nav-link {% if active_page == 'reports' %}active{% endif %}">
+                  <i class="fas fa-chart-line"></i>
+                  <span>Reports</span>
+              </a>
+          </li>
+      
+          <!-- Profile Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'engineer_profile' %}" 
+                 class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
+                  <i class="fas fa-user"></i>
+                  <span>Profile</span>
+              </a>
+          </li>
+          <!-- Settings Link -->
+          <li class="side-nav-item">
+            <a href="#" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+              <i class="fas fa-cog"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+      
+          <!-- Logout Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'logout' %}" class="side-nav-link">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+              </a>
+          </li>
+      </ul>
+    </nav>
 
 
-    {%include "navbar.html" %}
+    
 
   
 
@@ -291,6 +402,18 @@
             <div class="welcome-section">
                 <div class="welcome-message">Welcome</div>
                 
+            </div>
+            <div class="department-selector">
+                <form id="department-form" method="get" action="">
+                    <label for="department-select">Select Department:</label>
+                    <select id="department-select" name="dept" onchange="this.form.submit()">
+                        {% for dept in departments %}
+                            <option value="{{ dept.departmentid }}" {% if selected_department.departmentid == dept.departmentid %}selected{% endif %}>
+                                {{ dept.departmentname }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
             </div>
             
             <h2 class="department-title">The Engineering Operations Department</h2>
@@ -339,8 +462,18 @@
             // Show loading indicator
             loadingIndicator.style.display = 'block';
             
+            // Get the department ID from URL if available
+            const urlParams = new URLSearchParams(window.location.search);
+            const deptId = urlParams.get('dept');
+            
             // Fetch data from Django backend
-            fetch('/api/engineering-metrics/')
+            // Append department ID to URL if available
+            let apiUrl = '/api/engineering-metrics/';
+            if (deptId) {
+                apiUrl += `?dept=${deptId}`;
+            }
+            
+            fetch(apiUrl)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -359,46 +492,24 @@
                     
                     // Hide loading indicator and show error message
                     loadingIndicator.style.display = 'none';
-                    
-                    // For development purposes, use placeholder data instead of showing error
-                    const placeholderData = {
-                        bar_metrics: {
-                            categories: ['Mission', 'Plan', 'Speed', 'Value'],
-                            values: [4.0, 3.95, 3.9, 4.15]
-                        },
-                        progression_data: {
-                            dates: ['2023-01-15', '2023-01-22', '2023-02-01', '2023-02-08', '2023-02-15', '2023-02-22', '2023-03-01'],
-                            mission: [3.8, 3.85, 3.9, 3.95, 4.0, 4.1, 4.2],
-                            plan: [3.7, 3.75, 3.8, 3.85, 3.9, 3.95, 4.0],
-                            speed: [3.6, 3.7, 3.7, 3.8, 3.8, 3.9, 4.1],
-                            value: [3.9, 4.0, 4.0, 4.1, 4.1, 4.2, 4.3]
-                        },
-                        summary: {
-                            health_score: 4.05,
-                            mission: 4.0,
-                            fun: 3.95,
-                            speed: 3.9,
-                            value: 4.15
-                        }
-                    };
-                    updateDashboard(placeholderData);
-                    
-                    // Uncomment in production to show real error message
-                    // errorMessage.style.display = 'block';
+                    errorMessage.style.display = 'block';
+                    errorMessage.textContent = 'Error loading data: ' + error.message;
                 });
                 
             function updateDashboard(data) {
+                console.log('Received data:', data);  // Debug - check what data is received
+                
                 // Update summary metrics
                 if (data.summary) {
-                    document.querySelector('.health-score').textContent = data.summary.health_score;
-                    document.querySelector('.mission-score').textContent = data.summary.mission;
-                    document.querySelector('.fun-score').textContent = data.summary.fun;
-                    document.querySelector('.speed-score').textContent = data.summary.speed;
-                    document.querySelector('.value-score').textContent = data.summary.value;
+                    document.querySelector('.health-score').textContent = data.summary.health_score.toFixed(2);
+                    document.querySelector('.mission-score').textContent = data.summary.mission.toFixed(2);
+                    document.querySelector('.fun-score').textContent = data.summary.fun.toFixed(2);
+                    document.querySelector('.speed-score').textContent = data.summary.speed.toFixed(2);
+                    document.querySelector('.value-score').textContent = data.summary.value.toFixed(2);
                 }
                 
                 // Create bar chart
-                if (data.bar_metrics) {
+                if (data.bar_metrics && data.bar_metrics.categories && data.bar_metrics.values) {
                     const barCtx = document.getElementById('barChart').getContext('2d');
                     new Chart(barCtx, {
                         type: 'bar',
@@ -411,13 +522,15 @@
                                     'rgba(74, 20, 140, 0.7)',
                                     'rgba(124, 67, 189, 0.7)',
                                     'rgba(94, 53, 177, 0.7)',
-                                    'rgba(49, 27, 146, 0.7)'
+                                    'rgba(49, 27, 146, 0.7)',
+                                    'rgba(74, 20, 140, 0.7)'  // Added one more for 'Fun'
                                 ],
                                 borderColor: [
                                     'rgba(74, 20, 140, 1)',
                                     'rgba(124, 67, 189, 1)',
                                     'rgba(94, 53, 177, 1)',
-                                    'rgba(49, 27, 146, 1)'
+                                    'rgba(49, 27, 146, 1)',
+                                    'rgba(74, 20, 140, 1)'  // Added one more for 'Fun'
                                 ],
                                 borderWidth: 1
                             }]
@@ -458,7 +571,7 @@
                 }
                 
                 // Create line chart
-                if (data.progression_data) {
+                if (data.progression_data && data.progression_data.dates) {
                     const lineCtx = document.getElementById('lineChart').getContext('2d');
                     new Chart(lineCtx, {
                         type: 'line',
@@ -475,7 +588,7 @@
                                     pointHoverRadius: 5
                                 },
                                 {
-                                    label: 'Plan',
+                                    label: 'Health',
                                     data: data.progression_data.plan,
                                     borderColor: 'rgba(124, 67, 189, 1)',
                                     backgroundColor: 'rgba(124, 67, 189, 0.1)',
