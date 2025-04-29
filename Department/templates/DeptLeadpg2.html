@@ -83,9 +83,9 @@
             <select id="team-dropdown">
                 <option value="">-- Select a team --</option>
                 {% for team in teams %}
-                    <option value="{{ team.id }}">{{ team.name }}</option>
+                    <option value="{{ team.teamid }}">{{ team.teamname }}</option>
                 {% endfor %}
-            </select>
+            </select>            
         </div>
         <div class="footer-buttons">
             <a href="{% url 'department_settings' %}"><button>Settings</button></a>

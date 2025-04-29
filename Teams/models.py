@@ -45,6 +45,9 @@ class Team(models.Model):
         managed = False
         db_table = 'Team'
 
+    def __str__(self):
+        return str(self.teamname)
+
 class Summary(models.Model):
     summaryid = models.AutoField(db_column='summaryID', primary_key=True, )  # Field name made lowercase.
     progressstatus = models.TextField(db_column='progressStatus', blank=True, null=True)  # Field name made lowercase.
