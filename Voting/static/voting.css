@@ -108,6 +108,7 @@ textarea {
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .rating-options {
@@ -178,7 +179,7 @@ textarea {
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 1rem;
-    margin-bottom: 0rem;
+    margin-bottom: 10px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     -ms-border-radius: 10px;
