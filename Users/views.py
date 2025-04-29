@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import User ,Healthcheckcard, Vote                   
+from .models import User ,Healthcheckcard, Vote ,Department, Team                  
 from django.contrib.auth import authenticate 
 from .backends import CustomAuthBackend
 from .backends import CustomPasswordResetTokenGenerator
@@ -88,8 +88,15 @@ def redirect_by_UserType(user_type):
         return redirect('home')  # Default redirect for other user types
     
 @never_cache
+@never_cache
+# Updated signup_view function for views.py
+@never_cache
 def signup_view(request):
     auth_backend = CustomAuthBackend()
+    
+    # Get departments and teams from database
+    departments = Department.objects.all()
+    teams = Team.objects.all()
     
     if request.method == 'POST':
         # Process the form data
@@ -100,17 +107,36 @@ def signup_view(request):
         first_name = request.POST.get('name')
         last_name = request.POST.get('surname')
         role = request.POST.get('role')
+        department_id = request.POST.get('department')
+        team_id = request.POST.get('team')
         
-         # Validate the input
-        validation_errors=auth_backend.validate_signup(
+        # Determine if department/team are required based on role
+        requires_dept = role in ['Engineer', 'team_lead', 'dept_lead']
+        requires_team = role in ['Engineer', 'team_lead']
+        
+        # Validate the input
+        validation_errors = auth_backend.validate_signup(
             username=username,
             email=email,
             password=password,
             confirm_password=confirm_password,
             first_name=first_name,
             last_name=last_name,
-            role=role
-         )
+            role=role,
+            department=department_id if requires_dept else None,
+            team=team_id if requires_team else None
+        )
+        
+        # Add additional validation for department and team based on role
+        if requires_dept and not department_id:
+            if not validation_errors:
+                validation_errors = {}
+            validation_errors['department'] = 'Department is required for this role'
+        
+        if requires_team and not team_id:
+            if not validation_errors:
+                validation_errors = {}
+            validation_errors['team'] = 'Team is required for this role'
        
         # If there are any errors, return to signup page with error messages
         if validation_errors:
@@ -121,31 +147,68 @@ def signup_view(request):
                     'email': email,
                     'name': first_name,
                     'surname': last_name,
-                    'role': role
-                }
+                    'role': role,
+                    'department': department_id,
+                    'team': team_id
+                },
+                'departments': departments,
+                'teams': teams
             })
         
-        # Create a new user using Django's auth system
+        # Create a new user
         try:
-            # Create a new user using your custom User model
             user = auth_backend.create_user(
                 username=username,
                 email=email,
-                password=password,  # removed the hashing 
-                userType=role,
+                password=password,
+                userType=auth_backend.map_role_to_user_type(role),  # Use the mapping function
                 first_name=first_name,
                 last_name=last_name
             )
+            if not user:
+                messages.error(request, "Error creating user account.")
+                return render(request, 'signup.html', {
+                    'form_data': {
+                        'username': username,
+                        'email': email,
+                        'name': first_name,
+                        'surname': last_name,
+                        'role': role,
+                        'department': department_id,
+                        'team': team_id
+                    },
+                    'departments': departments,
+                    'teams': teams
+                })
+                
+            # Add department and team to user if provided and required by role
+            if requires_dept and department_id:
+                try:
+                    department = Department.objects.get(departmentid=department_id)
+                    user.departmentid = department
+                except Department.DoesNotExist:
+                    messages.warning(request, 'Selected department could not be assigned.')
+            
+            if requires_team and team_id:
+                try:
+                    team = Team.objects.get(teamid=team_id)
+                    user.teamid = team
+                except Team.DoesNotExist:
+                    messages.warning(request, 'Selected team could not be assigned.')
+            
             user.save()
             
             messages.success(request, 'Account created successfully! Please log in.')
             return redirect('login')
         except Exception as e:
             messages.error(request, f'Error creating account: {str(e)}')
-            return redirect('signup')
-    
+            
     # Render the sign-up page
-    return render(request, 'signup.html')
+    return render(request, 'signup.html', {
+        'departments': departments,
+        'teams': teams,
+        'form_data': {}
+    })
 
 
 password_reset_token_generator = CustomPasswordResetTokenGenerator()

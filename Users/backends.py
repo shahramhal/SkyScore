@@ -1,6 +1,6 @@
 from django.contrib.auth.backends import BaseBackend
 from django.db.models import Q
-from .models import User
+from .models import User, Department, Team
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 
@@ -9,7 +9,7 @@ class CustomAuthBackend(BaseBackend):
     ROLE_MAPPING= {
         'Engineer': 'Engineer',
         'team_lead': 'TeamLead',
-        'dept_lead': 'SenManager',
+        'dept_lead': 'DeptLead',  # Updated to match the required role 
         'Sen-man': 'SenManager',
         'admin': 'Admin'
     }
@@ -33,8 +33,7 @@ class CustomAuthBackend(BaseBackend):
         except User.DoesNotExist:
             return None
         
-    def validate_signup(self, username=None, email=None, password=None, confirm_password=None, first_name=None, last_name=None, role=None):
-      
+    def validate_signup(self, username=None, email=None, password=None, confirm_password=None, first_name=None, last_name=None, role=None, department=None, team=None):
         errors = {}
 
         # Validate username
@@ -68,6 +67,19 @@ class CustomAuthBackend(BaseBackend):
             errors['name'] = 'First name is required'
         if not last_name:
             errors['surname'] = 'Last name is required'
+        
+        # Validate role
+        if not role:
+            errors['role'] = 'Role is required'
+        elif role not in self.ROLE_MAPPING:
+            errors['role'] = 'Invalid role selected'
+        
+        # Role-specific validations
+        if role in ['Engineer', 'team_lead', 'dept_lead'] and department is None:
+            errors['department'] = 'Department is required for this role'
+            
+        if role in ['Engineer', 'team_lead'] and team is None:
+            errors['team'] = 'Team is required for this role'
             
         return errors if errors else None
     def map_role_to_user_type(self, role):
@@ -75,12 +87,12 @@ class CustomAuthBackend(BaseBackend):
         Convert form role to database user type
         """
         return self.ROLE_MAPPING.get(role, 'Engineer')  # Default to Engineer
-    def create_user(self, username,email, password, userType,first_name, last_name):
+    def create_user(self, username, email, password, userType, first_name, last_name, department=None, team=None):
         """
         Create a new user with the given information
         """
-        try :
-            user =User(
+        try:
+            user = User(
                 username=username,
                 email=email,
                 password=password,  
@@ -88,11 +100,31 @@ class CustomAuthBackend(BaseBackend):
                 first_name=first_name,
                 last_name=last_name
             )
+            
+            # Save first to get an ID
+            user.save()
+            
+            # Then associate department and team if provided
+            if department:
+                try:
+                    dept_obj = Department.objects.get(departmentid=department)
+                    user.departmentid = dept_obj
+                except Department.DoesNotExist:
+                    pass
+    
+            if team:
+                try:
+                    team_obj = Team.objects.get(teamid=team)
+                    user.teamid = team_obj
+                except Team.DoesNotExist:
+                    pass
+            
+            # Save again with the relationships
             user.save()
             return user
         except Exception as e:
+            print(f"Error creating user: {str(e)}")
             return None
-        
 class CustomPasswordResetTokenGenerator(PasswordResetTokenGenerator):
     
     def _make_hash_value(self, user, timestamp):

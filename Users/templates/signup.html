@@ -160,15 +160,83 @@
                   class="hidden-select"
                   required
                 >
-                  <option value="Engineer">Engineer</option>
-                  <option value="TeamLead">Team Leader</option>
-                  <option value="DepLead">Department Leader</option>
-                  <option value="SenManager">Senior managers</option>
-                  <option value="Admin">Admin</option>
+                  <option value="">-- Select Role --</option>
+                  <option value="Engineer" {% if form_data.role == 'Engineer' %}selected{% endif %}>Engineer</option>
+                  <option value="team_lead" {% if form_data.role == 'team_lead' %}selected{% endif %}>Team Leader</option>
+                  <option value="dept_lead" {% if form_data.role == 'dept_lead' %}selected{% endif %}>Department Leader</option>
+                  <option value="Sen-man" {% if form_data.role == 'Sen-man' %}selected{% endif %}>Senior Manager</option>
+                  <option value="admin" {% if form_data.role == 'admin' %}selected{% endif %}>Admin</option>
                 </select>
               </div>
             </div>
           </div>
+
+          <!-- Department selection - only shown for appropriate roles -->
+          <div class="form-row dept-selection" id="dept-selection-row">
+            <div class="form-group">
+              <div class="dropdown">
+                <div class="dropdown-header">
+                  <span>Department: </span>
+                  <span id="selected-department">
+                    {% if form_data.department %}
+                      {% for dept in departments %}
+                        {% if form_data.department == dept.departmentid|stringformat:'i' %}
+                          {{ dept.departmentname }}
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      Choose a department
+                    {% endif %}
+                  </span>
+                  <div class="dropdown-arrow"></div>
+                </div>
+                <select
+                  id="department-select"
+                  name="department"
+                  class="hidden-select"
+                >
+                  <option value="">-- Select Department --</option>
+                  {% for dept in departments %}
+                    <option value="{{ dept.departmentid }}" {% if form_data.department == dept.departmentid|stringformat:'i' %}selected{% endif %}>{{ dept.departmentname }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Team selection - only shown for engineers and team leads -->
+          <div class="form-row team-selection" id="team-selection-row">
+            <div class="form-group">
+              <div class="dropdown">
+                <div class="dropdown-header">
+                  <span>Team: </span>
+                  <span id="selected-team">
+                    {% if form_data.team %}
+                      {% for team in teams %}
+                        {% if form_data.team == team.teamid|stringformat:'i' %}
+                          {{ team.teamname }}
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      Choose a team
+                    {% endif %}
+                  </span>
+                  <div class="dropdown-arrow"></div>
+                </div>
+                <select
+                  id="team-select"
+                  name="team"
+                  class="hidden-select"
+                >
+                  <option value="">-- Select Team --</option>
+                  {% for team in teams %}
+                    <option value="{{ team.teamid }}" data-department="{{ team.departmentid.departmentid }}" {% if form_data.team == team.teamid|stringformat:'i' %}selected{% endif %}>{{ team.teamname }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div class="form-actions1">
             <a href="{% url 'login' %}" class="login-link"
               >Already have an Account?</a
@@ -180,6 +248,7 @@
     </div>
 
     <script src="{% static 'js/user_script.js' %}"></script>
+
     {% include "footer.html" %}
   </body>
 </html>
