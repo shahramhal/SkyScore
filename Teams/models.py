@@ -3,15 +3,21 @@ from django.db import models
 
 # Create your models here.
 
+
 class User(models.Model):
-    userid = models.AutoField(db_column='userID', primary_key=True, blank=True)  # Field name made lowercase.
-    username = models.TextField()
-    email = models.TextField(unique=True)
-    password = models.TextField()
-    usertype = models.TextField(db_column='userType', blank=True, null=True)  # Field name made lowercase.
-    managerid = models.ForeignKey('self', models.DO_NOTHING, db_column='managerID', blank=True, null=True)  # Field name made lowercase.
-    first_name = models.TextField(blank=True, null=True)
-    last_name = models.TextField(blank=True, null=True)
+    userID = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    password = models.CharField(max_length=100)
+    userType = models.CharField(max_length=50)
+    managerID = models.IntegerField(null=True, blank=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    teamid=models.ForeignKey('Team', models.DO_NOTHING, db_column='teamID', blank=True)  # Field name made lowercase.
+    departmentid=models.ForeignKey('Department', models.DO_NOTHING, db_column='departmentID', blank=True,)  # Field name made lowercase.
+    
+    
+    
 
     class Meta:
         managed = False
@@ -30,7 +36,6 @@ class Department(models.Model):
 
 class Team(models.Model):
     teamid = models.AutoField(db_column='teamID', primary_key=True, blank=True)  # Field name made lowercase.
-    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userID', blank=True, null=True)  # Field name made lowercase.
     voteid = models.ForeignKey('Vote', models.DO_NOTHING, db_column='voteID', blank=True, null=True)  # Field name made lowercase.
     summaryid = models.ForeignKey('Summary', models.DO_NOTHING, db_column='summaryID', blank=True)  # Field name made lowercase.
     teamname = models.TextField(db_column='teamName', blank=True, null=True)  # Field name made lowercase.

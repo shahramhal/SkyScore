@@ -37,9 +37,13 @@ def department_summary(request):
     # Default to first department if available
     default_department = departments.first() if departments.exists() else None
     
+    # Pass selected department's ID to template for initial load
+    selected_dept_id = default_department.departmentid if default_department else None
+    
     context = {
         'departments': departments,
         'default_department': default_department,
+        'selected_dept_id': selected_dept_id,
     }
     
     return render(request, 'SenManagerp1.html', context)
@@ -66,6 +70,7 @@ def department_data(request):
         for team in teams:
             team_metrics = calculate_team_metrics(team)
             team_data.append({
+                'id': team.teamid,
                 'name': team.teamname,
                 'health': team_metrics['health_score'],
                 'mission': team_metrics['mission_score'],
@@ -84,6 +89,15 @@ def department_data(request):
         summary_data = get_summary_data(department)
         
         response_data = {
+            'department': {
+                'id': department.departmentid,
+                'name': department.departmentname,
+                'health': dept_metrics['health_score'],
+                'mission': dept_metrics['mission_score'],
+                'speed': dept_metrics['speed_score'],
+                'value': dept_metrics['value_score'],
+                'trend': dept_metrics['health_trend']
+            },
             'trends': trend_data,
             'radar': radar_data,
             'teams': team_data,
@@ -97,6 +111,7 @@ def department_data(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
 def calculate_department_metrics(department):
     """
     Calculate metrics for a department based on team data.
@@ -107,32 +122,36 @@ def calculate_department_metrics(department):
     # Get teams in this department
     teams = Team.objects.filter(departmentid=department.departmentid)
     
-    # Get users in these teams
-    users_in_dept = User.objects.filter(team__in=teams).distinct()
+    # Get users in these teams - they belong to the department
+    users_in_dept = User.objects.filter(departmentid=department.departmentid).distinct()
     
-    # Get votes for users in this department
+    # Get all health check cards
+    health_card = Healthcheckcard.objects.filter(cardname='Health').first()
+    mission_card = Healthcheckcard.objects.filter(cardname='Mission').first()
+    speed_card = Healthcheckcard.objects.filter(cardname='Speed').first()
+    value_card = Healthcheckcard.objects.filter(cardname='Value').first()
+    
+    # Get votes for users in this department for current month
     current_votes = Vote.objects.filter(
-        cardid__cardname__in=['Health', 'Mission', 'Speed', 'Value'],
         votingdate__gte=one_month_ago,
         userid__in=users_in_dept
     ).select_related('cardid')
     
     # Calculate average scores
-    health_score = current_votes.filter(cardid__cardname='Health').aggregate(avg=Avg('votevalue'))['avg'] or 0
-    mission_score = current_votes.filter(cardid__cardname='Mission').aggregate(avg=Avg('votevalue'))['avg'] or 0
-    speed_score = current_votes.filter(cardid__cardname='Speed').aggregate(avg=Avg('votevalue'))['avg'] or 0
-    value_score = current_votes.filter(cardid__cardname='Value').aggregate(avg=Avg('votevalue'))['avg'] or 0
+    health_score = current_votes.filter(cardid=health_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
+    mission_score = current_votes.filter(cardid=mission_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
+    speed_score = current_votes.filter(cardid=speed_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
+    value_score = current_votes.filter(cardid=value_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
     
     # Calculate previous month's scores for trend
     two_months_ago = one_month_ago - timedelta(days=30)
     previous_votes = Vote.objects.filter(
-        cardid__cardname__in=['Health', 'Mission', 'Speed', 'Value'],
         votingdate__gte=two_months_ago,
         votingdate__lt=one_month_ago,
         userid__in=users_in_dept
     ).select_related('cardid')
     
-    prev_health_score = previous_votes.filter(cardid__cardname='Health').aggregate(avg=Avg('votevalue'))['avg'] or 0
+    prev_health_score = previous_votes.filter(cardid=health_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
     
     # Calculate trends
     health_trend = round(health_score - prev_health_score, 1)
@@ -145,6 +164,7 @@ def calculate_department_metrics(department):
         'health_trend': health_trend
     }
 
+
 def calculate_team_metrics(team):
     """
     Calculate metrics for a single team.
@@ -153,25 +173,33 @@ def calculate_team_metrics(team):
     one_month_ago = today - timedelta(days=30)
     two_months_ago = one_month_ago - timedelta(days=30)
     
-    # Get votes for this team
+    # Get users in this team
+    users_in_team = User.objects.filter(teamid=team.teamid)
+    
+    # Get all health check cards
+    health_card = Healthcheckcard.objects.filter(cardname='Health').first()
+    mission_card = Healthcheckcard.objects.filter(cardname='Mission').first()
+    speed_card = Healthcheckcard.objects.filter(cardname='Speed').first()
+    value_card = Healthcheckcard.objects.filter(cardname='Value').first()
+    
+    # Get votes for this team's users for current month
     current_votes = Vote.objects.filter(
-        cardid__cardname__in=['Health', 'Mission', 'Speed', 'Value'],
         votingdate__gte=one_month_ago,
-        userid__in=User.objects.filter(team=team)  # Filter by users in this team
+        userid__in=users_in_team
     ).select_related('cardid')
     
     # Calculate average scores
-    health_score = current_votes.filter(cardid__cardname='Health').aggregate(avg=Avg('votevalue'))['avg'] or 0
-    mission_score = current_votes.filter(cardid__cardname='Mission').aggregate(avg=Avg('votevalue'))['avg'] or 0
-    speed_score = current_votes.filter(cardid__cardname='Speed').aggregate(avg=Avg('votevalue'))['avg'] or 0
-    value_score = current_votes.filter(cardid__cardname='Value').aggregate(avg=Avg('votevalue'))['avg'] or 0
+    health_score = current_votes.filter(cardid=health_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
+    mission_score = current_votes.filter(cardid=mission_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
+    speed_score = current_votes.filter(cardid=speed_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
+    value_score = current_votes.filter(cardid=value_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
     
     # Get previous month's health score
     previous_votes = Vote.objects.filter(
-        cardid__cardname='Health',
+        cardid=health_card,
         votingdate__gte=two_months_ago,
         votingdate__lt=one_month_ago,
-        userid__in=User.objects.filter(team=team)  # Filter by users in this team
+        userid__in=users_in_team
     )
     prev_health_score = previous_votes.aggregate(avg=Avg('votevalue'))['avg'] or 0
     
@@ -179,12 +207,13 @@ def calculate_team_metrics(team):
     trend = round(health_score - prev_health_score, 1)
     
     return {
-        'health_score': round(health_score, 1),  # Make sure values are properly rounded
+        'health_score': round(health_score, 1),
         'mission_score': round(mission_score, 1),
         'speed_score': round(speed_score, 1),
         'value_score': round(value_score, 1),
         'trend': trend
     }
+
 
 def get_trend_data(department):
     """
@@ -192,38 +221,46 @@ def get_trend_data(department):
     """
     today = datetime.now().date()
     
+    # Get health card
+    health_card = Healthcheckcard.objects.filter(cardname='Health').first()
+    if not health_card:
+        return {'months': [], 'healthScores': []}
+    
+    # Get users in this department
+    users_in_dept = User.objects.filter(departmentid=department.departmentid).distinct()
+    
     # Get last 6 months
     months = []
     health_scores = []
     
     for i in range(5, -1, -1):
-        month_start = today.replace(day=1) - timedelta(days=i*30)
-        month_end = (month_start.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+        # Calculate start and end of month
+        month_start = (today.replace(day=1) - timedelta(days=i*30)).replace(day=1)
+        if i > 0:
+            next_month = month_start.replace(month=month_start.month+1) if month_start.month < 12 else month_start.replace(year=month_start.year+1, month=1)
+            month_end = next_month - timedelta(days=1)
+        else:
+            month_end = today
         
         month_name = month_start.strftime('%b')
         months.append(month_name)
         
-        # Get teams in this department
-        teams = Team.objects.filter(departmentid=department.departmentid)
-        team_ids = [team.teamid for team in teams]
-        
         # Get health scores for this month
-        health_card = Healthcheckcard.objects.filter(cardname='Health').first()
-        if health_card:
-            month_votes = Vote.objects.filter(
-                cardid=health_card.cardid,
-                votingdate__gte=month_start,
-                votingdate__lte=month_end
-            )
-            avg_score = month_votes.aggregate(avg=Avg('votevalue'))['avg'] or 0
-            health_scores.append(round(avg_score, 2))
-        else:
-            health_scores.append(0)
+        month_votes = Vote.objects.filter(
+            cardid=health_card,
+            votingdate__gte=month_start,
+            votingdate__lte=month_end,
+            userid__in=users_in_dept
+        )
+        
+        avg_score = month_votes.aggregate(avg=Avg('votevalue'))['avg'] or 0
+        health_scores.append(round(avg_score, 2))
     
     return {
         'months': months,
         'healthScores': health_scores
     }
+
 
 def get_radar_data(department):
     """
@@ -232,12 +269,11 @@ def get_radar_data(department):
     today = datetime.now().date()
     one_month_ago = today - timedelta(days=30)
     
-    # Get teams in this department
-    teams = Team.objects.filter(departmentid=department.departmentid)
-    team_ids = [team.teamid for team in teams]
+    # Get users in this department
+    users_in_dept = User.objects.filter(departmentid=department.departmentid).distinct()
     
     # Define categories
-    categories = ['Mission', 'Plan', 'Speed', 'Value', 'Fun']
+    categories = ['Mission', 'Health', 'Speed', 'Value', 'Fun']
     scores = []
     
     # Get scores for each category
@@ -245,8 +281,9 @@ def get_radar_data(department):
         card = Healthcheckcard.objects.filter(cardname=category).first()
         if card:
             category_votes = Vote.objects.filter(
-                cardid=card.cardid,
-                votingdate__gte=one_month_ago
+                cardid=card,
+                votingdate__gte=one_month_ago,
+                userid__in=users_in_dept
             )
             avg_score = category_votes.aggregate(avg=Avg('votevalue'))['avg'] or 0
             scores.append(round(avg_score, 2))
@@ -258,6 +295,7 @@ def get_radar_data(department):
         'scores': scores
     }
 
+
 def get_summary_data(department):
     """
     Get summary data for the department.
@@ -265,33 +303,45 @@ def get_summary_data(department):
     today = datetime.now().date()
     one_month_ago = today - timedelta(days=30)
     
-    # Get teams in this department
-    teams = Team.objects.filter(departmentid=department.departmentid)
-    team_ids = [team.teamid for team in teams]
+    # Get users in this department
+    users_in_dept = User.objects.filter(departmentid=department.departmentid).distinct()
+    total_users = users_in_dept.count()
     
-    # Get all votes for these teams
-    votes = Vote.objects.filter(votingdate__gte=one_month_ago)
+    # Get all health check cards
+    health_cards = Healthcheckcard.objects.all()
+    total_cards = health_cards.count()
+    
+    # Get all votes for users in this department in the last month
+    votes = Vote.objects.filter(
+        votingdate__gte=one_month_ago,
+        userid__in=users_in_dept
+    )
     
     # Count total votes
     total_votes = votes.count()
     
-    # Get total users in the department
-    users_in_teams = User.objects.filter(team__departmentid=department.departmentid).distinct()
-    total_users = users_in_teams.count()
-    
-    # Calculate participation rate
-    participation_rate = (total_votes / (total_users * 5)) * 100 if total_users > 0 else 0
+    # Calculate participation rate (total votes divided by possible votes)
+    # Possible votes = users * cards
+    possible_votes = total_users * total_cards
+    participation_rate = (total_votes / possible_votes) * 100 if possible_votes > 0 else 0
     
     # Get last health check date
     last_vote = votes.order_by('-votingdate').first()
     last_check_date = last_vote.votingdate.strftime('%-d %b') if last_vote else 'N/A'
     
+    # Get average health score
+    health_card = Healthcheckcard.objects.filter(cardname='Health').first()
+    health_votes = votes.filter(cardid=health_card) if health_card else votes.none()
+    avg_health = health_votes.aggregate(avg=Avg('votevalue'))['avg'] or 0
+    
     return {
         'totalVotes': total_votes,
         'participationRate': round(participation_rate),
-        'lastCheckDate': last_check_date
+        'lastCheckDate': last_check_date,
+        'averageHealth': round(avg_health, 1),
+        'totalUsers': total_users,
+        'totalTeams': Team.objects.filter(departmentid=department.departmentid).count()
     }
-
 
 def team_lead_dashboard(request):
     teams = Team.objects.all()
