@@ -468,4 +468,6 @@ def engineering_metrics(request):
         return JsonResponse({'error': str(e)}, status=500)
     
 def get_settings_SM(request):
-    return render(request, 'SenManSetting.html', {'active_page': 'settings'})
+    return render(request, 'SenManSetting.html')
+def get_settings_TL(request):
+    return render(request, 'Teamleadersetting.html')

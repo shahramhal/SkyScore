@@ -12,6 +12,7 @@ urlpatterns = [
     path('teamleadprog/', views.team_progress, name='teamleadprog'),
     path('api/engineering-metrics/', views.engineering_metrics, name='engineering_metrics'),
     path('settings_sm/',views.get_settings_SM, name = 'settings_sm'),
+     path('settings_tl/',views.get_settings_TL, name = 'settings_tl'),
     
     
     
