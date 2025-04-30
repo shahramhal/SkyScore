@@ -17,6 +17,7 @@
             --text-color: #1F2937;
             --success-green: #22c55e;
             --error-red: #ef4444;
+            --sidebar-width: 280px;
         }
 
         * {
@@ -40,12 +41,15 @@
             font-size: 26px;
             font-weight: bold;
             margin-bottom: 30px;
+            
         }
 
         .content {
             max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
+            margin-left: 280px;
+            
         }
 
         .card {
@@ -106,6 +110,93 @@
         .highlight-down {
             color: var(--error-red);
             font-weight: bold;
+        }
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(to bottom, var(--primary-blue), var(--dark-blue));
+            color: white;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .side-nav-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .side-nav-logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .side-nav-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .user-profile {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-name,
+        .user-role {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .side-nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .side-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .side-nav-link:hover,
+        .side-nav-link.active {
+            background-color: var(--accent-blue);
+        }
+
+        .side-nav-link i {
+            margin-right: 10px;
         }
     </style>
 </head>
