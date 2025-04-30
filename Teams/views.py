@@ -27,11 +27,21 @@ def getsenman_overview(request):
 
 def getsenmanprogress(request):
     departments = Department.objects.all()
-    default_department = departments.first()
+    selected_dept_id = request.GET.get('dept')
+
+    if selected_dept_id:
+        try:
+            selected_dept_id = int(selected_dept_id)
+        except ValueError:
+            selected_dept_id = departments.first().departmentid
+    else:
+        selected_dept_id = departments.first().departmentid
+
     return render(request, 'SenManp2.html', {
         'departments': departments,
-        'selected_dept_id': default_department.departmentid if default_department else None
+        'selected_dept_id': selected_dept_id
     })
+
 
 # Serve metrics data as JSON
 def getsenmanager_metrics(request):
@@ -418,6 +428,34 @@ def team_progress(request):
     teams = Team.objects.all()
     return render(request, 'TeamOverview.html', { 'teams': teams})
 
+def get_category_trend(department, category_name):
+    today = date.today()
+    users = User.objects.filter(departmentid=department)
+
+    card = Healthcheckcard.objects.filter(cardname=category_name).first()
+    if not card:
+        return []
+
+    scores = []
+    for i in range(5, -1, -1):
+        month_start = (today.replace(day=1) - timedelta(days=i*30)).replace(day=1)
+        if i > 0:
+            next_month = month_start.replace(month=month_start.month+1) if month_start.month < 12 else month_start.replace(year=month_start.year+1, month=1)
+            month_end = next_month - timedelta(days=1)
+        else:
+            month_end = today
+
+        votes = Vote.objects.filter(
+            userid__in=users,
+            cardid=card,
+            votingdate__gte=month_start,
+            votingdate__lte=month_end
+        )
+        avg = votes.aggregate(avg=Avg('votevalue'))['avg'] or 0
+        scores.append(round(avg, 2))
+
+    return scores
+
 def engineering_metrics(request):
     """
     API endpoint to provide metrics data for the Engineering Operations Department.
@@ -459,16 +497,17 @@ def engineering_metrics(request):
 
         # Build response
         response_data = {
+            
             'bar_metrics': {
                 'categories': categories,
                 'values': bar_values
             },
             'progression_data': {
                 'dates': trend_data['months'],
-                'mission': [],  # Can be extended to support real mission progression
+                'mission': get_category_trend(department, 'Mission'),  # Can be extended to support real mission progression
                 'plan': trend_data['healthScores'],
-                'speed': [],    # Optional: implement get_speed_progression if needed
-                'value': []     # Optional: implement get_value_progression if needed
+                'speed': get_category_trend(department, 'Speed'),    # Optional: implement get_speed_progression if needed
+                'value': get_category_trend(department, 'Delivering value')     # Optional: implement get_value_progression if needed
             },
             'summary': {
                 'health_score': round(sum(bar_values) / len(bar_values), 2),

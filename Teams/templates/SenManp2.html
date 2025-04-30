@@ -554,7 +554,7 @@
                 </form>
             </div>
             
-            <h2 class="department-title">The Engineering Operations Department</h2>
+            <h2 class="department-title" id="department-name-title">The Engineering Operations Department</h2>
             
             <div id="loading-indicator" class="loading-indicator">
                 Loading department metrics...
@@ -653,6 +653,7 @@
                     document.querySelector('.fun-score').textContent = data.summary.fun.toFixed(2);
                     document.querySelector('.speed-score').textContent = data.summary.speed.toFixed(2);
                     document.querySelector('.value-score').textContent = data.summary.value.toFixed(2);
+                
                 }
                 
                 // Create bar chart
