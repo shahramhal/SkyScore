@@ -12,7 +12,7 @@
         :root {
             --primary-color: #4a3b99;
             --primary-light: #7c43bd;
-            --primary-dark: #12005e;
+            --primary-dark: #362b73;
             --accent-color: #4a148c;
             --text-dark: #333333;
             --text-light: #ffffff;
@@ -127,7 +127,7 @@
         }
         
         .dashboard-container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 0;
             box-shadow: var(--shadow);
@@ -595,7 +595,7 @@
             
             <!-- Settings Link -->
             <li class="side-nav-item">
-                <a href="#" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+                <a href="{% url 'settings_sm' %}" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>
@@ -888,116 +888,246 @@
         }
         
         function updateDashboardData(data) {
-            // Update summary metrics
-            if (data.summary) {
-                document.getElementById('total-votes').textContent = data.summary.totalVotes || '0';
-                document.getElementById('participation-rate').textContent = (data.summary.participationRate || '0') + '%';
-                document.getElementById('last-check-date').textContent = data.summary.lastCheckDate || 'N/A';
-            }
+    console.log("Received data:", data); // Debug: check data structure
+    
+    // Update department name in case it was changed server-side
+    if (data.department && data.department.name) {
+        document.getElementById('current-department').textContent = data.department.name + " Department";
+    }
+    
+    // Update summary metrics
+    if (data.summary) {
+        document.getElementById('total-votes').textContent = data.summary.totalVotes || '0';
+        document.getElementById('participation-rate').textContent = (data.summary.participationRate || '0') + '%';
+        document.getElementById('last-check-date').textContent = data.summary.lastCheckDate || 'N/A';
+    }
 
-            // Update score cards and trends
-            if (data.scores) {
-                document.getElementById('health-score').textContent = data.scores.health || '--';
-                document.getElementById('mission-score').textContent = data.scores.mission || '--';
-                document.getElementById('speed-score').textContent = data.scores.speed || '--';
-                document.getElementById('value-score').textContent = data.scores.value || '--';
+    // Update score cards and trends
+    if (data.scores) {
+        document.getElementById('health-score').textContent = data.scores.health || '--';
+        document.getElementById('mission-score').textContent = data.scores.mission || '--';
+        document.getElementById('speed-score').textContent = data.scores.speed || '--';
+        document.getElementById('value-score').textContent = data.scores.value || '--';
+        
+        // Update trend badges with values and apply correct classes
+        updateTrendBadge('health-trend', data.scores.healthTrend);
+        updateTrendBadge('mission-trend', data.scores.missionTrend);
+        updateTrendBadge('speed-trend', data.scores.speedTrend);
+        updateTrendBadge('value-trend', data.scores.valueTrend);
+    }
 
-                document.getElementById('health-trend').textContent = data.scores.healthTrend || '--';
-                document.getElementById('mission-trend').textContent = data.scores.missionTrend || '--';
-                document.getElementById('speed-trend').textContent = data.scores.speedTrend || '--';
-                document.getElementById('value-trend').textContent = data.scores.valueTrend || '--';
-            }
+    // Show charts if data available
+    if (data.trendData && data.trendData.labels && data.trendData.labels.length > 0) {
+        document.getElementById('trend-chart-placeholder').style.display = 'none';
+        renderTrendChart(data.trendData);
+    } else {
+        document.getElementById('trend-chart-placeholder').style.display = 'flex';
+    }
 
-            // Show charts if data available
-            if (data.trendData && data.trendData.labels && data.trendData.labels.length > 0) {
-                document.getElementById('trend-chart-placeholder').style.display = 'none';
-                renderTrendChart(data.trendData);
-            } else {
-                document.getElementById('trend-chart-placeholder').style.display = 'flex';
-            }
+    if (data.performance && data.performance.labels && data.performance.labels.length > 0) {
+        document.getElementById('radar-chart-placeholder').style.display = 'none';
+        renderRadarChart(data.performance);
+    } else {
+        document.getElementById('radar-chart-placeholder').style.display = 'flex';
+    }
 
-            if (data.performance && data.performance.labels && data.performance.labels.length > 0) {
-                document.getElementById('radar-chart-placeholder').style.display = 'none';
-                renderRadarChart(data.performance);
-            } else {
-                document.getElementById('radar-chart-placeholder').style.display = 'flex';
+    // Populate team table
+    const teamTableBody = document.getElementById('team-table-body');
+    teamTableBody.innerHTML = ''; // Clear previous rows
+    
+    if (data.teams && data.teams.length > 0) {
+        data.teams.forEach(team => {
+            const row = document.createElement('tr');
+            
+            // Determine health indicator class based on health score
+            let healthClass = 'health-warning';
+            if (team.health >= 4.0) {
+                healthClass = 'health-good';
+            } else if (team.health < 3.0) {
+                healthClass = 'health-critical';
             }
+            
+            row.innerHTML = `
+                <td>${team.name}</td>
+                <td class="score-cell">
+                    <span class="health-indicator ${healthClass}"></span>
+                    ${team.health || '--'}
+                </td>
+                <td class="score-cell">${team.mission || '--'}</td>
+                <td class="score-cell">${team.speed || '--'}</td>
+                <td class="score-cell">${team.value || '--'}</td>
+                <td class="score-cell">${formatTrend(team.trend)}</td>
+            `;
+            teamTableBody.appendChild(row);
+        });
+    } else {
+        // Add a message if no teams
+        const row = document.createElement('tr');
+        row.innerHTML = '<td colspan="6" style="text-align: center;">No teams found in this department</td>';
+        teamTableBody.appendChild(row);
+    }
+}
 
-            // Populate team table
-            const teamTableBody = document.getElementById('team-table-body');
-            teamTableBody.innerHTML = ''; // Clear previous rows
-            if (data.teams && data.teams.length > 0) {
-                data.teams.forEach(team => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${team.name}</td>
-                        <td>${team.health || '--'}</td>
-                        <td>${team.mission || '--'}</td>
-                        <td>${team.speed || '--'}</td>
-                        <td>${team.value || '--'}</td>
-                        <td>${team.trend || '--'}</td>
-                    `;
-                    teamTableBody.appendChild(row);
-                });
-            }
-        }
+// Helper function to update trend badges with correct styling
+function updateTrendBadge(elementId, trendValue) {
+    const element = document.getElementById(elementId);
+    
+    // Reset classes
+    element.classList.remove('trend-up', 'trend-down', 'trend-neutral');
+    
+    // Apply appropriate class and text
+    if (trendValue > 0) {
+        element.classList.add('trend-up');
+        element.textContent = '+' + trendValue.toFixed(1);
+    } else if (trendValue < 0) {
+        element.classList.add('trend-down');
+        element.textContent = trendValue.toFixed(1);
+    } else {
+        element.classList.add('trend-neutral');
+        element.textContent = '0.0';
+    }
+}
 
-        function renderTrendChart(trendData) {
-            const ctx = document.getElementById('trendChart').getContext('2d');
-            if (window.trendChart) {
-                window.trendChart.destroy();
-            }
-            window.trendChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: trendData.labels,
-                    datasets: [{
-                        label: 'Health Score',
-                        data: trendData.values,
-                        borderColor: '#6c63ff',
-                        backgroundColor: 'rgba(108, 99, 255, 0.2)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
+// Helper function to format trend values
+function formatTrend(value) {
+    if (value === undefined || value === null) return '--';
+    return value > 0 ? '+' + value.toFixed(1) : value.toFixed(1);
+}
 
-        function renderRadarChart(performanceData) {
-            const ctx = document.getElementById('radarChart').getContext('2d');
-            if (window.radarChart) {
-                window.radarChart.destroy();
-            }
-            window.radarChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: performanceData.labels,
-                    datasets: [{
-                        label: 'Scores',
-                        data: performanceData.values,
-                        backgroundColor: 'rgba(108, 99, 255, 0.3)',
-                        borderColor: '#6c63ff',
-                        pointBackgroundColor: '#6c63ff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        r: {
-                            angleLines: { display: true },
-                            suggestedMin: 0,
-                            suggestedMax: 100
+function renderTrendChart(trendData) {
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    
+    // Destroy previous chart instance if it exists
+    if (window.trendChart) {
+        window.trendChart.destroy();
+    }
+    
+    window.trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: trendData.labels,
+            datasets: [{
+                label: 'Health Score',
+                data: trendData.values,
+                borderColor: '#6c63ff',
+                backgroundColor: 'rgba(108, 99, 255, 0.2)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            return tooltipItems[0].label + ' Health Score';
                         }
                     }
                 }
-            });
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    min: 0,
+                    max: 5,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
         }
+    });
+}
+
+function renderRadarChart(performanceData) {
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    
+    // Destroy previous chart instance if it exists
+    if (window.radarChart) {
+        window.radarChart.destroy();
+    }
+    
+    window.radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: performanceData.labels,
+            datasets: [{
+                label: 'Performance',
+                data: performanceData.values,
+                backgroundColor: 'rgba(108, 99, 255, 0.3)',
+                borderColor: '#6c63ff',
+                pointBackgroundColor: '#6c63ff',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { display: true },
+                    suggestedMin: 0,
+                    suggestedMax: 5,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+// Add better error handling and debug logging
+function fetchDepartmentData(deptId) {
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const errorMessage = document.getElementById('error-message');
+    
+    // Show loading indicator and hide error
+    loadingIndicator.style.display = 'block';
+    errorMessage.style.display = 'none';
+    
+    // Build URL for API endpoint
+    const url = `/api/department-data/?dept=${deptId}`;
+    
+    console.log(`Fetching data from: ${url}`);
+    
+    fetch(url)
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Received data:', data);
+            if (!data || Object.keys(data).length === 0) {
+                throw new Error('No data received');
+            }
+            
+            // Update dashboard with department data
+            updateDashboardData(data);
+            loadingIndicator.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error fetching department data:', error);
+            errorMessage.textContent = `Unable to load department data: ${error.message || 'Please try again later.'}`;
+            errorMessage.style.display = 'block';
+            loadingIndicator.style.display = 'none';
+        });
+}
     </script>
 </body>
 </html>

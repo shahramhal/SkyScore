@@ -124,29 +124,42 @@ def department_data(request):
                 'trend': team_metrics['trend']
             })
         
-        # Build trend data for last 6 months
+        # Get trend data for last 6 months
         trend_data = get_trend_data(department)
         
-        # Build radar chart data
+        # Get radar data
         radar_data = get_radar_data(department)
         
-        # Build summary data
+        # Get summary data
         summary_data = get_summary_data(department)
         
+        # Format data to match what the frontend expects
         response_data = {
             'department': {
                 'id': department.departmentid,
                 'name': department.departmentname,
+            },
+            # This matches the structure expected by updateDashboardData
+            'summary': summary_data,
+            'scores': {
                 'health': dept_metrics['health_score'],
                 'mission': dept_metrics['mission_score'],
                 'speed': dept_metrics['speed_score'],
                 'value': dept_metrics['value_score'],
-                'trend': dept_metrics['health_trend']
+                'healthTrend': dept_metrics['health_trend'],
+                'missionTrend': 0.0,  # Placeholder values since we don't track these
+                'speedTrend': 0.0,    # in the backend functions
+                'valueTrend': 0.0
             },
-            'trends': trend_data,
-            'radar': radar_data,
-            'teams': team_data,
-            'summary': summary_data
+            'trendData': {
+                'labels': trend_data['months'],
+                'values': trend_data['healthScores']
+            },
+            'performance': {
+                'labels': radar_data['categories'],
+                'values': radar_data['scores']
+            },
+            'teams': team_data
         }
         
         return JsonResponse(response_data)
@@ -155,7 +168,6 @@ def department_data(request):
         return JsonResponse({'error': 'Department not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
 
 def calculate_department_metrics(department):
     """
@@ -454,3 +466,6 @@ def engineering_metrics(request):
         return JsonResponse({'error': 'Department not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+def get_settings_SM(request):
+    return render(request, 'SenManSetting.html', {'active_page': 'settings'})
