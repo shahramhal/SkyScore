@@ -11,7 +11,7 @@ class User(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     teamid=models.ForeignKey('Team', models.DO_NOTHING, db_column='teamID', blank=True)  # Field name made lowercase.
-    departmentid=models.ForeignKey('Department', models.DO_NOTHING, db_column='departmentID', blank=True,)  # Field name made lowercase.
+    departmentid = models.ForeignKey('Department', models.DO_NOTHING, db_column='departmentID', blank=True, null=True)
     
     
     class Meta:
