@@ -1,4 +1,4 @@
-<!-- templates/engineering/dashboard.html -->
+
 {%load static%}
 <!DOCTYPE html>
 <html lang="en">
@@ -7,22 +7,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENMAN DEPT OVERVIEW PAGE</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link 
-    rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4a148c;
+            --primary-color: #4a3b99;
             --primary-light: #7c43bd;
-            --primary-dark: #12005e;
+            --primary-dark: #362b73;
             --accent-color: #4a148c;
             --text-dark: #333333;
             --text-light: #ffffff;
             --background-light: #f8f9fa;
             --card-bg: #ffffff;
-            --primary-blue: #4a148c;
-            --dark-blue: #12005e;
+            --primary-blue: #4a3b99;
+            --dark-blue: #362b73;
             --accent-blue: #7c43bd;
-
+            /* Define sidebar width as a variable for consistency */
+            --sidebar-width: 280px;
 
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
@@ -38,14 +39,14 @@
         }
         
         .dashboard-container {
-            max-width: 1200px;
+            max-width: calc(100% - var(--sidebar-width));
             margin: 0 auto;
             padding: 0;
             box-shadow: var(--shadow);
             border-radius: var(--border-radius);
             overflow: hidden;
-            margin-left: var(--sidebar-width, 250px);
-
+            margin-left: var(--sidebar-width);
+            
         }
         
         .header-banner {
@@ -54,7 +55,6 @@
             padding: 25px 40px;
             text-align: center;
             position: relative;
-            
         }
         
         .header-title {
@@ -64,12 +64,100 @@
             letter-spacing: 1px;
         }
         
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(to bottom, var(--primary-blue), var(--dark-blue));
+            color: white;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .side-nav-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .side-nav-logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .side-nav-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .user-profile {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-name,
+        .user-role {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .side-nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .side-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .side-nav-link:hover,
+        .side-nav-link.active {
+            background-color: var(--accent-blue);
+        }
+
+        .side-nav-link i {
+            margin-right: 10px;
+        }
         
-    .main-content {
-        background-color: var(--background-light);
-        padding: 30px 40px;
-        margin-right: var(--sidebar-width, 250px) ;
-    }
+        .main-content {
+            background-color: var(--background-light);
+            padding: 30px 40px;
+            max-width: 900px;             
+            margin: 0 auto;
+        }
         
         .overview-tab {
             background-color: rgba(255, 255, 255, 0.9);
@@ -245,7 +333,56 @@
             border-radius: var(--border-radius);
         }
         
+        .department-selector {
+            margin-bottom: 20px;
+        }
+        
+        .department-selector select {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            background-color: white;
+            font-size: 14px;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+        
+        .department-selector label {
+            margin-right: 10px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            :root {
+                --sidebar-width: 250px;
+            }
+        }
+        
         @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 0px;
+            }
+            
+            .side-nav {
+                transform: translateX(-100%);
+            }
+            
+            .side-nav.active {
+                transform: translateX(0);
+                width: 250px;
+            }
+            
+            .side-nav-toggle {
+                display: block;
+            }
+            
+            .dashboard-container {
+                max-width: 100%;
+                margin-left: 0;
+            }
+            
             .charts-section {
                 flex-direction: column;
             }
@@ -260,6 +397,7 @@
             
             .main-content {
                 padding: 20px;
+                
             }
             
             .logo {
@@ -269,130 +407,130 @@
                 margin-top: 15px;
                 display: block;
             }
+            
+            /* Add hamburger menu button for mobile */
+            .mobile-menu-toggle {
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 1001;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            }
         }
-        .department-selector {
-        margin-bottom: 20px;
-        }
-        .department-selector select {
-        padding: 8px 12px;
-        border-radius: var(--border-radius);
-        border: 1px solid #ddd;
-        background-color: white;
-        font-size: 14px;
-        color: var(--primary-color);
-        cursor: pointer;}
-    
-        .department-selector label {
-        margin-right: 10px;
-        font-weight: 600;
-        color: var(--primary-color);
-    }
-        
     </style>
 </head>
 <body>
-    <nav class="side-nav">
+    <nav class="side-nav" id="side-nav">
         <!-- Header with logo and toggle button -->
         <div class="side-nav-header">
-          <!-- Django URL template tag for dynamic routing -->
-          <a href="{% url 'SenManagerDash' %}" class="side-nav-logo"
-            >Sky Score</a
-          >
-          <!-- Toggle button for collapsing sidebar -->
-          <button class="side-nav-toggle">
-            <i class="fas fa-bars"></i>
-          </button>
+            <!-- Django URL template tag for dynamic routing -->
+            <a href="{% url 'SenManagerDash' %}" class="side-nav-logo">Sky Score</a>
+            <!-- Toggle button for collapsing sidebar -->
+            <button class="side-nav-toggle" aria-label="Toggle Sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
-    
+
         <!-- User Profile Section with Django Template Logic -->
         <div class="user-profile">
-          <!-- Avatar with user's initial (or 'U' for guest) -->
-          <div class="user-avatar">
-            {% if user %} {{ user.username|slice:":1"|upper }}
-            <!-- First letter of username -->
-            {% else %} U
-            <!-- Default for guest users -->
-            {% endif %}
-          </div>
-    
-          <!-- User's full name (or 'Guest User') -->
-          <div class="user-name">
-            {% if user %} {{ user.first_name }} {{ user.last_name }}
-            <!-- Combined name -->
-            {% else %} Guest User {% endif %}
-          </div>
-    
-          <!-- User role from Django model -->
-          <div class="user-role">
-            {% if user %} {{ user.userType }}
-            <!-- Custom user type field -->
-            {% else %} Guest User {% endif %}
-          </div>
+            <!-- Avatar with user's initial (or 'U' for guest) -->
+            <div class="user-avatar">
+                {% if user %} {{ user.username|slice:":1"|upper }}
+                <!-- First letter of username -->
+                {% else %} U
+                <!-- Default for guest users -->
+                {% endif %}
+            </div>
+
+            <!-- User's full name (or 'Guest User') -->
+            <div class="user-name">
+                {% if user %} {{ user.first_name }} {{ user.last_name }}
+                <!-- Combined name -->
+                {% else %} Guest User {% endif %}
+            </div>
+
+            <!-- User role from Django model -->
+            <div class="user-role">
+                {% if user %} {{ user.userType }}
+                <!-- Custom user type field -->
+                {% else %} Guest User {% endif %}
+            </div>
         </div>
-    
+
         <!-- Navigation Menu -->
         <ul class="side-nav-menu">
-          <!-- Dashboard Link -->
-          <li class="side-nav-item">
-              <a href="{% url 'engineer_dashboard' %}" 
-                 class="side-nav-link {% if active_page == 'dashboard' %}active{% endif %}">
-                  <i class="fas fa-home"></i>
-                  <span>Dashboard</span>
-              </a>
-          </li>
-      
-          <!-- Health Check Link -->
-          <li class="side-nav-item">
-              <a href="{% url 'votingDashboard' %}" 
-                 class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'voting' %}active{% endif %}">
-                  <i class="fas fa-heart"></i>
-                  <span>Health Check</span>
-              </a>
-          </li>
-      
-          <!-- Reports Link -->
-          <li class="side-nav-item">
-              <a href="#" 
-                 class="side-nav-link {% if active_page == 'reports' %}active{% endif %}">
-                  <i class="fas fa-chart-line"></i>
-                  <span>Reports</span>
-              </a>
-          </li>
-      
-          <!-- Profile Link -->
-          <li class="side-nav-item">
-              <a href="{% url 'engineer_profile' %}" 
-                 class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
-                  <i class="fas fa-user"></i>
-                  <span>Profile</span>
-              </a>
-          </li>
-          <!-- Settings Link -->
-          <li class="side-nav-item">
-            <a href="#" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
-              <i class="fas fa-cog"></i>
-              <span>Settings</span>
-            </a>
-          </li>
-      
-          <!-- Logout Link -->
-          <li class="side-nav-item">
-              <a href="{% url 'logout' %}" class="side-nav-link">
-                  <i class="fas fa-sign-out-alt"></i>
-                  <span>Logout</span>
-              </a>
-          </li>
-      </ul>
+            <!-- Dashboard Link -->
+            <li class="side-nav-item">
+                <a href="{% url 'SenManagerDash' %}" 
+                   class="side-nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+        
+            <!-- Health Check Link -->
+            <li class="side-nav-item">
+                <a href="{% url 'department_summary' %}" 
+                   class="side-nav-link {% if active_page == 'health_cards' or active_page == 'voting' %}active{% endif %}">
+                    <i class="fas fa-star"></i>
+                    <span>Summary</span>
+                </a>
+            </li>
+        
+            <!-- Reports Link -->
+            <li class="side-nav-item">
+                <a href="{% url 'SenManagerprog' %}" 
+                   class="side-nav-link {% if active_page == 'reports' %}active{% endif %}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+        
+            <!-- Profile Link -->
+            <li class="side-nav-item">
+                <a href="{% url 'engineer_profile' %}" 
+                   class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            
+            <!-- Settings Link -->
+            <li class="side-nav-item">
+                <a href="{% url 'settings_sm' %}" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        
+            <!-- Logout Link -->
+            <li class="side-nav-item">
+                <a href="{% url 'logout' %}" class="side-nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
     </nav>
 
-
-    
-
-  
+    <!-- Mobile menu toggle button (only visible on small screens) -->
+    <button id="mobile-menu-toggle" class="mobile-menu-toggle d-md-none">
+        <i class="fas fa-bars"></i>
+    </button>
 
     <div class="dashboard-container">
         <div class="header-banner">
-            <h1 class="header-title">OTHER DEPARTMENTS?</h1>
+            <h1 class="header-title">PROGRESS OF DEPARTMENTS</h1>
             <div class="logo"><span class="sky">sky</span><span class="score">score</span></div>
         </div>
         
@@ -401,8 +539,8 @@
             
             <div class="welcome-section">
                 <div class="welcome-message">Welcome</div>
-                
             </div>
+            
             <div class="department-selector">
                 <form id="department-form" method="get" action="">
                     <label for="department-select">Select Department:</label>
@@ -458,6 +596,15 @@
         document.addEventListener('DOMContentLoaded', function() {
             const loadingIndicator = document.getElementById('loading-indicator');
             const errorMessage = document.getElementById('error-message');
+            const sideNav = document.getElementById('side-nav');
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            
+            // Mobile menu toggle functionality
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sideNav.classList.toggle('active');
+                });
+            }
             
             // Show loading indicator
             loadingIndicator.style.display = 'block';
