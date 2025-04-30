@@ -8,6 +8,7 @@
     <title>User Page</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   </head>
   <body>
     <div class="main-container">
@@ -21,7 +22,25 @@
           <a href="{% url 'admin:index' %}" class="auth-button">Admin Log in</a>
         </div>
       </div>
+      <div>
+        <div class="display_in-line">
+          <a class="center_image"><i class="fas fa-users title-icon"></i></a>
+          <h1 class="h1_center">Our Website</h1>
+          
+        </div>
+        <p class="text_center">
+          <b>Sky Score</b> is a comprehensive <i>team health assessment platform</i> that helps organizations build stronger, more effective teams. By collecting meaningful feedback from each team member, our tool generates <b>actionable insights</b> and targeted recommendations for improvement. Whether you're focusing on <i>communication</i>, <i>collaboration</i>, or overall team dynamics, <b>Sky Score</b> provides a clear pathway to elevate your team's performance and <i>well-being</i>. Start your journey toward a healthier, more productive team environment <b>today</b>.
+        </p>
+        <div class="display_in-line">
+          <a class="center_image"><i class="fas fa-solid fa-user-group  "></i></a>
+          <h1 class="h1_center_2"><i>Join Us Today</i></h1>
+          
+        </div>
+  
+      </div>
     </div>
+
+    
 
     {% include "footer.html" %}
   </body>

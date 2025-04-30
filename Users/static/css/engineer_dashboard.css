@@ -140,13 +140,21 @@
 /* Health Cards Grid */
 .health-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   margin-bottom: 10px;
+  width: 100%;
+}
+
+.health-cards-grid_left {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80%, 1fr));
+  gap: 1rem;
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 .health-card {
-  width: 240%;
+  width: 80%;
   padding: 1rem;
   border-radius: 8px;
   border-left: 5px solid;

@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Team Leader Settings | Sky Score</title>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link
       rel="stylesheet"
       href="{% static 'css/navbar.css' %}"
@@ -13,13 +13,15 @@
 
     <style>
       :root {
-        --primary-blue: #4a148c;
-        --dark-blue: #12005e;
-        --accent-blue: #7c43bd;
+        --primary-blue: #4a3b99;
         --light-gray: #f4f4f4;
         --white: #ffffff;
         --status-allowed: #4caf50;
         --status-notallowed: #b90c0c;
+        --primary-blue: #4a3b99;
+        --dark-blue: #362b73;
+        --accent-blue: #6a42c1;
+        --sidebar-width: 280px;
       }
 
       body {
@@ -62,6 +64,7 @@
         margin-left: 250px;
         padding: 20px;
         width: calc(100% - 250px);
+        margin-left: 280px;
       }
 
       .settings-container {
@@ -232,7 +235,99 @@
   </head>
   <body>
 
-    {%include "navbar.html" %}
+    <nav class="side-nav">
+        <!-- Header with logo and toggle button -->
+        <div class="side-nav-header">
+          <!-- Django URL template tag for dynamic routing -->
+          <a href="{% url 'teamleaddash' %}" class="side-nav-logo"
+            >Sky Score</a
+          >
+          <!-- Toggle button for collapsing sidebar -->
+          <button class="side-nav-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+    
+        <!-- User Profile Section with Django Template Logic -->
+        <div class="user-profile">
+          <!-- Avatar with user's initial (or 'U' for guest) -->
+          <div class="user-avatar">
+            {% if user %} {{ user.username|slice:":1"|upper }}
+            <!-- First letter of username -->
+            {% else %} U
+            <!-- Default for guest users -->
+            {% endif %}
+          </div>
+    
+          <!-- User's full name (or 'Guest User') -->
+          <div class="user-name">
+            {% if user %} {{ user.first_name }} {{ user.last_name }}
+            <!-- Combined name -->
+            {% else %} Guest User {% endif %}
+          </div>
+    
+          <!-- User role from Django model -->
+          <div class="user-role">
+            {% if user %} {{ user.userType }}
+            <!-- Custom user type field -->
+            {% else %} Guest User {% endif %}
+          </div>
+        </div>
+    
+        <!-- Navigation Menu -->
+        <ul class="side-nav-menu">
+          <!-- Dashboard Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'teamleaddash' %}" 
+                 class="side-nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                  <i class="fas fa-home"></i>
+                  <span>Dashboard</span>
+              </a>
+          </li>
+      
+          <!-- Health Check Link -->
+          <li class="side-nav-item">
+              <a href="#" 
+                 class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'voting' %}active{% endif %}">
+                  <i class="fas fa-vote-yea"></i>
+                  <span>Session</span>
+              </a>
+          </li>
+      
+          <!-- Reports Link -->
+          <li class="side-nav-item">
+              <a href="{%url 'teamleadprog' %}" 
+                 class="side-nav-link {% if active_page == 'reports' %}active{% endif %}">
+                  <i class="fas fa-chart-line"></i>
+                  <span>Reports</span>
+              </a>
+          </li>
+      
+          <!-- Profile Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'engineer_profile' %}" 
+                 class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
+                  <i class="fas fa-user"></i>
+                  <span>Profile</span>
+              </a>
+          </li>
+          <!-- Settings Link -->
+          <li class="side-nav-item">
+            <a href="{% url 'settings_tl' %}" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+              <i class="fas fa-cog"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+      
+          <!-- Logout Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'logout' %}" class="side-nav-link">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+              </a>
+          </li>
+      </ul>
+    </nav>
     
 
     <div class="main-content">

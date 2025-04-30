@@ -526,7 +526,11 @@ def engineering_metrics(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 def get_settings_SM(request):
+
     return render(request, 'SenManSetting.html', {'active_page': 'settings'})
+
+def get_settings_TL(request):
+    return render(request, 'Teamleadersetting.html')
 
 def debug_cards(request):
     card_names = list(Healthcheckcard.objects.values_list('cardname', flat=True))
