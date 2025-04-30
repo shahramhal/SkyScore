@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Health Check Overview</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 40px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+        }
+        h2 {
+            color: #6f42c1;
+        }
+        .summary-section {
+            background-color: #f1e8fc;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        .summary-section h3 {
+            margin-top: 0;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        .back-button {
+            background-color: #6f42c1;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #5a34a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Health Check Overview</h2>
+
+        <label for="team-name"><strong>Selected Team:</strong></label>
+        <select id="team-name" disabled>
+            <option selected>{{ team.teamname }}</option>
+        </select>
+
+        <div class="summary-section">
+            <h3>Team Health Summary</h3>
+            <p><strong>Average Score:</strong> [Coming Soon]</p>
+            <p><strong>Mission / Fun / Speed / Value:</strong> [Coming Soon]</p>
+            <p><strong>Last Voted:</strong> [Coming Soon]</p>
+        </div>
+
+        <div class="summary-section">
+            <h3>Performance Charts</h3>
+            <p>[Graphs or bar/line charts will appear here in future releases.]</p>
+        </div>
+
+        <div class="summary-section">
+            <h3>Suggestions & Actions</h3>
+            <p>[Automated suggestions for improvements will be displayed here.]</p>
+        </div>
+
+        <a class="back-button" href="{% url 'dept_lead_dashboard' %}">← Back to Department Overview</a>
+    </div>
+</body>
+</html>

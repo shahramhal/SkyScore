@@ -668,7 +668,7 @@
           
           <div class="summary-cards">
               <div class="summary-card">
-                  <h3 class="summary-card-title">Overall Health Score</h3>
+                  <h3 class="summary-card-title">Teamwork Score</h3>
                   <div class="summary-card-value" id="health-score">--</div>
                   <div class="trend-badge trend-up" id="health-trend">--</div>
               </div>
@@ -704,6 +704,10 @@
                       <p>No performance data available for this department</p>
                   </div>
               </div>
+              <div class="chart-container">
+                <h3 class="chart-title">Category Score Overview</h3>
+                <canvas id="barChart"></canvas>
+            </div>
           </div>
           
           <div class="team-summary-section">
@@ -829,6 +833,12 @@
                 window.radarChart.destroy();
                 window.radarChart = null;
             }
+
+            if (window.barChart) {
+                window.barChart.destroy();
+                window.barChart = null;
+            }
+            
         }
         
         function changeDepartment() {
@@ -890,86 +900,84 @@
         }
         
         function updateDashboardData(data) {
-    console.log("Received data:", data); // Debug: check data structure
-    
-    // Update department name in case it was changed server-side
-    if (data.department && data.department.name) {
-        document.getElementById('current-department').textContent = data.department.name + " Department";
-    }
-    
-    // Update summary metrics
-    if (data.summary) {
-        document.getElementById('total-votes').textContent = data.summary.totalVotes || '0';
-        document.getElementById('participation-rate').textContent = (data.summary.participationRate || '0') + '%';
-        document.getElementById('last-check-date').textContent = data.summary.lastCheckDate || 'N/A';
-    }
-
-    // Update score cards and trends
-    if (data.scores) {
-        document.getElementById('health-score').textContent = data.scores.health || '--';
-        document.getElementById('mission-score').textContent = data.scores.mission || '--';
-        document.getElementById('speed-score').textContent = data.scores.speed || '--';
-        document.getElementById('value-score').textContent = data.scores.value || '--';
+            console.log("Received data:", data); // Debug: check data structure
         
-        // Update trend badges with values and apply correct classes
-        updateTrendBadge('health-trend', data.scores.healthTrend);
-        updateTrendBadge('mission-trend', data.scores.missionTrend);
-        updateTrendBadge('speed-trend', data.scores.speedTrend);
-        updateTrendBadge('value-trend', data.scores.valueTrend);
-    }
-
-    // Show charts if data available
-    if (data.trendData && data.trendData.labels && data.trendData.labels.length > 0) {
-        document.getElementById('trend-chart-placeholder').style.display = 'none';
-        renderTrendChart(data.trendData);
-    } else {
-        document.getElementById('trend-chart-placeholder').style.display = 'flex';
-    }
-
-    if (data.performance && data.performance.labels && data.performance.labels.length > 0) {
-        document.getElementById('radar-chart-placeholder').style.display = 'none';
-        renderRadarChart(data.performance);
-    } else {
-        document.getElementById('radar-chart-placeholder').style.display = 'flex';
-    }
-
-    // Populate team table
-    const teamTableBody = document.getElementById('team-table-body');
-    teamTableBody.innerHTML = ''; // Clear previous rows
-    
-    if (data.teams && data.teams.length > 0) {
-        data.teams.forEach(team => {
-            const row = document.createElement('tr');
-            
-            // Determine health indicator class based on health score
-            let healthClass = 'health-warning';
-            if (team.health >= 4.0) {
-                healthClass = 'health-good';
-            } else if (team.health < 3.0) {
-                healthClass = 'health-critical';
+            // Render bar chart if available
+            if (data.bar_metrics && data.bar_metrics.categories) {
+                renderBarChart(data.bar_metrics);
             }
-            
-            row.innerHTML = `
-                <td>${team.name}</td>
-                <td class="score-cell">
-                    <span class="health-indicator ${healthClass}"></span>
-                    ${team.health || '--'}
-                </td>
-                <td class="score-cell">${team.mission || '--'}</td>
-                <td class="score-cell">${team.speed || '--'}</td>
-                <td class="score-cell">${team.value || '--'}</td>
-                <td class="score-cell">${formatTrend(team.trend)}</td>
-            `;
-            teamTableBody.appendChild(row);
-        });
-    } else {
-        // Add a message if no teams
-        const row = document.createElement('tr');
-        row.innerHTML = '<td colspan="6" style="text-align: center;">No teams found in this department</td>';
-        teamTableBody.appendChild(row);
-    }
-}
-
+        
+            // Update department title
+            if (data.department && data.department.name) {
+                document.getElementById('current-department').textContent = data.department.name + " Department";
+            }
+        
+            // Update summary metrics
+            if (data.summary) {
+                document.getElementById('total-votes').textContent = data.summary.totalVotes || '0';
+                document.getElementById('participation-rate').textContent = (data.summary.participationRate || '0') + '%';
+                document.getElementById('last-check-date').textContent = data.summary.lastCheckDate || 'N/A';
+            }
+        
+            // Update score cards and trend badges
+            if (data.scores) {
+                document.getElementById('health-score').textContent = data.scores.teamwork_score || '--';
+                document.getElementById('mission-score').textContent = data.scores.mission_score || '--';
+                document.getElementById('speed-score').textContent = data.scores.speed_score || '--';
+                document.getElementById('value-score').textContent = data.scores.value_score || '--';
+        
+                updateTrendBadge('health-trend', data.scores.health_trend);
+                updateTrendBadge('mission-trend', data.scores.mission_trend || 0.0);
+                updateTrendBadge('speed-trend', data.scores.speed_trend || 0.0);
+                updateTrendBadge('value-trend', data.scores.value_trend || 0.0);
+            }
+        
+            // Show or hide trend chart
+            if (data.trendData && data.trendData.labels && data.trendData.labels.length > 0) {
+                document.getElementById('trend-chart-placeholder').style.display = 'none';
+                renderTrendChart(data.trendData);
+            } else {
+                document.getElementById('trend-chart-placeholder').style.display = 'flex';
+            }
+        
+            // Show or hide radar chart
+            if (data.performance && data.performance.labels && data.performance.labels.length > 0) {
+                document.getElementById('radar-chart-placeholder').style.display = 'none';
+                renderRadarChart(data.performance);
+            } else {
+                document.getElementById('radar-chart-placeholder').style.display = 'flex';
+            }
+        
+            // Populate team breakdown table
+            const teamTableBody = document.getElementById('team-table-body');
+            teamTableBody.innerHTML = ''; // Clear previous rows
+        
+            if (data.teams && data.teams.length > 0) {
+                data.teams.forEach(team => {
+                    let healthClass = 'health-warning';
+                    if (team.health >= 4.0) healthClass = 'health-good';
+                    else if (team.health < 3.0) healthClass = 'health-critical';
+        
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${team.name}</td>
+                        <td class="score-cell">
+                            <span class="health-indicator ${healthClass}"></span>
+                            ${team.health || '--'}
+                        </td>
+                        <td class="score-cell">${team.mission || '--'}</td>
+                        <td class="score-cell">${team.speed || '--'}</td>
+                        <td class="score-cell">${typeof team.value === 'number' ? team.value.toFixed(1) : '--'}</td>
+                        <td class="score-cell">${formatTrend(team.trend)}</td>
+                    `;
+                    teamTableBody.appendChild(row);
+                });
+            } else {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="6" style="text-align: center;">No teams found in this department</td>';
+                teamTableBody.appendChild(row);
+            }
+        }
 // Helper function to update trend badges with correct styling
 function updateTrendBadge(elementId, trendValue) {
     const element = document.getElementById(elementId);
@@ -1000,7 +1008,7 @@ function renderTrendChart(trendData) {
     const ctx = document.getElementById('trendChart').getContext('2d');
     
     // Destroy previous chart instance if it exists
-    if (window.trendChart) {
+    if (window.trendChart && typeof window.trendChart.destroy === "function") {
         window.trendChart.destroy();
     }
     
@@ -1044,25 +1052,24 @@ function renderTrendChart(trendData) {
     });
 }
 
-function renderRadarChart(performanceData) {
+function renderRadarChart(radarData) {
     const ctx = document.getElementById('radarChart').getContext('2d');
-    
-    // Destroy previous chart instance if it exists
-    if (window.radarChart) {
+
+    if (window.radarChart && typeof window.radarChart.destroy === "function") {
         window.radarChart.destroy();
     }
-    
+
     window.radarChart = new Chart(ctx, {
         type: 'radar',
         data: {
-            labels: performanceData.labels,
+            labels: radarData.labels,
             datasets: [{
-                label: 'Performance',
-                data: performanceData.values,
-                backgroundColor: 'rgba(108, 99, 255, 0.3)',
+                label: 'Score',
+                data: radarData.values,
+                backgroundColor: 'rgba(108, 99, 255, 0.2)',
                 borderColor: '#6c63ff',
                 pointBackgroundColor: '#6c63ff',
-                pointRadius: 4
+                borderWidth: 2
             }]
         },
         options: {
@@ -1072,24 +1079,45 @@ function renderRadarChart(performanceData) {
                 r: {
                     angleLines: { display: true },
                     suggestedMin: 0,
-                    suggestedMax: 5,
-                    ticks: {
-                        stepSize: 1
-                    },
-                    pointLabels: {
-                        font: {
-                            size: 12,
-                            weight: 'bold'
-                        }
-                    }
+                    suggestedMax: 5
                 }
-            },
-            plugins: {
-                legend: { display: false }
             }
         }
     });
 }
+
+
+function renderBarChart(barData) {
+    const ctx = document.getElementById('barChart').getContext('2d');
+
+    if (window.barChart && typeof window.barChart.destroy === "function") {
+        window.barChart.destroy();
+    }
+
+    window.barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: barData.categories,
+            datasets: [{
+                label: 'Average Score',
+                data: barData.values,
+                backgroundColor: 'rgba(124, 67, 189, 0.7)',
+                borderColor: 'rgba(74, 20, 140, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 5
+                }
+            }
+        }
+    });
+}
+
 
 // Add better error handling and debug logging
 function fetchDepartmentData(deptId) {
@@ -1101,7 +1129,7 @@ function fetchDepartmentData(deptId) {
     errorMessage.style.display = 'none';
     
     // Build URL for API endpoint
-    const url = `/api/department-data/?dept=${deptId}`;
+    const url = `/teams/api/department-data/?dept=${deptId}`;
     
     console.log(`Fetching data from: ${url}`);
     
