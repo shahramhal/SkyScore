@@ -190,25 +190,100 @@
     </style>
   </head>
   <body>
-    <!-- Sidebar -->
     <nav class="side-nav">
-      <div class="side-nav-header">
-        <a href="#" class="side-nav-logo">Sky Score</a>
-      </div>
-      <div class="user-profile">
-        <div class="user-avatar">U</div>
-        <p class="user-name">Guest User</p>
-        <p class="user-role">Senior Manager</p>
-      </div>
-      <ul class="side-nav-menu">
-        <li><a href="#" class="side-nav-link active"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="#" class="side-nav-link"><i class="fas fa-heart"></i> Health Check</a></li>
-        <li><a href="#" class="side-nav-link"><i class="fas fa-chart-line"></i> Reports</a></li>
-        <li><a href="#" class="side-nav-link"><i class="fas fa-user"></i> Profile</a></li>
-        <li><a href="#" class="side-nav-link"><i class="fas fa-cog"></i> Settings</a></li>
-        <li><a href="{% url 'logout'%}" class="side-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <!-- Header with logo and toggle button -->
+        <div class="side-nav-header">
+          <!-- Django URL template tag for dynamic routing -->
+          <a href="{% url 'engineer_dashboard' %}" class="side-nav-logo"
+            >Sky Score</a
+          >
+          <!-- Toggle button for collapsing sidebar -->
+          <button class="side-nav-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+    
+        <!-- User Profile Section with Django Template Logic -->
+        <div class="user-profile">
+          <!-- Avatar with user's initial (or 'U' for guest) -->
+          <div class="user-avatar">
+            {% if user %} {{ user.username|slice:":1"|upper }}
+            <!-- First letter of username -->
+            {% else %} U
+            <!-- Default for guest users -->
+            {% endif %}
+          </div>
+    
+          <!-- User's full name (or 'Guest User') -->
+          <div class="user-name">
+            {% if user %} {{ user.first_name }} {{ user.last_name }}
+            <!-- Combined name -->
+            {% else %} Guest User {% endif %}
+          </div>
+    
+          <!-- User role from Django model -->
+          <div class="user-role">
+            {% if user %} {{ user.userType }}
+            <!-- Custom user type field -->
+            {% else %} Guest User {% endif %}
+          </div>
+        </div>
+    
+        <!-- Navigation Menu -->
+        <ul class="side-nav-menu">
+          <!-- Dashboard Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'SenManagerDash' %}" 
+                 class="side-nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                  <i class="fas fa-home"></i>
+                  <span>Dashboard</span>
+              </a>
+          </li>
+      
+          <!-- Health Check Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'department_summary' %}" 
+                 class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'voting' %}active{% endif %}">
+                  <i class="fas fa-star"></i>
+                  <span>Summary</span>
+              </a>
+          </li>
+      
+          <!-- Reports Link -->
+          <li class="side-nav-item">
+              <a href="{%url 'SenManagerprog'%}" 
+                 class="side-nav-link {% if active_page == 'reports' %}active{% endif %}">
+                  <i class="fas fa-chart-line"></i>
+                  <span>Reports</span>
+              </a>
+          </li>
+      
+          <!-- Profile Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'engineer_profile' %}" 
+                 class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
+                  <i class="fas fa-user"></i>
+                  <span>Profile</span>
+              </a>
+          </li>
+          <!-- Settings Link -->
+          <li class="side-nav-item">
+            <a href="#" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+              <i class="fas fa-cog"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+      
+          <!-- Logout Link -->
+          <li class="side-nav-item">
+              <a href="{% url 'logout' %}" class="side-nav-link">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+              </a>
+          </li>
       </ul>
     </nav>
+    
 
     <!-- Main Content -->
     <div class="main-container">
@@ -218,21 +293,29 @@
           <p>Get a Clear View of the Departments below! Click a Department to see its teams.</p>
         </div>
 
-        <div class="warning">
-          <i class="fas fa-exclamation-triangle"></i>&nbsp; You don't have access to team-level details.
-        </div>
+        
 
         <div class="department-item" onclick="toggleTeams('{{ department.departmentid }}')">
             {{ department.departmentname }}
           </div>
           
           <!-- Example of dynamically generated teams list -->
-          <div id="{{ department.departmentid }}" style="display: none;">
-            <ul>
-              <li>Team 1</li>
-              <li>Team 2</li>
-              <li>Team 3</li>
-            </ul>
+          <div class="department-list">
+            {% for department in departments %}
+              <div class="department-item" onclick="toggleTeams('{{ department.departmentid }}')">
+                {{ department.departmentname }}
+              </div>
+          
+              <div id="{{ department.departmentid }}" style="display: none;">
+                <ul>
+                  {% for team in teams %}
+                    {% if team.departmentid == department  %}
+                      <li>{{ team.teamname }}</li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
           </div>
 
         <div class="bottom-actions">
@@ -244,12 +327,9 @@
 
     <script>
       function toggleTeams(id) {
-    const el = document.getElementById(id);
-    if (el) {
-      // Toggle the display of the element (team list)
-      el.style.display = el.style.display === 'none' ? 'block' : 'none';
-    }
-  }
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+      }
     </script>
   </body>
 </html>

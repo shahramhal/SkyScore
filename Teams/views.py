@@ -17,13 +17,58 @@ from .models import Department
 
 def getsenman_overview(request):
     departments = Department.objects.all()
-    return render(request, 'SenManagerDash.html', {'departments': departments})
+    teams = Team.objects.all()
+    return render(request, 'SenManagerDash.html', {'departments': departments, 'teams': teams})
 
 
 def getsenmanprogress(request):
-    departments = Department.objects.all()
-    teams = Team.objects.all()
-    return render(request, 'SenManp2.html', {'departments': departments, 'teams': teams})
+    """
+    View to render the Senior Manager progress page with necessary context.
+    """
+    # Get all departments for dropdown selection
+    departments = Department.objects.all().order_by('departmentname')
+    
+    # Get all teams for reference
+    teams = Team.objects.all().order_by('teamname')
+    
+    # Get department ID from URL parameter if available
+    dept_id = request.GET.get('dept')
+    
+    # If department ID is provided, get that department, otherwise use the first one
+    if dept_id:
+        try:
+            selected_department = Department.objects.get(departmentid=dept_id)
+        except Department.DoesNotExist:
+            selected_department = departments.first() if departments.exists() else None
+    else:
+        selected_department = departments.first() if departments.exists() else None
+    
+    # If we have a selected department, get its metrics
+    if selected_department:
+        dept_metrics = calculate_department_metrics(selected_department)
+        dept_name = selected_department.departmentname
+    else:
+        dept_metrics = {
+            'health_score': 0,
+            'mission_score': 0,
+            'speed_score': 0,
+            'value_score': 0,
+            'health_trend': 0
+        }
+        dept_name = "No Department Found"
+    
+    context = {
+        'departments': departments,
+        'teams': teams,
+        'selected_department': selected_department,
+        'department_name': dept_name,
+        'health_score': dept_metrics['health_score'],
+        'mission_score': dept_metrics['mission_score'],
+        'speed_score': dept_metrics['speed_score'],
+        'value_score': dept_metrics['value_score'],
+    }
+    
+    return render(request, 'SenManp2.html', context)
 
 
 def department_summary(request):
@@ -352,3 +397,60 @@ def team_progress(request):
     return render(request, 'TeamOverview.html', { 'teams': teams})
 
 
+def engineering_metrics(request):
+    """
+    API endpoint to provide metrics data for the Engineering Operations Department.
+    """
+    try:
+        # Get department ID from request or use default
+        dept_id = request.GET.get('dept')
+        if not dept_id:
+            # Get the first department with "Engineering" in the name, or just the first one
+            dept = Department.objects.filter(departmentname__icontains='Engineering').first()
+            if not dept:
+                dept = Department.objects.first()
+            dept_id = dept.departmentid if dept else None
+
+        if not dept_id:
+            return JsonResponse({'error': 'No departments found'}, status=404)
+            
+        # Get the department
+        department = Department.objects.get(departmentid=dept_id)
+        
+        # Calculate metrics for this department
+        dept_metrics = calculate_department_metrics(department)
+        
+        # Get trend data for last 6 months
+        trend_data = get_trend_data(department)
+        
+        # Get radar data
+        radar_data = get_radar_data(department)
+        
+        # Format the data as expected by the frontend
+        response_data = {
+            'bar_metrics': {
+                'categories': radar_data['categories'],
+                'values': radar_data['scores']
+            },
+            'progression_data': {
+                'dates': trend_data['months'],
+                'mission': [3.8, 3.9, 4.0, 4.1, 4.0, 4.2],  # Placeholder, replace with actual data
+                'plan': trend_data['healthScores'],  # Using health scores as plan for now
+                'speed': [3.6, 3.7, 3.8, 3.9, 4.0, 4.1],  # Placeholder, replace with actual data
+                'value': [3.9, 4.0, 4.1, 4.2, 4.3, 4.3]  # Placeholder, replace with actual data
+            },
+            'summary': {
+                'health_score': dept_metrics['health_score'],
+                'mission': dept_metrics['mission_score'],
+                'fun': 3.95,  # Placeholder, replace with actual data if available
+                'speed': dept_metrics['speed_score'],
+                'value': dept_metrics['value_score']
+            }
+        }
+        
+        return JsonResponse(response_data)
+        
+    except Department.DoesNotExist:
+        return JsonResponse({'error': 'Department not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
