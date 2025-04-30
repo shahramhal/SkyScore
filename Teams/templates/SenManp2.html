@@ -577,14 +577,14 @@
             
             <div class="metrics-summary">
                 <div class="metrics-row">
-                    <span class="metric-item">Average Health Score: <span class="metric-value health-score">4.05</span><span class="star-icon">★</span></span>
-                    <span class="metric-item">Mission: <span class="metric-value mission-score">4.0</span><span class="star-icon">★</span></span>
-                    <span class="metric-item">Fun: <span class="metric-value fun-score">3.95</span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Average Health Score: <span class="metric-value health-score"></span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Mission: <span class="metric-value mission-score"></span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Fun: <span class="metric-value fun-score"></span><span class="star-icon">★</span></span>
                 </div>
                 <div class="metrics-divider"></div>
                 <div class="metrics-row">
-                    <span class="metric-item">Speed: <span class="metric-value speed-score">3.9</span><span class="star-icon">★</span></span>
-                    <span class="metric-item">Value: <span class="metric-value value-score">4.15</span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Speed: <span class="metric-value speed-score"></span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Value: <span class="metric-value value-score"></span><span class="star-icon">★</span></span>
                 </div>
             </div>
         </div>
@@ -615,7 +615,7 @@
             
             // Fetch data from Django backend
             // Append department ID to URL if available
-            let apiUrl = '/api/engineering-metrics/';
+            let apiUrl = '/teams/api/engineering-metrics/';
             if (deptId) {
                 apiUrl += `?dept=${deptId}`;
             }
