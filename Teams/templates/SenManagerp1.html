@@ -666,7 +666,7 @@
           
           <div class="summary-cards">
               <div class="summary-card">
-                  <h3 class="summary-card-title">Overall Health Score</h3>
+                  <h3 class="summary-card-title">Teamwork Score</h3>
                   <div class="summary-card-value" id="health-score">--</div>
                   <div class="trend-badge trend-up" id="health-trend">--</div>
               </div>
@@ -702,6 +702,10 @@
                       <p>No performance data available for this department</p>
                   </div>
               </div>
+              <div class="chart-container">
+                <h3 class="chart-title">Category Score Overview</h3>
+                <canvas id="barChart"></canvas>
+            </div>
           </div>
           
           <div class="team-summary-section">
@@ -890,6 +894,9 @@
         function updateDashboardData(data) {
     console.log("Received data:", data); // Debug: check data structure
     
+    if (data.bar_metrics && data.bar_metrics.categories) {
+        renderBarChart(data.bar_metrics);
+    }
     // Update department name in case it was changed server-side
     if (data.department && data.department.name) {
         document.getElementById('current-department').textContent = data.department.name + " Department";
@@ -1046,7 +1053,7 @@ function renderRadarChart(performanceData) {
     const ctx = document.getElementById('radarChart').getContext('2d');
     
     // Destroy previous chart instance if it exists
-    if (window.radarChart) {
+    if (window.radarChart && typeof window.radarChart.destroy === "function") {
         window.radarChart.destroy();
     }
     
@@ -1099,7 +1106,7 @@ function fetchDepartmentData(deptId) {
     errorMessage.style.display = 'none';
     
     // Build URL for API endpoint
-    const url = `/api/department-data/?dept=${deptId}`;
+    const url = `/teams/api/department-data/?dept=${deptId}`;
     
     console.log(`Fetching data from: ${url}`);
     
@@ -1127,6 +1134,38 @@ function fetchDepartmentData(deptId) {
             errorMessage.style.display = 'block';
             loadingIndicator.style.display = 'none';
         });
+}
+
+function renderBarChart(barData) {
+    const ctx = document.getElementById('barChart').getContext('2d');
+
+    if (window.barChart) {
+        window.barChart.destroy();
+    }
+
+    window.barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: barData.categories,
+            datasets: [{
+                label: 'Average Score',
+                data: barData.values,
+                backgroundColor: 'rgba(124, 67, 189, 0.7)',
+                borderColor: 'rgba(74, 20, 140, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 5
+                }
+            }
+        }
+    });
+
 }
     </script>
 </body>
