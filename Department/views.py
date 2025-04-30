@@ -26,6 +26,11 @@ def department_settings(request):
         return redirect('login')
     return render(request, 'DeptLeadSetting.html')
 
+def health_check_placeholder(request):
+    return render(request, 'HealthCheckComingSoon.html')
+
+def department_reports(request):
+    return render(request, 'DeptReportsPlaceholder.html')
 
 def get_data(request):
     if 'user_id' not in request.session:
