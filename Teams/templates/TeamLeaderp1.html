@@ -260,8 +260,7 @@
       
           <!-- Health Check Link -->
           <li class="side-nav-item">
-              <a href="#" 
-                 class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'voting' %}active{% endif %}">
+              <a href="{%url 'Voting:votingDashboard'%}" class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'voting' %}active{% endif %}">
                   <i class="fas fa-vote-yea"></i>
                   <span>Session</span>
               </a>

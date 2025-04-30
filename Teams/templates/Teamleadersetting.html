@@ -36,7 +36,7 @@
         left: 0;
         top: 0;
         height: 100vh;
-        width: 250px;
+        width: 280px;
         background: linear-gradient(to bottom, var(--primary-blue), var(--dark-blue));
         color: white;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
@@ -287,7 +287,7 @@
       
           <!-- Health Check Link -->
           <li class="side-nav-item">
-              <a href="#" 
+              <a href="{%url 'Voting:votingDashboard'%}" 
                  class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'voting' %}active{% endif %}">
                   <i class="fas fa-vote-yea"></i>
                   <span>Session</span>
