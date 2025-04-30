@@ -6,5 +6,5 @@ urlpatterns = [
     path('view_summary/<int:team_id>/', views.view_summary, name='view_summary'),
     path('departmentSettings/', views.department_settings, name='department_settings'),
     path('reports/', views.department_reports, name='dept_reports'),
-    path('healthcheck/', views.health_check_placeholder, name='health_check_placeholder'),  # ✅ This line is critical
+    path('healthcheck/', views.health_check_view, name='health_check_placeholder'), 
 ]

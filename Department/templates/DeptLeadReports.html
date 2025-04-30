@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Team Reports | Department Leader</title>
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(to bottom, #eae6fc, #f9f9f9);
+        }
+
+        .container {
+            margin-left: 280px;
+            padding: 40px;
+        }
+
+        .header {
+            background: linear-gradient(to right, #6f42c1, #8a4be0);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            color: #4a3b99;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 300px !important;
+        }
+
+        .performance-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .performance-table th, .performance-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .performance-table th {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .highlight-up {
+            color: green;
+        }
+
+        .highlight-down {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        <div class="header">
+            <h1>Team Reports for {{ team.teamname }}</h1>
+        </div>
+
+        <div class="card">
+            <h3>Category Scores</h3>
+            <canvas id="teamChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h3>Performance Insights</h3>
+            <table class="performance-table">
+                <tr>
+                    <th>Best Score</th>
+                    <td id="bestScore"></td>
+                </tr>
+                <tr>
+                    <th>Worst Score</th>
+                    <td id="worstScore"></td>
+                </tr>
+                <tr>
+                    <th>Average Score</th>
+                    <td>{{ averages.Mission }}, {{ averages.Fun }}, {{ averages.Speed }}, {{ averages.Value }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const scores = {
+            Mission: {{ averages.Mission }},
+            Fun: {{ averages.Fun }},
+            Speed: {{ averages.Speed }},
+            Value: {{ averages.Value }}
+        };
+
+        const labels = Object.keys(scores);
+        const data = Object.values(scores);
+
+        const ctx = document.getElementById('teamChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Average Score',
+                    data: data,
+                    backgroundColor: '#6f42c1'
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5
+                    }
+                }
+            }
+        });
+
+        const bestIndex = data.indexOf(Math.max(...data));
+        const worstIndex = data.indexOf(Math.min(...data));
+        document.getElementById('bestScore').textContent = labels[bestIndex] + ' (' + data[bestIndex] + ')';
+        document.getElementById('worstScore').textContent = labels[worstIndex] + ' (' + data[worstIndex] + ')';
+    </script>
+</body>
+</html>
