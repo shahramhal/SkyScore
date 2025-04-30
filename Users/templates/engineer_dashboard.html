@@ -70,7 +70,7 @@
 
           <div class="health-cards-grid">
             <!-- Example Health Card (repeat for each metric) -->
-            <div class="health-cards-grid">
+            <div class="health-cards-grid_left">
               {% for card in health_cards %}
               <div class="health-card {% if card.voted and card.vote_value >= 3 %}green{% elif card.voted and card.vote_value >= 2 %}amber{% elif card.voted %}red{% else %}amber{% endif %}">
                 <h3>{{ card.cardname }}</h3>

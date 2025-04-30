@@ -26,7 +26,7 @@
             --sidebar-width: 280px;
 
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --border-radius: 8px;
+            --border-radius: 3px;
         }
         
         body {
@@ -55,6 +55,7 @@
             padding: 25px 40px;
             text-align: center;
             position: relative;
+            border-radius: 3px;
         }
         
         .header-title {
@@ -554,7 +555,7 @@
                 </form>
             </div>
             
-            <h2 class="department-title">The Engineering Operations Department</h2>
+            <h2 class="department-title" id="department-name-title">{{ selected_department.departmentname }} Department</h2>
             
             <div id="loading-indicator" class="loading-indicator">
                 Loading department metrics...
@@ -577,14 +578,14 @@
             
             <div class="metrics-summary">
                 <div class="metrics-row">
-                    <span class="metric-item">Average Health Score: <span class="metric-value health-score">4.05</span><span class="star-icon">★</span></span>
-                    <span class="metric-item">Mission: <span class="metric-value mission-score">4.0</span><span class="star-icon">★</span></span>
-                    <span class="metric-item">Fun: <span class="metric-value fun-score">3.95</span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Average Health Score: <span class="metric-value health-score"></span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Mission: <span class="metric-value mission-score"></span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Fun: <span class="metric-value fun-score"></span><span class="star-icon">★</span></span>
                 </div>
                 <div class="metrics-divider"></div>
                 <div class="metrics-row">
-                    <span class="metric-item">Speed: <span class="metric-value speed-score">3.9</span><span class="star-icon">★</span></span>
-                    <span class="metric-item">Value: <span class="metric-value value-score">4.15</span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Speed: <span class="metric-value speed-score"></span><span class="star-icon">★</span></span>
+                    <span class="metric-item">Value: <span class="metric-value value-score"></span><span class="star-icon">★</span></span>
                 </div>
             </div>
         </div>
@@ -615,7 +616,7 @@
             
             // Fetch data from Django backend
             // Append department ID to URL if available
-            let apiUrl = '/api/engineering-metrics/';
+            let apiUrl = '/teams/api/engineering-metrics/';
             if (deptId) {
                 apiUrl += `?dept=${deptId}`;
             }
@@ -645,6 +646,10 @@
                 
             function updateDashboard(data) {
                 console.log('Received data:', data);  // Debug - check what data is received
+
+                if (data.department && data.department.name) {
+                    document.getElementById('department-name-title').textContent = `${data.department.name} Department`;
+                }                
                 
                 // Update summary metrics
                 if (data.summary) {
@@ -653,6 +658,7 @@
                     document.querySelector('.fun-score').textContent = data.summary.fun.toFixed(2);
                     document.querySelector('.speed-score').textContent = data.summary.speed.toFixed(2);
                     document.querySelector('.value-score').textContent = data.summary.value.toFixed(2);
+                
                 }
                 
                 // Create bar chart
@@ -777,8 +783,8 @@
                             },
                             scales: {
                                 y: {
-                                    min: 3.5,
-                                    max: 4.5,
+                                    min: 0,
+                                    max: 5,
                                     title: {
                                         display: true,
                                         text: 'Average Score',
