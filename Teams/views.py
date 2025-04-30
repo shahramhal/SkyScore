@@ -37,9 +37,13 @@ def getsenmanprogress(request):
     else:
         selected_dept_id = departments.first().departmentid
 
+    # ✅ Add this to retrieve the actual department object
+    selected_department = Department.objects.get(departmentid=selected_dept_id)
+
     return render(request, 'SenManp2.html', {
         'departments': departments,
-        'selected_dept_id': selected_dept_id
+        'selected_dept_id': selected_dept_id,
+        'selected_department': selected_department,  # ✅ Pass it to template
     })
 
 
@@ -490,26 +494,29 @@ def engineering_metrics(request):
 
         # Build response
         response_data = {
-            
-            'bar_metrics': {
-                'categories': categories,
-                'values': bar_values
-            },
-            'progression_data': {
-                'dates': trend_data['months'],
-                'mission': get_category_trend(department, 'Mission'),  # Can be extended to support real mission progression
-                'plan': trend_data['healthScores'],
-                'speed': get_category_trend(department, 'Speed'),    # Optional: implement get_speed_progression if needed
-                'value': get_category_trend(department, 'Delivering value')     # Optional: implement get_value_progression if needed
-            },
-            'summary': {
-                'health_score': round(sum(bar_values) / len(bar_values), 2),
-                'mission': bar_values[3],
-                'fun': bar_values[1],    # Learning = fun
-                'speed': bar_values[4],
-                'value': bar_values[2]
-            }
-        }
+    'department': {
+        'id': department.departmentid,
+        'name': department.departmentname
+    },
+    'bar_metrics': {
+        'categories': categories,
+        'values': bar_values
+    },
+    'progression_data': {
+        'dates': trend_data['months'],
+        'mission': get_category_trend(department, 'Mission'),
+        'plan': trend_data['healthScores'],
+        'speed': get_category_trend(department, 'Speed'),
+        'value': get_category_trend(department, 'Delivering value')
+    },
+    'summary': {
+        'health_score': round(sum(bar_values) / len(bar_values), 2),
+        'mission': bar_values[3],
+        'fun': bar_values[1],
+        'speed': bar_values[4],
+        'value': bar_values[2]
+    }
+}
 
         return JsonResponse(response_data)
 

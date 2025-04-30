@@ -554,7 +554,7 @@
                 </form>
             </div>
             
-            <h2 class="department-title" id="department-name-title">The Engineering Operations Department</h2>
+            <h2 class="department-title" id="department-name-title">{{ selected_department.departmentname }} Department</h2>
             
             <div id="loading-indicator" class="loading-indicator">
                 Loading department metrics...
@@ -645,6 +645,10 @@
                 
             function updateDashboard(data) {
                 console.log('Received data:', data);  // Debug - check what data is received
+
+                if (data.department && data.department.name) {
+                    document.getElementById('department-name-title').textContent = `${data.department.name} Department`;
+                }                
                 
                 // Update summary metrics
                 if (data.summary) {
@@ -778,8 +782,8 @@
                             },
                             scales: {
                                 y: {
-                                    min: 3.5,
-                                    max: 4.5,
+                                    min: 0,
+                                    max: 5,
                                     title: {
                                         display: true,
                                         text: 'Average Score',
