@@ -1,45 +1,49 @@
-##SkyScore
-SkyScore is a machine learning application that analyzes and scores sky images based on their aesthetic quality, clarity, and celestial object visibility. The project enables both automated batch processing of sky images and an interactive web interface for real-time scoring.
-Overview
-SkyScore combines computer vision and machine learning techniques to evaluate sky photographs. It can detect and analyze various features including:
+# SkyScore
 
-Cloud coverage and patterns
-Sky clarity and visibility
-Presence of celestial objects (stars, moon, planets)
-Color distribution and light pollution
-Overall aesthetic composition
+A Django-based web application for analyzing and scoring sky images using machine learning.
 
-The scoring algorithm produces both an overall quality score and specific subscores for different aspects of the image.
-Features
+## Features
 
-Batch Processing: Process directories of images to generate score reports
-Web Interface: Upload and score images through an intuitive browser-based UI
-Detailed Analytics: Receive comprehensive breakdown of image qualities
-Score Visualization: Visual representation of scoring metrics
-Export Options: Save results in multiple formats (CSV, JSON, PDF)
+- Analyze sky photographs for clarity, celestial objects, and aesthetic quality
+- Score images based on multiple metrics
+- Process individual images or batch uploads
+- View detailed score breakdowns and visualizations
+- Export results in various formats
 
-Installation
-Prerequisites
+## Setup
 
-Python 3.8+
-TensorFlow 2.5+
-OpenCV 4.5+
-Django 3.2+ (for web interface)
-
-Setup
-
-Clone the repository:
+```bash
+# Clone repository
 git clone https://github.com/shahramhal/SkyScore.git
 cd SkyScore
 
-Install dependencies:
+# Install dependencies
 pip install -r requirements.txt
 
-Apply database migrations:
+# Apply migrations
 python manage.py migrate
 
-Download pre-trained models:
-python manage.py download_models
+# Run development server
+python manage.py runserver
+```
 
-Create a superuser (optional):
-python manage.py crea
+## Usage
+
+1. Upload sky images via the web interface at http://localhost:8000
+2. View scores and detailed analytics
+3. Export results as needed
+
+## Requirements
+
+- Python 3.8+
+- Django 3.2+
+- TensorFlow 2.5+
+- OpenCV 4.5+
+
+## License
+
+MIT
+
+## Author
+
+Shahram Hal - [GitHub](https://github.com/shahramhal)
