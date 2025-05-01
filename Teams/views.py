@@ -422,8 +422,89 @@ def team_lead_dashboard(request):
     return render(request, 'TeamLeaderp1.html', { 'teams': teams})
 
 def team_progress(request):
-    teams = Team.objects.all()
-    return render(request, 'TeamOverview.html', { 'teams': teams})
+    # Get the current user's team
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return redirect('login')
+    
+    try:
+        user = User.objects.get(userID=user_id)
+        team = user.teamid
+        
+        # Calculate team metrics
+        team_metrics = calculate_team_metrics(team)
+        
+        # Get team members
+        team_members = User.objects.filter(teamid=team)
+        
+        # Get recent votes for visualization
+        today = datetime.now().date()
+        one_month_ago = today - timedelta(days=30)
+        
+        # Get all health check cards
+        health_cards = Healthcheckcard.objects.all()
+        
+        # Get votes for the team in the last month
+        votes = Vote.objects.filter(
+            userid__in=team_members,
+            votingdate__gte=one_month_ago
+        ).select_related('cardid', 'userid')
+        
+        # Prepare data for charts
+        categories = ["Teamwork", "Learning", "Delivering value", "Mission", "Speed"]
+        category_scores = []
+        
+        for category in categories:
+            card = health_cards.filter(cardname=category).first()
+            if card:
+                avg_score = votes.filter(cardid=card).aggregate(avg=Avg('votevalue'))['avg'] or 0
+                category_scores.append(round(avg_score, 2))
+            else:
+                category_scores.append(0)
+        
+        # Get trend data for the last 3 months
+        trend_data = {
+            'dates': [],
+            'scores': []
+        }
+        
+        for i in range(3):
+            month_start = today - timedelta(days=30 * (i + 1))
+            month_end = today - timedelta(days=30 * i)
+            month_votes = votes.filter(votingdate__gte=month_start, votingdate__lt=month_end)
+            health_card = health_cards.filter(cardname='Teamwork').first()
+            if health_card:
+                avg_score = month_votes.filter(cardid=health_card).aggregate(avg=Avg('votevalue'))['avg'] or 0
+                trend_data['dates'].append(month_start.strftime('%b %Y'))
+                trend_data['scores'].append(round(avg_score, 2))
+            else:
+                trend_data['dates'].append(month_start.strftime('%b %Y'))
+                trend_data['scores'].append(0)
+        
+        # Reverse the trend data to show oldest to newest
+        trend_data['dates'].reverse()
+        trend_data['scores'].reverse()
+        
+        context = {
+            'team': team,
+            'team_metrics': team_metrics,
+            'team_members': team_members,
+            'category_scores': {
+                'categories': json.dumps(categories),
+                'scores': json.dumps(category_scores)
+            },
+            'trend_data': {
+                'dates': json.dumps(trend_data['dates']),
+                'scores': json.dumps(trend_data['scores'])
+            },
+            'total_votes': votes.count(),
+            'participation_rate': round((votes.count() / (len(team_members) * len(health_cards))) * 100)
+        }
+        
+        return render(request, 'TeamOverview.html', context)
+        
+    except User.DoesNotExist:
+        return redirect('login')
 
 def get_category_trend(department, category_name):
     today = date.today()
