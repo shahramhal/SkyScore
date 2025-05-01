@@ -37,8 +37,7 @@ python manage.py runserver
 
 - Python 3.8+
 - Django 3.2+
-- TensorFlow 2.5+
-- OpenCV 4.5+
+
 
 ## License
 
