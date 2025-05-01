@@ -74,9 +74,8 @@ def login_view(request):
 #This function handles the redirection based on user type
 def redirect_by_UserType(user_type):
     # Redirect based on user type
-    if user_type == 'Admin':
-        return redirect('/admin/')  # Redirect to admin dashboard
-    elif user_type == 'SenManager':
+   # Redirect to admin dashboard
+    if user_type == 'SenManager':
         return redirect('SenManagerDash')  # Redirect to senior manager page
     elif user_type == 'TeamLead':
         return redirect('teamleaddash')  # Redirect to team leader dashboard
@@ -87,8 +86,7 @@ def redirect_by_UserType(user_type):
     else:
         return redirect('home')  # Default redirect for other user types
     
-@never_cache
-@never_cache
+
 # Updated signup_view function for views.py
 @never_cache
 def signup_view(request):

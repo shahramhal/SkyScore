@@ -1,3 +1,10 @@
+# Author: Hamza Hassan (W2044381)
+# File: Teams/views.py
+# Purpose: I compute and render dashboards and APIs for Senior Manager, Department Lead and Team Lead,
+#          handling both HTML pages and JSON endpoints for data visualisations.
+# Date:    Started 20 April 2025
+# Last updated: 30 April 2025 (added feature/senman_metrics)
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from decimal import Decimal
@@ -9,20 +16,19 @@ import json
 from django.contrib import messages
 
 
-
-# Import your existing models here - update these model names to match your database schema
+# Importing the existing models here - so it update these model names to match your database schema
 from .models import Department 
-# If your models have different names, replace them with your actual model names
+# If the models have different names, it would replace them with your actual model names
 
-
-
-from django.shortcuts import render
-from django.http import JsonResponse
 from django.db.models import Avg
 from .models import Department, Team, User, Vote, Healthcheckcard
 from datetime import date, timedelta
 
 def getsenman_overview(request):
+
+    # I chose to load all departments here to allow for easy navigation between them
+    # This main dashboard needs to show all departments for the senior manager
+
     departments = Department.objects.all()
     teams = Team.objects.all()
     try:
@@ -33,6 +39,10 @@ def getsenman_overview(request):
     return render(request, 'SenManagerDash.html', {'departments': departments, 'teams': teams, 'user': user, 'active_page': 'senmanager_overview'})
 
 def getsenmanprogress(request):
+
+    # I struggled a bit with this function initially because I wasn't properly handling
+    # the case when no department was selected - fixed it by setting a default
+
     departments = Department.objects.all()
     selected_dept_id = request.GET.get('dept')
     try:
@@ -62,6 +72,11 @@ def getsenmanprogress(request):
 
 # Serve metrics data as JSON
 def getsenmanager_metrics(request):
+
+    # Back in March I got stuck on the date filter—ended up realising I needed `timedelta(days=30)`
+    # Had to debug this function quite a few times to get the metrics calculation right
+    # The aggregation of votes was especially tricky to get working properly
+
     try:
         dept_id = request.GET.get("dept")
         if not dept_id:
@@ -113,7 +128,7 @@ def department_summary(request):
     View to render the department summary dashboard.
     Initially loads with the first department in the database.
     """
-    # Get all departments for the dropdown
+    # Getting all departments for the dropdown
     try:
         user = User.objects.get(userID=request.session['user_id'])
     except User.DoesNotExist:
@@ -943,9 +958,8 @@ def view_session(request, session_id):
     return render(request, 'teamvotingDashboard.html', context)
     
 def team_progress(request):
-    teams = Team.objects.all()
 
-
+    
     # Get the current user's team
     user_id = request.session.get('user_id')
     if not user_id:
@@ -1145,6 +1159,3 @@ def get_settings_SM(request):
 def get_settings_TL(request):
     return render(request, 'Teamleadersetting.html', {'active_page': 'settings'})
 
-def debug_cards(request):
-    card_names = list(Healthcheckcard.objects.values_list('cardname', flat=True))
-    return JsonResponse({'cardnames': card_names})

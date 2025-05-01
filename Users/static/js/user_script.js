@@ -19,6 +19,21 @@ document.addEventListener('DOMContentLoaded', function () {
     'admin': { showDept: false, showTeam: false, deptRequired: false, teamRequired: false }
   };
 
+  // Store all original team options on page load
+  const originalTeamOptions = [];
+  if (teamSelect) {
+    Array.from(teamSelect.options).forEach(option => {
+      if (option.value) {
+        originalTeamOptions.push({
+          value: option.value,
+          text: option.textContent,
+          departmentId: option.getAttribute('data-department')
+        });
+      }
+    });
+    console.log("Original team options saved:", originalTeamOptions);
+  }
+
   // Function to update form fields based on selected role
   function updateFormFields(role) {
     if (!role || !roleSettings[role]) {
@@ -82,44 +97,17 @@ document.addEventListener('DOMContentLoaded', function () {
   const confirmPasswordField = document.querySelector('input[name="confirm_password"]');
 
   if (showPasswordCheckbox && passwordField && confirmPasswordField) {
+    // Set up the change event listener
     showPasswordCheckbox.addEventListener('change', function () {
-      const type = this.checked ? 'text' : 'password';
+      togglePasswordVisibility();
+    });
+
+    // Function to toggle password visibility
+    function togglePasswordVisibility() {
+      const type = showPasswordCheckbox.checked ? 'text' : 'password';
       passwordField.type = type;
       confirmPasswordField.type = type;
-    });
-  }
-
-  // Store the original teams data
-  let teamsData = {};
-
-  // Initialize teams data from the options
-  if (teamSelect) {
-    const teamOptions = Array.from(teamSelect.querySelectorAll('option')).filter(opt => opt.value);
-
-    // Check if there are any teams
-    if (teamOptions.length === 0) {
-      console.warn("No team options found in the dropdown!");
     }
-
-    teamOptions.forEach(option => {
-      const deptId = option.getAttribute('data-department');
-      if (deptId) {
-        if (!teamsData[deptId]) {
-          teamsData[deptId] = [];
-        }
-        teamsData[deptId].push({
-          id: option.value,
-          name: option.textContent
-        });
-      } else {
-        console.warn(`Team option "${option.textContent}" has no department ID attribute`);
-      }
-    });
-
-    // Debug log
-    console.log("Teams data initialized:", teamsData);
-  } else {
-    console.error("Team select element not found!");
   }
 
   // Function to update teams dropdown based on selected department
@@ -147,18 +135,33 @@ document.addEventListener('DOMContentLoaded', function () {
       selectedTeam.textContent = 'Choose a team';
     }
 
-    // Add teams for the selected department
-    if (deptId && teamsData[deptId]) {
-      console.log(`Adding ${teamsData[deptId].length} teams for department ${deptId}`);
-      teamsData[deptId].forEach(team => {
-        const option = document.createElement('option');
-        option.value = team.id;
-        option.textContent = team.name;
-        option.setAttribute('data-department', deptId);
-        teamSelect.appendChild(option);
-      });
-    } else if (deptId) {
-      console.warn(`No teams found for department ID ${deptId}`);
+    // If no department selected, just leave the dropdown empty
+    if (!deptId) return;
+
+    // Add teams for the selected department from our original stored options
+    const teamsForDepartment = originalTeamOptions.filter(team => team.departmentId === deptId);
+    console.log(`Adding ${teamsForDepartment.length} teams for department ${deptId}`);
+
+    teamsForDepartment.forEach(team => {
+      const option = document.createElement('option');
+      option.value = team.value;
+      option.textContent = team.text;
+      option.setAttribute('data-department', team.departmentId);
+      teamSelect.appendChild(option);
+    });
+
+    // If a previously selected team is available for this department, select it
+    const previouslySelectedTeam = teamSelect.getAttribute('data-selected-team');
+    if (previouslySelectedTeam) {
+      for (let i = 0; i < teamSelect.options.length; i++) {
+        if (teamSelect.options[i].value === previouslySelectedTeam) {
+          teamSelect.selectedIndex = i;
+          if (selectedTeam) {
+            selectedTeam.textContent = teamSelect.options[i].textContent;
+          }
+          break;
+        }
+      }
     }
   }
 
@@ -195,6 +198,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (teamSelect.selectedIndex > 0 && selectedTeam) {
       const selectedOption = teamSelect.options[teamSelect.selectedIndex];
       selectedTeam.textContent = selectedOption.textContent;
+      // Save the selected team value as a data attribute for restoration
+      teamSelect.setAttribute('data-selected-team', selectedOption.value);
     }
 
     teamSelect.addEventListener('change', function () {
@@ -203,6 +208,13 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedTeam.textContent = selectedOption.textContent !== '-- Select Team --'
           ? selectedOption.textContent
           : 'Choose a team';
+
+        // Save the selected team value as a data attribute
+        if (selectedOption.value) {
+          teamSelect.setAttribute('data-selected-team', selectedOption.value);
+        } else {
+          teamSelect.removeAttribute('data-selected-team');
+        }
       }
     });
   }
