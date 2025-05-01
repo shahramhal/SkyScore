@@ -80,7 +80,7 @@ def redirect_by_UserType(user_type):
     elif user_type == 'TeamLead':
         return redirect('teamleaddash')  # Redirect to team leader dashboard
     elif user_type == 'DeptLead':
-        return redirect('departmentDashboard')  # Redirect to department leader dashboard
+        return redirect('dept_lead_dashboard')  # Redirect to department leader dashboard
     elif user_type == 'Engineer':
         return redirect('engineer_dashboard')  # Redirect to engineer dashboard
     else:

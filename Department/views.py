@@ -12,22 +12,12 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 
 def departmentDashboard(request):
-    if 'user_id' not in request.session:
-        return redirect('login')
+    teams = Team.objects.all()
+    return render(request, 'DeptLeadpg2.html', {'teams': teams})
 
-    try:
-        user = User.objects.get(userID=request.session['user_id'])
 
-        if hasattr(user, 'departmentid') and user.departmentid is not None:
-            teams = Team.objects.filter(departmentid=user.departmentid)
-        else:
-            teams = []
 
-        return render(request, 'DeptLeadpg2.html', {'teams': teams})
 
-    except User.DoesNotExist:
-        request.session.flush()
-        return redirect('login')
 
 
 def department_settings(request):

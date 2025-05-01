@@ -88,7 +88,7 @@
     <div class="sidebar">
         <h2>Sky Score</h2>
         <nav>
-            <a href="{% url 'departmentDashboard' %}" {% if active_page == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
+            <a href="{% url 'dept_lead_dashboard' %}" {% if active_page == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
             <a href="#">Health Check</a>
             <a href="{% url 'department_reports' %}" {% if active_page == 'reports' %}class="active"{% endif %}>Reports</a>
             <a href="{% url 'department_settings' %}" {% if active_page == 'settings' %}class="active"{% endif %}>Settings</a>
