@@ -80,3 +80,14 @@ class Healthcheckcard(models.Model):
     class Meta:
         managed = False
         db_table = 'HealthCheckCard'
+class Session(models.Model):
+    sessionid = models.AutoField(db_column='sessionID', primary_key=True)
+    sessiondate = models.DateField(db_column='sessionDate', blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Session'
+
+    def __str__(self):
+        return f"Session {self.sessionid} on {self.sessiondate}"

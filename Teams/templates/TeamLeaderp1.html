@@ -44,10 +44,10 @@
         }
 
         .container {
-            padding: 40px 20px;
+            padding:144px 20px;
             max-width: 1000px;
-            margin: 0 auto;
-            margin-left: 280px;
+            margin:0px auto;
+            margin-left: 433px;
         }
 
         .page-title {
@@ -212,7 +212,7 @@
         <!-- Header with logo and toggle button -->
         <div class="side-nav-header">
           <!-- Django URL template tag for dynamic routing -->
-          <a href="{% url 'engineer_dashboard' %}" class="side-nav-logo"
+          <a href="{% url 'teamleaddash' %}" class="side-nav-logo"
             >Sky Score</a
           >
           <!-- Toggle button for collapsing sidebar -->
@@ -252,7 +252,7 @@
           <!-- Dashboard Link -->
           <li class="side-nav-item">
               <a href="{% url 'teamleaddash' %}" 
-                 class="side-nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                 class="side-nav-link {% if active_page == 'team_lead_dashboard' %}active{% endif %}">
                   <i class="fas fa-home"></i>
                   <span>Dashboard</span>
               </a>
@@ -260,7 +260,7 @@
       
           <!-- Health Check Link -->
           <li class="side-nav-item">
-              <a href="{%url 'Voting:votingDashboard'%}" class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'voting' %}active{% endif %}">
+              <a href="{%url 'team_voting_dashboard'%}" class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'team_lead_voting' %}active{% endif %}">
                   <i class="fas fa-vote-yea"></i>
                   <span>Session</span>
               </a>
@@ -269,7 +269,7 @@
           <!-- Reports Link -->
           <li class="side-nav-item">
               <a href="{%url 'teamleadprog'%}" 
-                 class="side-nav-link {% if active_page == 'reports' %}active{% endif %}">
+                 class="side-nav-link {% if active_page == 'team_progress' %}active{% endif %}">
                   <i class="fas fa-chart-line"></i>
                   <span>Reports</span>
               </a>
@@ -277,7 +277,7 @@
       
           <!-- Profile Link -->
           <li class="side-nav-item">
-              <a href="{% url 'engineer_profile' %}" 
+              <a href="{% url 'team_lead_profile' %}" 
                  class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
                   <i class="fas fa-user"></i>
                   <span>Profile</span>

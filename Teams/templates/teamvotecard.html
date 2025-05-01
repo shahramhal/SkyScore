@@ -1,0 +1,296 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vote - {{ current_card.cardname }}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static 'voting.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <nav class="side-nav">
+    <!-- Header with logo and toggle button -->
+    <div class="side-nav-header">
+      <!-- Django URL template tag for dynamic routing -->
+      <a href="{% url 'teamleaddash' %}" class="side-nav-logo"
+        >Sky Score</a
+      >
+      <!-- Toggle button for collapsing sidebar -->
+      <button class="side-nav-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- User Profile Section with Django Template Logic -->
+    <div class="user-profile">
+      <!-- Avatar with user's initial (or 'U' for guest) -->
+      <div class="user-avatar">
+        {% if user %} {{ user.username|slice:":1"|upper }}
+        <!-- First letter of username -->
+        {% else %} U
+        <!-- Default for guest users -->
+        {% endif %}
+      </div>
+
+      <!-- User's full name (or 'Guest User') -->
+      <div class="user-name">
+        {% if user %} {{ user.first_name }} {{ user.last_name }}
+        <!-- Combined name -->
+        {% else %} Guest User {% endif %}
+      </div>
+
+      <!-- User role from Django model -->
+      <div class="user-role">
+        {% if user %} {{ user.userType }}
+        <!-- Custom user type field -->
+        {% else %} Guest User {% endif %}
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <ul class="side-nav-menu">
+      <!-- Dashboard Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'teamleaddash' %}" 
+             class="side-nav-link {% if active_page == 'teamleaddash' %}active{% endif %}">
+              <i class="fas fa-home"></i>
+              <span>Dashboard</span>
+          </a>
+      </li>
+  
+      <!-- Health Check Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'team_voting_dashboard' %}" 
+             class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'team_lead_voting' %}active{% endif %}">
+              <i class="fas fa-heart"></i>
+              <span>Health Check</span>
+          </a>
+      </li>
+  
+      <!-- Reports Link -->
+      <li class="side-nav-item">
+          <a href="#" 
+             class="side-nav-link {% if active_page == 'teamleadprog' %}active{% endif %}">
+              <i class="fas fa-chart-line"></i>
+              <span>Reports</span>
+          </a>
+      </li>
+  
+      <!-- Profile Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'team_lead_profile' %}" 
+             class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+          </a>
+      </li>
+      <!-- Settings Link -->
+      <li class="side-nav-item">
+        <a href="{%url 'settings_tl'%}" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </a>
+      </li>
+  
+      <!-- Logout Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'logout' %}" class="side-nav-link">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+          </a>
+      </li>
+  </ul>
+  </nav>
+
+  <body>
+    {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} 
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <div class="voting-container">
+        <!-- Voting Header -->
+        <div class="voting-header">
+          <div>
+            <h1>Vote for "{{ current_card.cardname }}"</h1>
+            <div class="date">{% now "F j, Y" %}</div>
+          </div>
+          <div class="session-badge">Session: {% now "F j, Y" %}</div>
+        </div>
+
+        <!-- Card Selection -->
+        <div class="vote-cards">
+          <h3>Health Check Cards</h3>
+          <div class="card-selector">
+            {% for card in health_check_cards %}
+            <div
+              class="card-item {% if card.cardid == current_card.cardid %}active{% endif %}"
+              onclick="window.location='{% url 'team_vote_card' card.cardid %}'"
+            >
+              {{ card.cardname }}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Card Info -->
+        <div class="card-info">
+          <p>{{ current_card.description }}</p>
+        </div>
+
+        <!-- Voting Form -->
+        <form
+          method="post"
+          action="{% url 'team_submit_vote' current_card.cardid %}"
+          class="vote-form"
+        >
+          {% csrf_token %}
+
+          <h3>How would you rate this area?</h3>
+          <div class="radio-container">
+            <div class="radio-option green-option">
+              <input type="radio" id="green" name="voteValue" value="3" required
+              {% if existing_vote and existing_vote.votevalue == 3 %}checked{%endif %}>
+              <label for="green" class="radio-label">Green</label>
+              <p class="radio-description">Everything is good</p>
+            </div>
+            <div class="radio-option amber-option">
+              <input type="radio" id="amber" name="voteValue" value="2" {% if
+              existing_vote and existing_vote.votevalue == 2 %}checked{% endif
+              %}>
+              <label for="amber" class="radio-label">Amber</label>
+              <p class="radio-description">Some concerns</p>
+            </div>
+            <div class="radio-option red-option">
+              <input type="radio" id="red" name="voteValue" value="1" {% if
+              existing_vote and existing_vote.votevalue == 1 %}checked{% endif
+              %}>
+              <label for="red" class="radio-label">Red</label>
+              <p class="radio-description">Serious issues</p>
+            </div>
+          </div>
+
+          <h3>Is this area getting better or worse?</h3>
+          <div class="radio-container">
+            <div class="radio-option green-option">
+              <input type="radio" id="better" name="progressStatus"
+              value="Better" required {% if existing_vote and existing_vote.progressstatus == 'Better' %}checked{% endif %}>
+              <label for="better" class="radio-label">Better</label>
+              <p class="radio-description">Improving</p>
+            </div>
+            <div class="radio-option amber-option">
+              <input type="radio" id="same" name="progressStatus" value="Same"
+              {% if existing_vote and existing_vote.progressstatus == 'Same'%}checked {% endif %}>
+
+              <label for="same" class="radio-label">Same</label>
+              <p class="radio-description">No change</p>
+            </div>
+            <div class="radio-option red-option">
+              <input type="radio" id="worse" name="progressStatus" value="Worse"
+              {% if existing_vote and existing_vote.progressstatus == 'Worse'%}checked{% endif %}>
+              <label for="worse" class="radio-label">Worse</label>
+              <p class="radio-description">Declining</p>
+            </div>
+          </div>
+
+          <div class="container">
+            <div class="section">
+              <label>Solutions or Ideas for the team:</label>
+              <textarea name="solutions" placeholder="Enter ideas...">
+                 {{ existing_vote.solutions|default_if_none:"" }}</textarea
+              >
+            </div>
+            <div class="section">
+              <label>Comments:</label>
+              <textarea name="comments" placeholder="Enter comments...">
+                 {{ existing_vote.comments|default_if_none:"" }}</textarea
+              >
+            </div>
+            <div class="section">
+              <label>Feedback for actions we can take as a team:</label>
+              <textarea name="feedback" placeholder="Enter feedback...">
+                  {{ existing_vote.feedback|default_if_none:"" }}</textarea
+              >
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <h3>Your Voting Progress</h3>
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: {{ progress_percentage }}%">
+              {{ votes_completed }}/{{ total_cards }} cards
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="nav-buttons">
+            <a href="{% url 'teamleaddash' %}" class="btn btn-back"
+              >Back to Dashboard</a
+            >
+
+            {% if has_previous %}
+            <a
+              href="{% url 'team_vote_card' previous_card.cardid %}"
+              class="btn btn-back"
+              >Previous Card</a
+            >
+            {% endif %} {% if has_next %}
+            <button
+              type="submit"
+              name="action"
+              value="next"
+              class="btn btn-next"
+            >
+              Save & Next
+            </button>
+            {% else %}
+            <button
+              type="submit"
+              name="action"
+              value="submit"
+              class="btn btn-submit"
+            >
+              Submit All Votes
+            </button>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // JavaScript for the side navigation toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const sideNavToggle = document.querySelector(".side-nav-toggle");
+        const mobileToggle = document.querySelector(".mobile-toggle");
+        const sideNav = document.querySelector(".side-nav");
+        const mainContent = document.querySelector(".main-content");
+
+        function toggleNav() {
+          sideNav.classList.toggle("collapsed");
+          mainContent.classList.toggle("expanded");
+        }
+
+        if (sideNavToggle) {
+          sideNavToggle.addEventListener("click", toggleNav);
+        }
+
+        if (mobileToggle) {
+          mobileToggle.addEventListener("click", function () {
+            sideNav.classList.toggle("mobile-open");
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
