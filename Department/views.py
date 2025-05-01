@@ -1,3 +1,4 @@
+
 """
 Department/views.py
 Department Lead dashboard and reporting with Chart.js visualisations.
@@ -69,7 +70,6 @@ def department_reports(request):
 
     except Team.DoesNotExist:
         return render(request, 'DeptError.html', {'message': 'Selected team not found. Please go back and select again.'})
-
 def get_data(request):
     if 'user_id' not in request.session:
         return JsonResponse({'error': 'Unauthorised'}, status=401)
