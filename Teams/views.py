@@ -943,9 +943,8 @@ def view_session(request, session_id):
     return render(request, 'teamvotingDashboard.html', context)
     
 def team_progress(request):
-    teams = Team.objects.all()
 
-
+    
     # Get the current user's team
     user_id = request.session.get('user_id')
     if not user_id:
