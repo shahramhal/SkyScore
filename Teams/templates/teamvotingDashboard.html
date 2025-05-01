@@ -1,0 +1,233 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voting Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static 'voting.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} 
+    <nav class="side-nav">
+      <!-- Header with logo and toggle button -->
+      <div class="side-nav-header">
+        <!-- Django URL template tag for dynamic routing -->
+        <a href="{% url 'teamleaddash' %}" class="side-nav-logo"
+          >Sky Score</a
+        >
+        <!-- Toggle button for collapsing sidebar -->
+        <button class="side-nav-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <!-- User Profile Section with Django Template Logic -->
+      <div class="user-profile">
+        <!-- Avatar with user's initial (or 'U' for guest) -->
+        <div class="user-avatar">
+          {% if user %} {{ user.username|slice:":1"|upper }}
+          <!-- First letter of username -->
+          {% else %} U
+          <!-- Default for guest users -->
+          {% endif %}
+        </div>
+
+        <!-- User's full name (or 'Guest User') -->
+        <div class="user-name">
+          {% if user %} {{ user.first_name }} {{ user.last_name }}
+          <!-- Combined name -->
+          {% else %} Guest User {% endif %}
+        </div>
+
+        <!-- User role from Django model -->
+        <div class="user-role">
+          {% if user %} {{ user.userType }}
+          <!-- Custom user type field -->
+          {% else %} Guest User {% endif %}
+        </div>
+      </div>
+
+    <ul class="side-nav-menu">
+      <!-- Dashboard Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'teamleaddash' %}" 
+             class="side-nav-link {% if active_page == 'teamleaddash' %}active{% endif %}">
+              <i class="fas fa-home"></i>
+              <span>Dashboard</span>
+          </a>
+      </li>
+  
+      <!-- Health Check Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'team_voting_dashboard' %}" 
+             class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'team_lead_voting' %}active{% endif %}">
+              <i class="fas fa-vote-yea"></i>
+              <span>Session</span>
+          </a>
+      </li>
+  
+      <!-- Reports Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'teamleadprog' %}" 
+             class="side-nav-link {% if active_page == 'teamleadprog' %}active{% endif %}">
+              <i class="fas fa-chart-line"></i>
+              <span>Reports</span>
+          </a>
+      </li>
+  
+      <!-- Profile Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'team_lead_profile' %}" 
+             class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+          </a>
+      </li>
+      <!-- Settings Link -->
+      <li class="side-nav-item">
+        <a href="{%url 'settings_tl'%}" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </a>
+      </li>
+  
+      <!-- Logout Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'logout' %}" class="side-nav-link">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+          </a>
+      </li>
+  </ul>
+  </nav>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <div class="voting-container">
+        <!-- Voting Header -->
+        <div class="voting-header">
+          <div>
+            <h1>Voting Dashboard</h1>
+            <div class="date">{% now "F j, Y" %}</div>
+          </div>
+          <div class="session-badge">Current Session: {% now "F j, Y" %}</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn btn-start" onclick="window.location='{% url 'team_vote_card' health_check_cards.first.cardid %}'">
+            <i class="fas fa-play"></i> Start Voting
+          </button>
+          
+        </div>
+
+        <!-- Current Progress -->
+        <div class="current-progress">
+          <h3><i class="fas fa-chart-line"></i> Current Session Progress</h3>
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: {{ progress_percentage }}%">
+              {{ votes_completed }}/{{ total_cards }} cards
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Selection -->
+        <div class="vote-cards">
+          <h3><i class="fas fa-list-check"></i> Health Check Cards</h3>
+          <div class="card-selector">
+            {% for card in health_check_cards %}
+            <div class="card-item" data-description="{{ card.description }}" onclick="showTooltip(this)">
+              <span class="card-name">{{ card.cardname }}</span>
+              <span class="card-status 
+                {% if card.voted and card.vote_value == 3 %}green{% elif card.voted and card.vote_value == 2 %}amber{% elif card.voted and card.vote_value == 1 %}red{% else %}not-voted{% endif %}">
+                {% if card.voted %}
+                  {% if card.vote_value == 3 %}Green{% elif card.vote_value == 2 %}Amber{% elif card.vote_value == 1 %}Red{% endif %}
+                {% else %}
+                  Not Voted
+                {% endif %}
+              </span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Voting History -->
+        <div class="voting-history">
+          <h3><i class="fas fa-history"></i> Voting History</h3>
+          <div class="history-list">
+            {% for session in voting_sessions %}
+            <div class="history-item {% if session.sessiondate == current_session_date %}current-session{% endif %}" onclick="window.location='{% url 'view_session' session.sessionid %}'">
+              <div class="history-details">
+                <h4>{{ session.description }} {% if session.sessiondate == current_session_date %}<span class="badge-current">Current</span>{% endif %}</h4>
+                <span class="history-date">{{ session.sessiondate|date:"F j, Y" }}</span>
+              </div>
+              <div class="history-stats">
+                <span class="vote-count">{{ session.vote_count }} votes</span>
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+            {% empty %}
+            <div class="no-history">
+              <i class="fas fa-info-circle"></i>
+              <p>No voting history available</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Team Summary -->
+        <div class="team-summary">
+          <h3><i class="fas fa-line"></i> Card Summary</h3>
+          <div class="summary-grid">
+            {% for card in health_check_cards %}
+            <div class="summary-card" data-description="{{ card.description }}" onclick="showTooltip(this)">
+              <h4>{{ card.cardname }}</h4>
+              <div class="status-distribution">
+                <div class="status-bar">
+                  <div class="green-bar" style="width: {{ card.green_percentage|default:'0' }}%"></div>
+                  <div class="amber-bar" style="width: {{ card.amber_percentage|default:'0' }}%"></div>
+                  <div class="red-bar" style="width: {{ card.red_percentage|default:'0' }}%"></div>
+                </div>
+                <div class="status-legend">
+                  <span class="green-dot">{{ card.green_count|default:'0' }}</span>
+                  <span class="amber-dot">{{ card.amber_count|default:'0' }}</span>
+                  <span class="red-dot">{{ card.red_count|default:'0' }}</span>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+          <button class="btn btn-back" onclick="window.location='{% url 'engineer_dashboard' %}'">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="card-tooltip" class="card-tooltip">
+      <div class="tooltip-header">
+        <span>Description</span>
+        <span class="tooltip-close">&times;</span>
+      </div>
+      <div class="tooltip-body"></div>
+    </div>
+
+    <script src={% static 'js/voting.js' %}></script>
+
+  </body>
+</html>

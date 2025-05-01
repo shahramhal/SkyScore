@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile - Sky Score</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/engineer_profile.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <meta
+    http-equiv="Cache-Control"
+    content="no-cache, no-store, must-revalidate"
+  />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <body>
+    <nav class="side-nav">
+      <!-- Header with logo and toggle button -->
+      <div class="side-nav-header">
+        <!-- Django URL template tag for dynamic routing -->
+        <a href="{% url 'teamleaddash' %}" class="side-nav-logo"
+          >Sky Score</a
+        >
+        <!-- Toggle button for collapsing sidebar -->
+        <button class="side-nav-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+  
+      <!-- User Profile Section with Django Template Logic -->
+      <div class="user-profile">
+        <!-- Avatar with user's initial (or 'U' for guest) -->
+        <div class="user-avatar">
+          {% if user %} {{ user.username|slice:":1"|upper }}
+          <!-- First letter of username -->
+          {% else %} U
+          <!-- Default for guest users -->
+          {% endif %}
+        </div>
+  
+        <!-- User's full name (or 'Guest User') -->
+        <div class="user-name">
+          {% if user %} {{ user.first_name }} {{ user.last_name }}
+          <!-- Combined name -->
+          {% else %} Guest User {% endif %}
+        </div>
+  
+        <!-- User role from Django model -->
+        <div class="user-role">
+          {% if user %} {{ user.userType }}
+          <!-- Custom user type field -->
+          {% else %} Guest User {% endif %}
+        </div>
+      </div>
+  
+      <!-- Navigation Menu -->
+      <ul class="side-nav-menu">
+        <!-- Dashboard Link -->
+        <li class="side-nav-item">
+            <a href="{% url 'teamleaddash' %}" 
+               class="side-nav-link {% if active_page == 'teamleaddash' %}active{% endif %}">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+    
+        <!-- Health Check Link -->
+        <li class="side-nav-item">
+            <a href="{% url 'team_voting_dashboard' %}" 
+               class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'team_lead_voting' %}active{% endif %}">
+                <i class="fas fa-vote-yea"></i>
+                <span>Session</span>
+            </a>
+        </li>
+    
+        <!-- Reports Link -->
+        <li class="side-nav-item">
+            <a href="{% url 'teamleadprog' %}" 
+               class="side-nav-link {% if active_page == 'teamleadprog' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+        </li>
+    
+        <!-- Profile Link -->
+        <li class="side-nav-item">
+            <a href="{% url 'team_lead_profile' %}" 
+               class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </li>
+        <!-- Settings Link -->
+        <li class="side-nav-item">
+          <a href="{%url 'settings_tl'%}" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+    
+        <!-- Logout Link -->
+        <li class="side-nav-item">
+            <a href="{% url 'logout' %}" class="side-nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+    </ul>
+    
+  </nav>
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="profile-container">
+          <!-- Profile Header -->
+          <div class="profile-header">
+            <h1>Your Profile</h1>
+            <p>Manage your personal information and account settings</p>
+          </div>
+  
+          <!-- Messages -->
+          {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+  
+          <!-- Profile Information Card -->
+          <div class="profile-card">
+            <h2><i class="fas fa-user-circle"></i> Personal Information</h2>
+  
+            <form
+              method="POST"
+              action="{% url 'update_profile' %}"
+              enctype="multipart/form-data"
+              class="profile-form"
+            >
+              {% csrf_token %}
+  
+              <div class="profile-photo-section">
+                <div class="profile-photo">
+                  <div class="profile-initials">
+                    {{ user.first_name|slice:":1"|upper }}
+                    {{user.last_name|slice:":1"|upper}}
+                  </div>
+                </div>
+  
+                <input
+                  type="file"
+                  id="photo-upload"
+                  name="profile_photo"
+                  accept="image/*"
+                  class="hidden-input"
+                />
+                <label for="photo-upload" class="photo-upload-btn">
+                  <i class="fas fa-camera"></i> Change Photo
+                </label>
+              </div>
+  
+              <!-- Profile Details Section -->
+              <div class="profile-details-section">
+                <div class="form-group">
+                  <label for="first_name">First Name</label>
+                  <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    value="{{ user.first_name }}"
+                    required
+                  />
+                </div>
+  
+                <div class="form-group">
+                  <label for="last_name">Last Name</label>
+                  <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    value="{{ user.last_name }}"
+                    required
+                  />
+                </div>
+  
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value="{{ user.username }}"
+                    required
+                  />
+                </div>
+  
+                <div class="form-group">
+                  <label for="email">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ user.email }}"
+                    required
+                  />
+                </div>
+  
+                <div class="form-group">
+                  <label for="role">Role</label>
+                  <input
+                    type="text"
+                    id="role"
+                    value="{{ user.userType }}"
+                    disabled
+                  />
+                </div>
+  
+                <div class="password-section">
+                  <a
+                    href="{% url 'change_password' %}"
+                    class="change-password-button"
+                  >
+                    <i class="fas fa-lock"></i> Change Password
+                  </a>
+                </div>
+  
+                <div class="form-actions">
+                  <a href="{% url 'engineer_dashboard' %}" class="cancel-button"
+                    >Cancel</a
+                  >
+                  <button type="submit" class="save-button">Save Changes</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+       </div> 
+      </div>
+    </body>
+    <script src="{% static 'js/enDashboard.js' %}"></script>
+  </html>
+  

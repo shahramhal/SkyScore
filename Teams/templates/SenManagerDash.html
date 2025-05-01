@@ -194,7 +194,7 @@
         <!-- Header with logo and toggle button -->
         <div class="side-nav-header">
           <!-- Django URL template tag for dynamic routing -->
-          <a href="{% url 'engineer_dashboard' %}" class="side-nav-logo"
+          <a href="{% url 'SenManagerDash' %}" class="side-nav-logo"
             >Sky Score</a
           >
           <!-- Toggle button for collapsing sidebar -->
@@ -260,7 +260,7 @@
       
           <!-- Profile Link -->
           <li class="side-nav-item">
-              <a href="{% url 'engineer_profile' %}" 
+              <a href="{% url 'senman_profile' %}" 
                  class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
                   <i class="fas fa-user"></i>
                   <span>Profile</span>

@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse, HttpResponse
 from decimal import Decimal
-from .models import Department, Team, Summary, Vote, Healthcheckcard, User
+from .models import Department, Team, Summary, Vote, Healthcheckcard, User, Session
 from django.db.models import Avg, Count, F, Q
 from datetime import datetime, timedelta
+from django.utils import timezone
 import json
+from django.contrib import messages
 
 
 
@@ -23,11 +25,21 @@ from datetime import date, timedelta
 def getsenman_overview(request):
     departments = Department.objects.all()
     teams = Team.objects.all()
-    return render(request, 'SenManagerDash.html', {'departments': departments, 'teams': teams})
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
+    return render(request, 'SenManagerDash.html', {'departments': departments, 'teams': teams, 'user': user, 'active_page': 'senmanager_overview'})
 
 def getsenmanprogress(request):
     departments = Department.objects.all()
     selected_dept_id = request.GET.get('dept')
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
 
     if selected_dept_id:
         try:
@@ -37,13 +49,14 @@ def getsenmanprogress(request):
     else:
         selected_dept_id = departments.first().departmentid
 
-    # ✅ Add this to retrieve the actual department object
+    
     selected_department = Department.objects.get(departmentid=selected_dept_id)
 
     return render(request, 'SenManp2.html', {
         'departments': departments,
         'selected_dept_id': selected_dept_id,
-        'selected_department': selected_department,  # ✅ Pass it to template
+        'selected_department': selected_department, 
+        'user': user, 
     })
 
 
@@ -101,6 +114,11 @@ def department_summary(request):
     Initially loads with the first department in the database.
     """
     # Get all departments for the dropdown
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
     departments = Department.objects.all().order_by('departmentname')
     
     # Default to first department if available
@@ -114,10 +132,120 @@ def department_summary(request):
         'default_department': default_department,
         'selected_dept_id': selected_dept_id,
         'active_page': 'health_cards',
+        'user': user,
     }
     
-    return render(request, 'SenManagerp1.html', context)
+    return render(request, 'SenManagerp1.html', context )
+def senman_profile(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+    
+    try:
+        # Get full user object from database
+        user = User.objects.get(userID=request.session['user_id'])
+        context = {
+            'user': user,
+            # Also pass session data to ensure it's available
+            'session_data': request.session,
+            'active_page': 'profile'
+        }
+        return render(request, 'senman_profile.html', context)
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('login')
+def update_profile(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+        
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(userID=request.session['user_id'])
+            
+            # Update user information
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.username = request.POST.get('username')
+            user.email = request.POST.get('email')
+            
+            '''''
+            # Handle profile photo
+            if 'profile_photo' in request.FILES:
+                # Delete old photo if exists
+                if user.profile_photo:
+                    if os.path.isfile(user.profile_photo.path):
+                        default_storage.delete(user.profile_photo.path)
+                
+                # Save new photo
+                photo = request.FILES['profile_photo']
+                photo_name = f"profile_photos/user_{user.userID}_{photo.name}"
+                user.profile_photo = photo_name
+                default_storage.save(photo_name, ContentFile(photo.read()))
+                
+            # Handle photo removal
+            if request.POST.get('remove_photo') == 'true' and user.profile_photo:
+                if os.path.isfile(user.profile_photo.path):
+                    default_storage.delete(user.profile_photo.path)
+                user.profile_photo = None
+                '''
+            
+            user.save()
+            
+            # Update session data if username changed
+            if user.username != request.session.get('username'):
+                request.session['username'] = user.username
+            
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('senman_profile')
+            
+        except User.DoesNotExist:
+            request.session.flush()
+            return redirect('login')
+        except Exception as e:
+            messages.error(request, f'Error updating profile: {str(e)}')
+            return redirect('senman_profile')
+    
+    return redirect('senman_profile')
 
+
+def change_password(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+    
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(userID=request.session['user_id'])
+            current_password = request.POST.get('current_password')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            
+            # Verify current password
+            if user.password != current_password:
+                messages.error(request, 'Current password is incorrect')
+                return render(request, 'senman_change_password.html', {'user': user})
+            
+            # Verify new passwords match
+            if new_password != confirm_password:
+                messages.error(request, 'New passwords do not match')
+                return render(request, 'senman_change_password.html', {'user': user})
+            
+            # Update password
+            user.password = new_password
+            user.save()
+            
+            messages.success(request, 'Password updated successfully!')
+            return redirect('senman_profile')
+            
+        except User.DoesNotExist:
+            request.session.flush()
+            return redirect('login')
+    
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+        return render(request, 'senman_change_password.html', {'user': user})
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('login')
+    
 def department_data(request):
     dept_id = request.GET.get('dept')
 
@@ -419,11 +547,409 @@ def get_summary_data(department):
 
 def team_lead_dashboard(request):
     teams = Team.objects.all()
-    return render(request, 'TeamLeaderp1.html', { 'teams': teams})
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
+    return render(request, 'TeamLeaderp1.html', { 'teams': teams, 'active_page': 'team_lead_dashboard','user': user,})
 
+    
+def team_lead_profile(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+    
+    try:
+        # Get full user object from database
+        user = User.objects.get(userID=request.session['user_id'])
+        context = {
+            'user': user,
+            # Also pass session data to ensure it's available
+            'session_data': request.session,
+            'active_page': 'profile'
+        }
+        return render(request, 'team_lead_profile.html', context)
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('login')
+def team_update_profile(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+        
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(userID=request.session['user_id'])
+            
+            # Update user information
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.username = request.POST.get('username')
+            user.email = request.POST.get('email')
+            
+            '''''
+            # Handle profile photo
+            if 'profile_photo' in request.FILES:
+                # Delete old photo if exists
+                if user.profile_photo:
+                    if os.path.isfile(user.profile_photo.path):
+                        default_storage.delete(user.profile_photo.path)
+                
+                # Save new photo
+                photo = request.FILES['profile_photo']
+                photo_name = f"profile_photos/user_{user.userID}_{photo.name}"
+                user.profile_photo = photo_name
+                default_storage.save(photo_name, ContentFile(photo.read()))
+                
+            # Handle photo removal
+            if request.POST.get('remove_photo') == 'true' and user.profile_photo:
+                if os.path.isfile(user.profile_photo.path):
+                    default_storage.delete(user.profile_photo.path)
+                user.profile_photo = None
+                '''
+            
+            user.save()
+            
+            # Update session data if username changed
+            if user.username != request.session.get('username'):
+                request.session['username'] = user.username
+            
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('team_lead_profile')
+            
+        except User.DoesNotExist:
+            request.session.flush()
+            return redirect('login')
+        except Exception as e:
+            messages.error(request, f'Error updating profile: {str(e)}')
+            return redirect('team_lead_profile')
+    
+    return redirect('team_lead_profile')
+
+def team_lead_voting(request):
+    # Get all health check cards
+    health_cards = Healthcheckcard.objects.all()
+
+    # Get current user
+    #
+    if 'user_id' not in request.session:
+        
+         return HttpResponse("User not logged in.", status=401) 
+
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
+
+    # Get active session
+    current_session_date = timezone.now().date()
+    active_session, created = Session.objects.get_or_create(
+        sessiondate=current_session_date,
+        defaults={
+            'description': f"Health Check Session - {timezone.now().strftime('%B %Y')}"
+        }
+    )
+
+    # Get user's votes for current session
+    user_votes_current_session = Vote.objects.filter(
+        userid=user, # Используем объект user
+        votingdate=current_session_date
+    )
+
+    # Calculate progress based on user's votes in the current session
+    votes_completed = user_votes_current_session.values('cardid').distinct().count()
+    total_cards = health_cards.count()
+    progress_percentage = min(
+        (votes_completed / total_cards * 100) if total_cards > 0 else 0,
+        100
+    )
+
+    # Get the current card status for each card based on *user's* vote
+    # Also calculate *user's* summary stats for the Card Summary section
+    for card in health_cards:
+        vote = user_votes_current_session.filter(cardid=card).first() 
+        if vote:
+            card.voted = True
+            card.vote_value = vote.votevalue
+            card.progress_status = vote.progressstatus
+            
+            card.green_count = 1 if vote.votevalue == 3 else 0
+            card.amber_count = 1 if vote.votevalue == 2 else 0
+            card.red_count = 1 if vote.votevalue == 1 else 0
+        else:
+            card.voted = False
+            card.vote_value = None
+            card.progress_status = None
+            card.green_count = 0
+            card.amber_count = 0
+            card.red_count = 0
+
+        
+        total_user_votes_for_card = card.green_count + card.amber_count + card.red_count
+        if total_user_votes_for_card > 0:
+             card.green_percentage = (card.green_count / total_user_votes_for_card) * 100
+             card.amber_percentage = (card.amber_count / total_user_votes_for_card) * 100
+             card.red_percentage = (card.red_count / total_user_votes_for_card) * 100
+        else:
+             card.green_percentage = 0
+             card.amber_percentage = 0
+             card.red_percentage = 0
+
+
+    
+    user_voted_session_dates = Vote.objects.filter(userid=user).values_list('votingdate', flat=True).distinct()
+    
+    voting_sessions = Session.objects.filter(
+        sessiondate__in=user_voted_session_dates
+    ).order_by('-sessiondate')[:10] 
+
+  
+    for session in voting_sessions:
+        session.user_vote_count = Vote.objects.filter(
+            userid=user,
+            votingdate=session.sessiondate
+        ).count()
+
+    # Get the first card as current_card if no card is selected
+    current_card = health_cards.first() if health_cards.exists() else None
+
+    context = {
+        'user': user,
+        'health_check_cards': health_cards,
+        'active_session': active_session, 
+        'voting_sessions': voting_sessions, 
+        'votes_completed': votes_completed,
+        'total_cards': total_cards,
+        'progress_percentage': progress_percentage,
+        'current_card': current_card,
+        'active_page': 'health_cards',
+        'is_historical': False 
+    }
+
+    return render(request, 'teamvotingDashboard.html', context)
+# Vote for a specific card
+
+def team_lead_vote_card(request, card_id):
+    
+    
+    # Get current user
+    user = User.objects.get(userID=request.session['user_id'])
+    
+    # Get the current card
+    current_card = get_object_or_404(Healthcheckcard, cardid=card_id)
+    
+    # Get all health check cards
+    health_cards = Healthcheckcard.objects.all()
+    
+    # Get active session
+    active_session, created = Session.objects.get_or_create(
+        sessiondate=timezone.now().date(),
+        defaults={
+            'description': f"Health Check Session - {timezone.now().strftime('%B %Y')}"
+        }
+    )
+    
+    # Get user's votes for this session
+    user_votes = Vote.objects.filter(
+        userid=user.userID,
+        cardid__in=health_cards
+        
+    )
+    
+    # Calculate progress
+    current_session_date = timezone.now().date()
+    votes_completed = Vote.objects.filter(
+        userid=user,
+        votingdate=current_session_date
+    ).values('cardid').distinct().count()
+    total_cards = health_cards.count()
+    progress_percentage = min(
+            (votes_completed / total_cards * 100) if total_cards > 0 else 0,
+            100
+        )
+    
+    # Get existing vote for this card if it exists
+    existing_vote = Vote.objects.filter(
+        userid=user.userID,
+        cardid=current_card
+    ).order_by('-votingdate').first()  # Show most recent vote
+    
+    # Find previous and next cards for navigation
+    card_ids = list(health_cards.values_list('cardid', flat=True))
+    current_index = card_ids.index(current_card.cardid) if current_card.cardid in card_ids else 0
+    
+    previous_card = None
+    if current_index > 0:
+        previous_card = health_cards.get(cardid=card_ids[current_index - 1])
+    
+    next_card = None
+    if current_index < len(card_ids) - 1:
+        next_card = health_cards.get(cardid=card_ids[current_index + 1])
+    
+    context = {
+        'user': user,
+        'current_card': current_card,
+        'health_check_cards': health_cards,
+        'existing_vote': existing_vote,
+        'votes_completed': votes_completed,
+        'total_cards': total_cards,
+        'progress_percentage': progress_percentage,
+        'has_previous': previous_card is not None,
+        'previous_card': previous_card,
+        'has_next': next_card is not None,
+        'next_card': next_card,
+        'active_session': active_session,
+        'active_page': 'team_lead_voting'
+    }
+    
+    return render(request, 'teamvotecard.html', context)
+def team_lead_submit_vote(request, card_id):
+    # if not request.user.is_authenticated or request.method != 'POST':
+    #     return redirect('login')
+    
+    # Get current user and card
+
+    # Get current user and card
+    user = User.objects.get(userID=request.session['user_id'])
+    current_card = get_object_or_404(Healthcheckcard, cardid=card_id)
+    
+    # Get form data
+    vote_value = request.POST.get('voteValue')
+    progress_status = request.POST.get('progressStatus')
+    solutions = request.POST.get('solutions', '')
+    comments = request.POST.get('comments', '')
+    feedback = request.POST.get('feedback', '')
+    
+    # Create new vote 
+    try:
+        Vote.objects.create(
+            userid=user,
+            cardid=current_card,
+            votevalue=vote_value,
+            progressstatus=progress_status,
+            comments=comments,
+            votingdate=timezone.now().date(),
+            # solutions=solutions,
+            # feedback=feedback
+        )
+        messages.success(request, "Vote submitted successfully!")
+    except Exception as e:
+        messages.error(request, f"Error submitting vote: {str(e)}")
+        return redirect('team_vote_card', card_id=card_id)
+    
+    # Handle navigation
+    action = request.POST.get('action')
+    health_check_cards = Healthcheckcard.objects.all()
+    card_ids = list(health_check_cards.values_list('cardid', flat=True))
+    current_index = card_ids.index(current_card.cardid) if current_card.cardid in card_ids else 0
+    
+    if action == 'next' and current_index < len(card_ids) - 1:
+        next_card = health_check_cards.get(cardid=card_ids[current_index + 1])
+        return redirect('team_vote_card', card_id=next_card.cardid)
+    
+    return redirect('team_voting_dashboard')
+def start_new_session(request):
+    # Create new session
+    new_session = Session.objects.create(
+        description=f"Health Check Session - {timezone.now().strftime('%B %d, %Y')}",
+        sessiondate=timezone.now().date()
+    )
+    messages.success(request, "New voting session started!")
+    return redirect('team_voting_dashboard')
+
+
+def end_current_session(request):
+    Session.objects.filter(is_active=True).update(is_active=False)
+    messages.success(request, "Current voting session ended!")
+    return redirect('engineer_dashboard')
+
+def view_session(request, session_id):
+    # Get the session
+    session = get_object_or_404(Session, sessionid=session_id)
+
+    # Get current user
+    if 'user_id' not in request.session:
+         return HttpResponse("User not logged in.", status=401)
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         return HttpResponse("User not found.", status=404)
+
+
+    # Get all health check cards
+    health_cards = Healthcheckcard.objects.all()
+
+    # Get *user's* votes for this specific session
+    user_votes_in_session = Vote.objects.filter(
+        userid=user,
+        votingdate=session.sessiondate
+    ).select_related('cardid') 
+    # Calculate progress for this user in this session
+    votes_completed = user_votes_in_session.values('cardid').distinct().count()
+    total_cards = health_cards.count()
+    progress_percentage = min(
+        (votes_completed / total_cards * 100) if total_cards > 0 else 0,
+        100
+    )
+
+    # Get the card status for each card based on *user's* vote in this session
+    # Also prepare data for the Card Summary section (showing user's vote)
+    user_votes_dict = {vote.cardid_id: vote for vote in user_votes_in_session} 
+
+    for card in health_cards:
+        vote = user_votes_dict.get(card.cardid) 
+        if vote:
+            card.voted = True
+            card.vote_value = vote.votevalue
+            card.progress_status = vote.progressstatus
+           
+            card.green_count = 1 if vote.votevalue == 3 else 0
+            card.amber_count = 1 if vote.votevalue == 2 else 0
+            card.red_count = 1 if vote.votevalue == 1 else 0
+        else:
+            card.voted = False
+            card.vote_value = None
+            card.progress_status = None
+            card.green_count = 0
+            card.amber_count = 0
+            card.red_count = 0
+
+        total_user_votes_for_card = card.green_count + card.amber_count + card.red_count
+        if total_user_votes_for_card > 0:
+             card.green_percentage = (card.green_count / total_user_votes_for_card) * 100
+             card.amber_percentage = (card.amber_count / total_user_votes_for_card) * 100
+             card.red_percentage = (card.red_count / total_user_votes_for_card) * 100
+        else:
+             card.green_percentage = 0
+             card.amber_percentage = 0
+             card.red_percentage = 0
+
+    # Get the first card as current_card if no card is selected
+    current_card = health_cards.first() if health_cards.exists() else None
+
+    context = {
+        'user': user,
+        'health_check_cards': health_cards,
+        'active_session': session, 
+        'user_session_votes': user_votes_in_session, 
+        'votes_completed': votes_completed, 
+        'total_cards': total_cards,
+        'progress_percentage': progress_percentage,
+        'current_card': current_card,
+        'active_page': 'health_cards', 
+        'is_historical': True 
+    }
+
+    return render(request, 'teamvotingDashboard.html', context)
+    
 def team_progress(request):
     teams = Team.objects.all()
-    return render(request, 'TeamOverview.html', { 'teams': teams})
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
+    return render(request, 'TeamOverview.html', { 'teams': teams , 'active_page': 'team_progress','user': user,})
 
 def get_category_trend(department, category_name):
     today = date.today()
@@ -530,7 +1056,7 @@ def get_settings_SM(request):
     return render(request, 'SenManSetting.html', {'active_page': 'settings'})
 
 def get_settings_TL(request):
-    return render(request, 'Teamleadersetting.html')
+    return render(request, 'Teamleadersetting.html', {'active_page': 'settings'})
 
 def debug_cards(request):
     card_names = list(Healthcheckcard.objects.values_list('cardname', flat=True))
