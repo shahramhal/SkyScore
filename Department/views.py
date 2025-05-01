@@ -24,8 +24,6 @@ def departmentDashboard(request):
 
 
 def department_settings(request):
-    if 'user_id' not in request.session:
-        return redirect('login')
     return render(request, 'DeptLeadSetting.html')
 
 

@@ -231,7 +231,7 @@
         <ul class="side-nav-menu">
           <!-- Dashboard Link -->
           <li class="side-nav-item">
-              <a href="" 
+              <a href="{%url 'dept_lead_dashboard'%}" 
                  class="side-nav-link {% if active_page == 'dashboard' %}active{% endif %}">
                   <i class="fas fa-home"></i>
                   <span>Dashboard</span>
@@ -304,7 +304,7 @@
       <button>Settings</button>
       <button onclick="showAccessDenied()">Other Departments?</button>
       <button onclick="window.location.href='/logout'">Log Out</button>
-      <button onclick="window.location.href='/summaries'">View Summaries</button>
+      <button onclick="">View Summaries</button>
     </div>
   </div>
 
