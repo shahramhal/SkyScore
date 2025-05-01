@@ -1,8 +1,12 @@
+# department/urls.py
+
 from django.urls import path
 from . import views
 
+app_name = 'department'
+
 urlpatterns = [
-    path('departmentDashboard/', views.departmentDashboard, name='dept_lead_dashboard'),
-    path('view_summary/<int:team_id>/', views.view_summary, name='view_summary'),
-    path('reports/', views.department_reports, name='department_reports'),
+    # 1) Department Leader landing page (pick your team)
+    path('dashboard/', views.department_dashboard, name='dashboard'),
+    path('reports/', views.department_reports, name='reports'),
 ]
