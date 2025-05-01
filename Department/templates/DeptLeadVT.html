@@ -5,218 +5,125 @@
     <title>Sky Score | Team Performance Dashboard</title>
     <style>
         body {
-    margin: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f9f9fc;
-}
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5fa;
+        }
 
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 240px;
-    height: 100vh;
-    background: linear-gradient(to bottom, #6a1b9a, #4a148c);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding-top: 30px;
-    z-index: 1000;
-}
+        .sidebar {
+            width: 200px;
+            background-color: #5e2ca5;
+            color: white;
+            position: fixed;
+            height: 100%;
+            padding-top: 30px;
+        }
 
-.sidebar h2 {
-    font-size: 1.8em;
-    font-weight: bold;
-    margin: 0 0 32px 32px;
-}
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
 
-.sidebar nav {
-    display: flex;
-    flex-direction: column;
-}
+        .sidebar a:hover {
+            background-color: #4a208f;
+        }
 
-.sidebar nav a {
-    color: #fff;
-    text-decoration: none;
-    padding: 14px 32px;
-    font-size: 1.1em;
-    border-left: 4px solid transparent;
-    transition: background 0.2s, border-color 0.2s;
-}
+        .main-content {
+            margin-left: 220px;
+            padding: 30px;
+        }
 
-.sidebar nav a.active,
-.sidebar nav a:hover {
-    background: rgba(255,255,255,0.08);
-    border-left: 4px solid #fff;
-    font-weight: bold;
-}
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
 
-.main-content {
-    margin-left: 240px;
-    padding: 40px;
-}
+        h2 {
+            margin-top: 0;
+            color: #5e2ca5;
+        }
 
-.team-overview-container {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-    padding: 32px;
-    max-width: 900px;
-    margin: auto;
-}
+        .stat-group {
+            margin-top: 20px;
+        }
 
-.team-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
+        .stat-group strong {
+            color: #333;
+        }
 
-.team-header h1 {
-    color: #4a148c;
-    font-size: 2em;
-}
+        .footer-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
 
-.switch-team {
-    background: #f3e5f5;
-    border-radius: 8px;
-    padding: 8px 16px;
-}
+        .footer-buttons a {
+            text-decoration: none;
+        }
 
-.switch-team select {
-    border: none;
-    background: transparent;
-    font-size: 1em;
-    color: #4a148c;
-    font-weight: bold;
-}
+        .footer-buttons button {
+            background-color: #6f42c1;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
 
-.team-details {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 1em;
-}
-
-.score-summary {
-    background: #f3e5f5;
-    border-radius: 10px;
-    padding: 20px 24px;
-    margin: 0 auto 28px auto;
-    max-width: 500px;
-    color: #4a148c;
-    font-size: 1.05em;
-}
-
-.chart-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 24px;
-}
-
-.chart-container {
-    background: #fafafa;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    padding: 24px;
-    min-height: 300px;
-    width: 100%;
-    max-width: 500px;
-}
-
-.overview-buttons {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-    gap: 20px;
-}
-
-.overview-buttons button {
-    background: #6a1b9a;
-    color: white;
-    border: none;
-    border-radius: 22px;
-    padding: 10px 26px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-.overview-buttons button:hover {
-    background: #512da8;
-}
-
+        .footer-buttons button:hover {
+            background-color: #5a34a1;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Sidebar Navigation -->
     <div class="sidebar">
         <h2>Sky Score</h2>
         <nav>
-            <a href="#" class="active">Dashboard</a>
+            <a href="{% url 'dept_lead_dashboard' %}" {% if active_page == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
             <a href="#">Health Check</a>
-            <a href="#">Reports</a>
-            <a href="#">Settings</a>
+            <a href="{% url 'department_reports' %}" {% if active_page == 'reports' %}class="active"{% endif %}>Reports</a>
+            <a href="{% url 'department_settings' %}" {% if active_page == 'settings' %}class="active"{% endif %}>Settings</a>
             <a href="#">Help</a>
-            <a href="#">Logout</a>
+            <a href="{% url 'logout' %}">Logout</a>
         </nav>
     </div>
+
+    <!-- Main Content -->
     <div class="main-content">
-        <div class="team-overview-container">
-            <div class="team-header">
-                <h1 id="team-title">{% block team_title %}{% endblock %}</h1>
-                <div class="switch-team">
-                    <label for="team-select"><strong>Other Teams:</strong></label>
-                    <select id="team-select" onchange="switchTeam()">
-                        <!-- Django: populate team options dynamically -->
-                        {% for team in teams %}
-                        <option value="{{ team.id }}" {% if team.id == current_team.id %}selected{% endif %}>{{ team.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="team-details" id="team-details">
-                <div><strong>Team Name:</strong> <span id="team-name">{% block team_name %}{% endblock %}</span></div>
-                <div><strong>Team Leader:</strong> <span id="team-leader">{% block team_leader %}{% endblock %}</span></div>
-                <div><strong>Number of Engineers:</strong> <span id="team-engineers">{% block team_engineers %}{% endblock %}</span></div>
-                <div><strong>Department:</strong> <span id="team-department">{% block team_department %}{% endblock %}</span></div>
-                <div><strong>Last Health Check:</strong> <span id="team-last-check">{% block team_last_check %}{% endblock %}</span></div>
-                <div><strong>Status:</strong> <span id="team-status">{% block team_status %}{% endblock %}</span></div>
-            </div>
-            <div class="score-summary" id="score-summary">
-                <div><strong>Average Health Score:</strong> <span id="avg-score">{% block avg_score %}{% endblock %}</span></div>
-                <div>
-                    Mission: <span id="score-mission">{% block score_mission %}{% endblock %}</span> |
-                    Fun: <span id="score-fun">{% block score_fun %}{% endblock %}</span> |
-                    Speed: <span id="score-speed">{% block score_speed %}{% endblock %}</span> |
-                    Value: <span id="score-value">{% block score_value %}{% endblock %}</span>
-                </div>
-                <div><strong>Top Performing Area:</strong> <span id="top-area">{% block top_area %}{% endblock %}</span></div>
-                <div><strong>Struggling Area:</strong> <span id="struggling-area">{% block struggling_area %}{% endblock %}</span></div>
-            </div>
-            <div class="chart-section">
-                <div class="chart-container">
-                    <!-- Chart.js or Plotly chart will be rendered here dynamically by Django/JS -->
-                    <canvas id="teamChart" style="width:100%; height:300px;"></canvas>
-                    <!-- For Plotly, you can use: <div id="teamChart"></div> -->
-                </div>
-            </div>
-            <div class="overview-buttons">
-                <button>OVERVIEW</button>
-                <button>Other Departments?</button>
-                <button>Settings</button>
-            </div>
+        <div class="card">
+            <h2>Team Summary</h2>
+            <p><strong>Team Name:</strong> {{ current_team.teamname }}</p>
+            <p><strong>Team Leader:</strong> [Coming Soon]</p>
+            <p><strong>Number of Engineers:</strong> [Coming Soon]</p>
+            <p><strong>Department:</strong> {{ current_team.departmentid.departmentname }}</p>
+            <p><strong>Last Health Check:</strong> [Coming Soon]</p>
+            <p><strong>Status:</strong> [Coming Soon]</p>
+        </div>
+
+        <div class="card stat-group">
+            <h2>Health Summary</h2>
+            <p><strong>Average Health Score:</strong> [Coming Soon]</p>
+            <p>Mission: | Fun: | Speed: | Value:</p>
+            <p><strong>Top Performing Area:</strong> [Coming Soon]</p>
+            <p><strong>Struggling Area:</strong> [Coming Soon]</p>
+        </div>
+
+        <!-- Back Button -->
+        <div class="footer-buttons">
+            <a href="{% url 'dept_lead_dashboard' %}">
+                <button>← Back to Department Overview</button>
+            </a>
         </div>
     </div>
-    <script>
-        // Placeholder for team-switching logic
-        function switchTeam() {
-            const team = document.getElementById('team-select').value;
-            // Add AJAX or Django logic to fetch and update the page with the selected team's data
-            // Example: window.location.href = `/dashboard/${team}/`;
-        }
-        // Chart rendering will be handled by Django/JS
-    </script>
+
 </body>
 </html>

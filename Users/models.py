@@ -10,6 +10,9 @@ class User(models.Model):
     managerID = models.IntegerField(null=True, blank=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
+    teamid=models.ForeignKey('Team', models.DO_NOTHING, db_column='teamID', blank=True)  # Field name made lowercase.
+    departmentid = models.ForeignKey('Department', models.DO_NOTHING, db_column='departmentID', blank=True, null=True)
+    
     
     class Meta:
         managed = False
@@ -53,3 +56,31 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"Vote {self.voteid} by {self.userid.username} on {self.cardid.cardname}"
+class Department(models.Model):
+    departmentid = models.AutoField(db_column='departmentID', primary_key=True)  # Field name made lowercase.
+    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userID', blank=True, )  # Field name made lowercase.
+    departmentname = models.TextField(db_column='departmentName', blank=True, )  # Field name made lowercase.
+    
+
+    class Meta:
+        managed = False
+        db_table = 'Department'
+class Team(models.Model):
+    teamid = models.AutoField(db_column='teamID', primary_key=True, blank=True)  # Field name made lowercase.
+    
+    voteid = models.ForeignKey('Vote', models.DO_NOTHING, db_column='voteID', blank=True,)  # Field name made lowercase.
+    summaryid = models.ForeignKey('Summary', models.DO_NOTHING, db_column='summaryID', blank=True, )  # Field name made lowercase.
+    teamname = models.TextField(db_column='teamName', blank=True, null=True)  # Field name made lowercase.
+    departmentid = models.ForeignKey('Department', models.DO_NOTHING, db_column='departmentID', blank=True, )  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Team'
+class Summary(models.Model):
+    summaryid = models.AutoField(db_column='summaryID', primary_key=True, blank=True)  # Field name made lowercase.
+    progressstatus = models.TextField(db_column='progressStatus', blank=True, null=True)  # Field name made lowercase.
+    averagevote = models.FloatField(db_column='averageVote', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Summary'

@@ -1,110 +1,28 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Department Leader Overview</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #4A90E2, #2C3E50);
-            height: 100%;
-            text-align: center;
-        }
-        .dashboard {
-            width: 1000px;
-            background: white;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .header {
-            background: linear-gradient(to right, #4A90E2, #2C3E50);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .content {
-            padding: 20px;
-        }
-        .team-buttons button {
-            background: #4A90E2;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        select {
-            padding: 10px;
-            margin-top: 10px;
-        }
-        .bottom-nav {
-            margin-top: 20px;
-        }
-        .bottom-nav button {
-            background: #2C3E50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Dept Lead Dashboard</title>
+  <style>
+    /* Simple CSS grid */
+    .container { max-width: 600px; margin: 40px auto; font-family: sans-serif; }
+    select, button { padding: 8px; margin: 8px 0; width: 100%; }
+  </style>
 </head>
 <body>
-    <div class="dashboard">
-        <div class="header">
-            <h1>Department Leader Overview</h1>
-            <div class="logo">Sky Score</div>
-        </div>
-        <div class="content">
-            <p>Get a clear view of the teams or cards in your department below:</p>
-            <div class="team-buttons">
-                <button onclick="setView('teams')">Teams</button>
-                <button onclick="setView('cards')">Cards</button>
-            </div>
-            <select id="data-select">
-                <!-- Options will be dynamically populated from database -->
-            </select>
-        </div>
-        <div class="bottom-nav">
-            <button>Settings</button>
-            <button onclick="showAccessDenied()">Other Departments?</button>
-            <button>Log Out</button>
-            <button>View Summaries</button>
-        </div>
-    </div>
-    <script>
-        function setView(viewType) {
-            fetch(`/get_data?view=${viewType}`) // Example API call to Django backend
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById("data-select");
-                    select.innerHTML = "";
-                    data.forEach(item => {
-                        const option = document.createElement("option");
-                        option.value = item.id;
-                        option.textContent = item.name;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => console.error("Error fetching data:", error));
-        }
-        
-        function showAccessDenied() {
-            alert("You cannot access these department teams and cards. Please contact the admin for access.");
-        }
-    </script>
+  <div class="container">
+    <h1>Department Leader Dashboard</h1>
+    <p>Select a team to view reports:</p>
+    <form method="get" action="{% url 'reports' %}">
+      <select name="team_id" required>
+        <option value="" disabled selected>-- choose team --</option>
+        {% for team in teams %}
+          <option value="{{ team.teamid }}">{{ team.teamname }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">View Reports</button>
+    </form>
+  </div>
 </body>
 </html>

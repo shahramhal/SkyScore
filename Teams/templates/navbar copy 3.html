@@ -32,7 +32,7 @@
           <i class="fas fa-bars"></i>
         </button>
       </div>
-
+  
       <!-- User Profile Section with Django Template Logic -->
       <div class="user-profile">
         <!-- Avatar with user's initial (or 'U' for guest) -->
@@ -43,14 +43,14 @@
           <!-- Default for guest users -->
           {% endif %}
         </div>
-
+  
         <!-- User's full name (or 'Guest User') -->
         <div class="user-name">
           {% if user %} {{ user.first_name }} {{ user.last_name }}
           <!-- Combined name -->
           {% else %} Guest User {% endif %}
         </div>
-
+  
         <!-- User role from Django model -->
         <div class="user-role">
           {% if user %} {{ user.userType }}
@@ -58,7 +58,7 @@
           {% else %} Guest User {% endif %}
         </div>
       </div>
-
+  
       <!-- Navigation Menu -->
       <ul class="side-nav-menu">
         <!-- Dashboard Link -->
@@ -80,13 +80,13 @@
         </li>
     
         <!-- Reports Link -->
-        {% comment %} <li class="side-nav-item">
+        <li class="side-nav-item">
             <a href="#" 
                class="side-nav-link {% if active_page == 'reports' %}active{% endif %}">
                 <i class="fas fa-chart-line"></i>
                 <span>Reports</span>
             </a>
-        </li> {% endcomment %}
+        </li>
     
         <!-- Profile Link -->
         <li class="side-nav-item">
@@ -112,7 +112,7 @@
             </a>
         </li>
     </ul>
-    </nav>
+  </nav>
 
     <!-- Mobile Toggle Button (shown only on small screens) -->
     <button class="mobile-toggle">
