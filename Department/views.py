@@ -29,6 +29,7 @@ def departmentDashboard(request):
 
 
 def department_settings(request):
+
     try:
         user = User.objects.get(userID=request.session['user_id'])
     except User.DoesNotExist:
@@ -37,6 +38,9 @@ def department_settings(request):
     if 'user_id' not in request.session:
         return redirect('login')
     return render(request, 'DeptLeadSetting.html',{'user': user})
+
+   
+
 
 
 def health_check_view(request):
