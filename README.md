@@ -1,4 +1,4 @@
-SkyScore
+##SkyScore
 SkyScore is a machine learning application that analyzes and scores sky images based on their aesthetic quality, clarity, and celestial object visibility. The project enables both automated batch processing of sky images and an interactive web interface for real-time scoring.
 Overview
 SkyScore combines computer vision and machine learning techniques to evaluate sky photographs. It can detect and analyze various features including:
