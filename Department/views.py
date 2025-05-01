@@ -7,7 +7,7 @@ Department Lead dashboard and reporting with Chart.js visualisations.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from Users.models import User, Vote  # assuming Vote.votingdate is a datetime
 from Teams.models import Team
 from datetime import timedelta, date
@@ -15,8 +15,13 @@ import json
 
 
 def departmentDashboard(request):
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
     teams = Team.objects.all()
-    return render(request, 'DeptLeadpg2.html', {'teams': teams})
+    return render(request, 'DeptLeadpg2.html', {'teams': teams, 'user': user})
 
 
 
@@ -24,9 +29,14 @@ def departmentDashboard(request):
 
 
 def department_settings(request):
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
     if 'user_id' not in request.session:
         return redirect('login')
-    return render(request, 'DeptLeadSetting.html')
+    return render(request, 'DeptLeadSetting.html',{'user': user})
 
 
 def health_check_view(request):

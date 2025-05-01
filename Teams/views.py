@@ -1153,9 +1153,19 @@ def engineering_metrics(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 def get_settings_SM(request):
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
 
-    return render(request, 'SenManSetting.html', {'active_page': 'settings'})
+    return render(request, 'SenManSetting.html', {'active_page': 'settings', 'user': user})
 
 def get_settings_TL(request):
-    return render(request, 'Teamleadersetting.html', {'active_page': 'settings'})
+    try:
+        user = User.objects.get(userID=request.session['user_id'])
+    except User.DoesNotExist:
+         
+         return HttpResponse("User not found.", status=404)
+    return render(request, 'Teamleadersetting.html', {'active_page': 'settings', 'user': user})
 

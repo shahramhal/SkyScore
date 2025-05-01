@@ -231,7 +231,7 @@
         <ul class="side-nav-menu">
           <!-- Dashboard Link -->
           <li class="side-nav-item">
-              <a href="" 
+              <a href="{% url 'dept_lead_dashboard' %}" 
                  class="side-nav-link {% if active_page == 'dashboard' %}active{% endif %}">
                   <i class="fas fa-home"></i>
                   <span>Dashboard</span>
@@ -240,7 +240,7 @@
       
           <!-- Health Check Link -->
           <li class="side-nav-item">
-              <a href="" 
+              <a href="{% url 'department_summary' %}" 
                  class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'voting' %}active{% endif %}">
                   <i class="fas fa-star"></i>
                   <span>Summary</span>
@@ -249,16 +249,16 @@
       
           <!-- Reports Link -->
           <li class="side-nav-item">
-              <a href="" 
-                 class="side-nav-link {% if active_page == 'reports' %}active{% endif %}">
-                  <i class="fas fa-chart-line"></i>
-                  <span>Reports</span>
-              </a>
-          </li>
+            <a href="{%url 'SenManagerprog'%}" 
+               class="side-nav-link {% if active_page == 'reports' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+        </li>
       
           <!-- Profile Link -->
           <li class="side-nav-item">
-              <a href="" 
+              <a href="{% url 'senman_profile' %}" 
                  class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
                   <i class="fas fa-user"></i>
                   <span>Profile</span>
@@ -266,7 +266,7 @@
           </li>
           <!-- Settings Link -->
           <li class="side-nav-item">
-            <a href="{% url 'department_settings' %}" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+            <a href="{% url 'settings_sm' %}" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
               <i class="fas fa-cog"></i>
               <span>Settings</span>
             </a>
