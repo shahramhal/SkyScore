@@ -139,9 +139,8 @@
                   id="show_password"
                   class="show-password-checkbox"
                 />
-
-                Show Password</label
-              >
+                Show Password
+              </label>
             </div>
           </div>
 
@@ -151,7 +150,16 @@
               <div class="dropdown">
                 <div class="dropdown-header">
                   <span>Role: </span>
-                  <span id="selected-role">Choose the role</span>
+                  <span id="selected-role">
+                    {% if form_data.role %}
+                      {% if form_data.role == 'Engineer' %}Engineer{% endif %}
+                      {% if form_data.role == 'team_lead' %}Team Leader{% endif %}
+                      {% if form_data.role == 'dept_lead' %}Department Leader{% endif %}
+                      {% if form_data.role == 'Sen-man' %}Senior Manager{% endif %}
+                    {% else %}
+                      Choose the role
+                    {% endif %}
+                  </span>
                   <div class="dropdown-arrow"></div>
                 </div>
                 <select
@@ -165,7 +173,6 @@
                   <option value="team_lead" {% if form_data.role == 'team_lead' %}selected{% endif %}>Team Leader</option>
                   <option value="dept_lead" {% if form_data.role == 'dept_lead' %}selected{% endif %}>Department Leader</option>
                   <option value="Sen-man" {% if form_data.role == 'Sen-man' %}selected{% endif %}>Senior Manager</option>
-                  <option value="admin" {% if form_data.role == 'admin' %}selected{% endif %}>Admin</option>
                 </select>
               </div>
             </div>
@@ -201,6 +208,9 @@
                   {% endfor %}
                 </select>
               </div>
+              {% if errors.department %}
+              <div class="error-message">{{ errors.department }}</div>
+              {% endif %}
             </div>
           </div>
           
@@ -227,6 +237,7 @@
                   id="team-select"
                   name="team"
                   class="hidden-select"
+                  {% if form_data.team %}data-selected-team="{{ form_data.team }}"{% endif %}
                 >
                   <option value="">-- Select Team --</option>
                   {% for team in teams %}
@@ -234,13 +245,14 @@
                   {% endfor %}
                 </select>
               </div>
+              {% if errors.team %}
+              <div class="error-message">{{ errors.team }}</div>
+              {% endif %}
             </div>
           </div>
 
           <div class="form-actions1">
-            <a href="{% url 'login' %}" class="login-link"
-              >Already have an Account?</a
-            >
+            <a href="{% url 'login' %}" class="login-link">Already have an Account?</a>
             <button type="submit" class="submit-button">SIGN UP</button>
           </div>
         </form>

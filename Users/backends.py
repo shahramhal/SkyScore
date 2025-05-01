@@ -34,6 +34,7 @@ class CustomAuthBackend(BaseBackend):
             return None
         
     def validate_signup(self, username=None, email=None, password=None, confirm_password=None, first_name=None, last_name=None, role=None, department=None, team=None):
+      
         errors = {}
 
         # Validate username

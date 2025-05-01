@@ -34,6 +34,8 @@
   font-family: Nunito Sans, sans-serif;
   background: linear-gradient(to right, #6a11cb, #2575fc);
   -webkit-background-clip: text;
+  background-clip: text;
+
   color: transparent;
 }
 
@@ -46,12 +48,14 @@
   font-weight: bolder;
   background-image: linear-gradient(to bottom, #1a1a2e, #3f37c9, #4361ee, #80ed99);
   color: transparent;
+  background-clip: text;
   -webkit-background-clip: text;
 }
 
 .center_image {
   margin-left: auto;
   background: linear-gradient(to right, #6a11cb, #2575fc);
+  background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
 
