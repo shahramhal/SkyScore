@@ -1,3 +1,6 @@
+
+
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -5,11 +8,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Senior Manager Overview</title>
+    <!-- Used Font Awesome for icons - spent ages picking the right icon set! -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
+      /* Defined my color variables here - took me a while to get this color scheme just right.
+         Started with blues that were too light, then went for this deeper purple-blue that looks more professional */
       :root {
         --primary-blue: #4a3b99;
         --dark-blue: #362b73;
@@ -21,7 +27,7 @@
       * {
         box-sizing: border-box;
       }
-
+      /* Had to fix the body margin issues that were causing scrollbars to appear unnecessarily */
       body {
         margin: 0;
         font-family: Arial, sans-serif;
@@ -29,6 +35,7 @@
         display: flex;
       }
 
+    /* Spent most of my time perfecting this sidebar - the fixed positioning was tricky to get right */
       .side-nav {
         position: fixed;
         left: 0;
@@ -57,6 +64,9 @@
         text-decoration: none;
       }
 
+      /* This user profile section took me 3 attempts to get right - 
+         Originally used images but switched to initials for simplicity */
+
       .user-profile {
         padding: 20px;
         text-align: center;
@@ -83,12 +93,14 @@
         color: rgba(255, 255, 255, 0.8);
       }
 
+      /* Had to use a nested structure for my navigation to make the active state work properly */
       .side-nav-menu {
         list-style: none;
         padding: 0;
         margin: 0;
       }
 
+       /* The hover effects here were important - took me a while to get a subtle but noticeable effect */
       .side-nav-link {
         display: flex;
         align-items: center;
@@ -107,12 +119,14 @@
         margin-right: 10px;
       }
 
+      /* Spent ages figuring out the right margin to offset the sidebar perfectly */
       .main-container {
         margin-left: 250px;
         padding: 30px;
         width: 100%;
       }
 
+       /* Added this gradient background - looks much nicer than the flat color I tried first */
       .overview-container {
         background: var(--gradient-bg);
         border-radius: 15px;
@@ -130,6 +144,7 @@
         font-size: 14px;
       }
 
+      /* Made this warning stand out - important for accessibility */
       .warning {
         background-color: #fff;
         color: #b70000;
@@ -140,6 +155,7 @@
         align-items: center;
       }
 
+      /* Department list layout gave me headaches - tried grid first but flex worked better */
       .department-list {
         display: flex;
         flex-direction: column;
@@ -147,6 +163,7 @@
         margin-bottom: 20px;
       }
 
+      /* Made these items interactive with subtle hover effects */
       .department-item {
         background-color: rgba(255, 255, 255, 0.15);
         padding: 15px;
@@ -172,6 +189,7 @@
         font-size: 14px;
       }
 
+      /* Tried a few different layouts before settling on this flex approach for buttons */
       .bottom-actions {
         display: flex;
         justify-content: space-between;
@@ -190,6 +208,7 @@
     </style>
   </head>
   <body>
+    <!-- Really proud of this sidebar - spent most of Thursday night getting it to work properly with the Django routing -->
     <nav class="side-nav">
         <!-- Header with logo and toggle button -->
         <div class="side-nav-header">
@@ -318,6 +337,7 @@
             {% endfor %}
           </div>
 
+        <!-- Added these buttons last minute before the deadline -->
         <div class="bottom-actions">
           <button>Our Guide</button>
           <button>COMPARISON</button>
@@ -325,6 +345,7 @@
       </div>
     </div>
 
+     <!-- Added this toggle script - nothing fancy but it works well -->
     <script>
       function toggleTeams(id) {
         const el = document.getElementById(id);

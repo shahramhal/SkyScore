@@ -1,112 +1,28 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Department Leader Overview</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eef2f7;
-        }
-        .dashboard-container {
-            max-width: 900px;
-            margin: 40px auto;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-        }
-        .title-header {
-            text-align: center;
-            background-color: #6f42c1;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-        .title-header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .title-header p {
-            margin: 5px 0 0;
-            font-size: 14px;
-        }
-        .team-select {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .team-select select {
-            width: 60%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
-        .footer-buttons {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 30px;
-        }
-        .footer-buttons button {
-            background-color: #6f42c1;
-            color: white;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .footer-buttons button:hover {
-            background-color: #5a34a1;
-        }
-        .info-text {
-            text-align: center;
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Dept Lead Dashboard</title>
+  <style>
+    /* Simple CSS grid */
+    .container { max-width: 600px; margin: 40px auto; font-family: sans-serif; }
+    select, button { padding: 8px; margin: 8px 0; width: 100%; }
+  </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <div class="title-header">
-            <h1>Department Leader Overview</h1>
-            <p>Sky Score</p>
-        </div>
-        <div class="info-text">
-            Get a clear view of the teams in your department below:
-        </div>
-        <div class="team-select">
-            <select id="team-dropdown">
-                {% if teams %}
-                    <option value="">-- Select a team --</option>
-                    {% for team in teams %}
-                        <option value="{{ team.teamid }}">{{ team.teamname }}</option>
-                    {% endfor %}
-                {% else %}
-                    <option disabled selected>No teams available</option>
-                {% endif %}
-            </select>
-        </div>
-        <div class="footer-buttons">
-            <a href="{% url 'department_settings' %}"><button>Settings</button></a>
-            <a href="{% url 'logout' %}"><button>Log Out</button></a>
-            <button onclick="viewSummary()">View</button>
-        </div>
-    </div>
-    <script>
-        function viewSummary() {
-            const dropdown = document.getElementById("team-dropdown");
-            const selectedId = dropdown.value;
-            if (!selectedId) {
-                alert("Please select a team first.");
-                return;
-            }
-            window.location.href = `/department/view_summary/${selectedId}/`;
-        }
-    </script>
+  <div class="container">
+    <h1>Department Leader Dashboard</h1>
+    <p>Select a team to view reports:</p>
+    <form method="get" action="{% url 'reports' %}">
+      <select name="team_id" required>
+        <option value="" disabled selected>-- choose team --</option>
+        {% for team in teams %}
+          <option value="{{ team.teamid }}">{{ team.teamname }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">View Reports</button>
+    </form>
+  </div>
 </body>
 </html>
