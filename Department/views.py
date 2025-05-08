@@ -309,7 +309,7 @@ def department_metrics_api(request):
             'summary': {
                 'health_score': bar_metrics['values'][0],  # Using Teamwork as health score
                 'mission': bar_metrics['values'][1],
-                'fun': 0,  # You might need to add Fun category
+                'fun': 0,  
                 'speed': bar_metrics['values'][2],
                 'value': bar_metrics['values'][3]
             },
