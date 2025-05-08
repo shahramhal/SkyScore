@@ -42,7 +42,7 @@ def login_view(request):
         password = request.POST.get('password')
         
         
-         # Try to find the user in your custom table
+         # Try to find the user in  custom table
         try:
             user = authenticate(request, username=username, password=password)
             if user is None:
