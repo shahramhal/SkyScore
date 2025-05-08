@@ -235,6 +235,10 @@
             padding: 20px;
             flex: 1 1 45%;
             min-width: 300px;
+            
+        }
+        .chart-container canvas {
+            height: 300px !important;
         }
         
         .chart-title {
@@ -543,11 +547,18 @@
         
             <!-- Department Summary Link -->
             <li class="side-nav-item">
-                <a href="{% url 'view_summary' team.teamid %}" 
+                {% if teams.first %}
+                <a href="{% url 'view_summary' teams.first.teamid %}" 
                    class="side-nav-link {% if active_page == 'health_cards' or active_page == 'voting' %}active{% endif %}">
                     <i class="fas fa-star"></i>
                     <span>Dept Summary</span>
                 </a>
+                {% else %}
+                <a href="#" class="side-nav-link">
+                    <i class="fas fa-star"></i>
+                    <span>Dept Summary</span>
+                </a>
+                {% endif %}
             </li>
         
             <!-- Team Progress Link -->
@@ -734,7 +745,11 @@
             const teamViewBtn = document.getElementById('team-view-btn');
             const deptViewContent = document.getElementById('dept-view-content');
             const teamViewContent = document.getElementById('team-view-content');
-            const teamSelector = document.getElementById('team-selector');
+            const teamSelector = document.getElementById('team-select').addEventListener('change', function() {
+                const teamId = this.value;
+                loadTeamData(teamId);
+                history.pushState(null, '', `?team=${teamId}`);
+            });
             const viewTitle = document.getElementById('view-title');
             
             // Mobile menu toggle functionality
@@ -771,53 +786,50 @@
             const teamId = urlParams.get('team');
             
             // Fetch department data
-            let deptApiUrl = '/api/department-metrics/';
+            let deptApiUrl = '{% url "department_metrics_api" %}';
             
             fetch(deptApiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Hide loading indicator
-                    loadingIndicator.style.display = 'none';
-                    
-                    // Update department dashboard with data
-                    updateDepartmentDashboard(data);
-                })
-                .catch(error => {
-                    console.error('Error fetching department metrics:', error);
-                    
-                    // Hide loading indicator and show error message
-                    loadingIndicator.style.display = 'none';
-                    errorMessage.style.display = 'block';
-                    errorMessage.textContent = 'Error loading department data: ' + error.message;
-                });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                loadingIndicator.style.display = 'none';
+                updateDepartmentDashboard(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingIndicator.style.display = 'none';
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = `Error loading data: ${error.message}`;
+    });
             
             // Fetch team data if team view is selected
-            if (teamId) {
-                let teamApiUrl = `/api/team-metrics/?team=${teamId}`;
+            function loadTeamData(teamId) {
+                const loadingIndicator = document.getElementById('loading-indicator');
+                const errorMessage = document.getElementById('error-message');
                 
-                fetch(teamApiUrl)
+                loadingIndicator.style.display = 'block';
+                errorMessage.style.display = 'none';
+                
+                fetch(`/api/team-metrics/?team=${teamId}`)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        // Update team dashboard with data
+                        loadingIndicator.style.display = 'none';
                         updateTeamDashboard(data);
-                        
-                        // Switch to team view if team parameter is in URL
-                        teamViewBtn.click();
                     })
                     .catch(error => {
-                        console.error('Error fetching team metrics:', error);
+                        console.error('Error loading team data:', error);
+                        loadingIndicator.style.display = 'none';
                         errorMessage.style.display = 'block';
-                        errorMessage.textContent = 'Error loading team data: ' + error.message;
+                        errorMessage.textContent = `Error loading team data: ${error.message}`;
                     });
             }
             
@@ -930,7 +942,94 @@
         }
 
         function updateTeamDashboard(data) {
-            // Similar logic for team charts and metrics if you extend functionality
+            console.log('Team data received:', data);  // Debug log
+            
+            // Update metric values
+            document.querySelector('.team-health-score').textContent = data.summary.health_score;
+            document.querySelector('.team-mission-score').textContent = data.summary.mission_score;
+            document.querySelector('.team-fun-score').textContent = data.summary.fun_score;
+            document.querySelector('.team-speed-score').textContent = data.summary.speed_score;
+            document.querySelector('.team-value-score').textContent = data.summary.value_score;
+            
+            // Update team charts
+            updateTeamCharts(data);
+        }
+        
+        function updateTeamCharts(data) {
+            // Team bar chart
+            const teamBarCtx = document.getElementById('teamBarChart').getContext('2d');
+            new Chart(teamBarCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Health', 'Mission', 'Fun', 'Speed', 'Value'],
+                    datasets: [{
+                        label: 'Score',
+                        data: [
+                            data.summary.health_score,
+                            data.summary.mission_score,
+                            data.summary.fun_score,
+                            data.summary.speed_score,
+                            data.summary.value_score
+                        ],
+                        backgroundColor: [
+                            'rgba(74, 20, 140, 0.7)',
+                            'rgba(124, 67, 189, 0.7)',
+                            'rgba(94, 53, 177, 0.7)',
+                            'rgba(49, 27, 146, 0.7)',
+                            'rgba(74, 20, 140, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(74, 20, 140, 1)',
+                            'rgba(124, 67, 189, 1)',
+                            'rgba(94, 53, 177, 1)',
+                            'rgba(49, 27, 146, 1)',
+                            'rgba(74, 20, 140, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Team line chart
+            const teamLineCtx = document.getElementById('teamLineChart').getContext('2d');
+            new Chart(teamLineCtx, {
+                type: 'line',
+                data: {
+                    labels: data.historical_data.labels,
+                    datasets: [{
+                        label: 'Health Score',
+                        data: data.historical_data.values,
+                        borderColor: '#6f42c1',
+                        backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
         }
     });
     </script>
