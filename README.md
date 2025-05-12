@@ -3,13 +3,18 @@
 SkyScore is a web-based application designed to streamline the "Health Check" technique used by SKY's Engineering Department to assess the operational health of their engineering teams. Inspired by Spotify's Squad Health Check model, this application replaces the traditional spreadsheet method with a dynamic, user-friendly interface that reduces data entry errors and improves data accessibility.
 # Screenshots 
 ![image](https://github.com/user-attachments/assets/91278e11-df9f-4d43-8a87-ce523980cd24)
-![image](https://github.com/user-attachments/assets/fc39cfdb-c85e-45e1-9a63-be63b5cdd00e)
-![Uploading image.png…]()
-![image](https://github.com/user-attachments/assets/cef2817d-2da9-416c-a945-f0e6ae58b594)
-![image](https://github.com/user-attachments/assets/5c831b6f-d24e-41ab-8d86-353c8046212b)
-![image](https://github.com/user-attachments/assets/ede6a14a-e52f-4275-b428-56aacab2b55f)
-![image](https://github.com/user-attachments/assets/dcec55af-40db-47d3-b2b0-bfb8a90ac2cf)
 ![image](https://github.com/user-attachments/assets/998b59be-e245-49ae-9916-8f89c43dbdd4)
+![image](https://github.com/user-attachments/assets/dcec55af-40db-47d3-b2b0-bfb8a90ac2cf)
+![image](https://github.com/user-attachments/assets/ede6a14a-e52f-4275-b428-56aacab2b55f)
+![image](https://github.com/user-attachments/assets/5c831b6f-d24e-41ab-8d86-353c8046212b)
+![image](https://github.com/user-attachments/assets/fc39cfdb-c85e-45e1-9a63-be63b5cdd00e)
+![image](https://github.com/user-attachments/assets/cef2817d-2da9-416c-a945-f0e6ae58b594)
+![Uploading image.png…]()
+
+
+
+
+
 
 ## Features
 **User Roles**: Supports multiple user roles including Engineers, Team Leaders, Department Leaders, and Senior Managers, each with tailored functionalities.
