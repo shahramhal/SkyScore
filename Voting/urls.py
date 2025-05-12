@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+# app_name = 'vote'
+
 urlpatterns = [
     path('voting/dashboard/', views.votingDashboard, name='votingDashboard'),
     path('voting/card/<int:card_id>/', views.vote_card, name='vote_card'),

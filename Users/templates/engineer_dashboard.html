@@ -61,7 +61,7 @@
         <div class="dashboard-card">
           <div class="card-header">
             <h2>
-              <i class="fas fa-users"></i> Team: <span>Frontend Squad</span>
+              <i class="fas fa-vote-yea"></i> Cards 
             </h2>
             <a href="{% url 'engineer_dashboard' %}" class="view-report"
               >View Full Report</a
@@ -70,7 +70,7 @@
 
           <div class="health-cards-grid">
             <!-- Example Health Card (repeat for each metric) -->
-            <div class="health-cards-grid">
+            <div class="health-cards-grid_left">
               {% for card in health_cards %}
               <div class="health-card {% if card.voted and card.vote_value >= 3 %}green{% elif card.voted and card.vote_value >= 2 %}amber{% elif card.voted %}red{% else %}amber{% endif %}">
                 <h3>{{ card.cardname }}</h3>
@@ -114,11 +114,12 @@
 
             
 
-          <div class="text-center">
-            <a href="{% url 'votingDashboard' %}" class="primary-button">
-              Vote for All Cards
-            </a>
-          </div>
+          
+        </div>
+        <div class="text-center">
+          <a href="{% url 'votingDashboard' %}" class="primary-button">
+            Vote for All Cards
+          </a>
         </div>
 
         <!-- Quick Stats -->

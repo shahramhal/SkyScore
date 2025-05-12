@@ -1,582 +1,401 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Dashboard</title>
-    <!-- Include Chart.js -->
+    <title>Team Leader progress</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    <!-- Include Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         :root {
-            --primary-color: #8B5CF6;
-            --primary-light: #A78BFA;
-            --primary-lighter: #C4B5FD;
-            --primary-dark: #7C3AED;
-            --primary-darker: #6D28D9;
-            --secondary-color: #F3F4F6;
+            --primary-blue: #4a3b99;
+            --dark-blue: #362b73;
+            --accent-blue: #6a42c1;
+            --light-bg: #f3f4f6;
+            --light-purple: #ede9fe;
             --text-color: #1F2937;
-            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            --transition-speed: 0.3s;
+            --success-green: #22c55e;
+            --error-red: #ef4444;
+            --sidebar-width: 280px;
         }
-        
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, white, #EDE9FE);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, white, var(--light-purple));
             color: var(--text-color);
             min-height: 100vh;
-            line-height: 1.6;
         }
-        
-        .main-container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        /* Space for your future navbar */
-        .sidebar {
-            width: 250px;
-            background-color: #f8f9fa;
-            border-right: 1px solid #e3e3e3;
-        }
-        
-        .content-area {
-            flex: 1;
-            padding: 20px;
-        }
-        
+
         .header {
-            background: linear-gradient(90deg, var(--primary-dark), var(--primary-color));
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
             color: white;
-            padding: 15px 20px;
+            padding: 20px;
             text-align: center;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            box-shadow: var(--card-shadow);
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 30px;
+            
         }
-        
-        .header::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
-            pointer-events: none;
+
+        .content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            margin-left: 280px;
+            
         }
-        
+
         .card {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
+            background: white;
             padding: 25px;
-            margin-bottom: 25px;
-            transition: transform var(--transition-speed);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
-        
-        .card:hover {
-            transform: translateY(-5px);
+
+        .card h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
         }
-        
-        .card-title {
-            font-size: 20px;
+
+        .chart-container {
+            width: 100%;
+            max-width: 700px;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-lighter);
-            padding-bottom: 10px;
+            color: var(--primary-blue);
+            margin: 10px 0;
+        }
+
+        .metric-label {
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .team-info {
+            margin-bottom: 30px;
+        }
+
+        .team-info h3 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(to bottom, var(--primary-blue), var(--dark-blue));
+            color: white;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .side-nav-header {
+            padding: 20px;
             display: flex;
             align-items: center;
-        }
-        
-        .card-title i {
-            margin-right: 10px;
-            color: var(--primary-dark);
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 20px 0;
-        }
-        
-        .team-overview {
-            margin-top: 20px;
-        }
-        
-        .team-overview h3 {
-            margin-bottom: 15px;
-            color: var(--primary-darker);
-        }
-        
-        .health-checks {
-            margin-bottom: 20px;
-        }
-        
-        .health-checks h4 {
-            margin-bottom: 10px;
-            color: var(--primary-dark);
-        }
-        
-        .score-item {
-            display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            padding: 12px;
-            background-color: var(--secondary-color);
-            border-radius: 8px;
-            transition: background-color var(--transition-speed);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .score-item:hover {
-            background-color: #E9D5FF;
-        }
-        
-        .score-value {
+
+        .side-nav-logo {
+            font-size: 22px;
             font-weight: bold;
-            color: var(--primary-darker);
-        }
-        
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .team-selector {
-            flex: 1;
-        }
-        
-        .team-selector select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--primary-lighter);
-            background-color: white;
-            color: var(--text-color);
-            font-size: 16px;
-            cursor: pointer;
-            outline: none;
-            transition: border-color var(--transition-speed);
-        }
-        
-        .team-selector select:focus {
-            border-color: var(--primary-color);
-        }
-        
-        .overview-button {
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
             color: white;
+            text-decoration: none;
+        }
+
+        .side-nav-toggle {
+            background: transparent;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            color: white;
+            font-size: 18px;
             cursor: pointer;
-            font-weight: bold;
-            transition: all var(--transition-speed);
+            display: none;
+        }
+
+        .user-profile {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--accent-blue);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-        }
-        
-        .overview-button:hover {
-            background: linear-gradient(90deg, var(--primary-dark), var(--primary-darker));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .performance-breakdown {
-            margin-top: 20px;
-        }
-        
-        .performance-breakdown h4 {
-            margin-bottom: 15px;
-            color: var(--primary-dark);
-        }
-        
-        .score-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            margin: 0 auto 10px;
+            font-size: 24px;
+            font-weight: bold;
         }
 
-        .performance-summary {
-            background-color: #F5F3FF;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border-left: 4px solid var(--primary-color);
+        .user-name,
+        .user-role {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
         }
-        
-        @media (max-width: 768px) {
-            .score-list {
-                grid-template-columns: 1fr;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
+
+        .side-nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
-        
-        /* Animation for data updates */
-        @keyframes highlight {
-            0% { background-color: var(--primary-lighter); }
-            100% { background-color: var(--secondary-color); }
+
+        .side-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
         }
-        
-        .highlight {
-            animation: highlight 1.5s ease-out;
+
+        .side-nav-link:hover,
+        .side-nav-link.active {
+            background-color: var(--accent-blue);
+        }
+
+        .side-nav-link i {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <!-- Left sidebar placeholder (you'll add this later) -->
-        <div class="sidebar">
-            <!-- Navbar will go here -->
+
+<nav class="side-nav">
+    <!-- Header with logo and toggle button -->
+    <div class="side-nav-header">
+      <!-- Django URL template tag for dynamic routing -->
+      <a href="{% url 'teamleaddash' %}" class="side-nav-logo"
+        >Sky Score</a
+      >
+      <!-- Toggle button for collapsing sidebar -->
+      <button class="side-nav-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- User Profile Section with Django Template Logic -->
+    <div class="user-profile">
+      <!-- Avatar with user's initial (or 'U' for guest) -->
+      <div class="user-avatar">
+        {% if user %} {{ user.username|slice:":1"|upper }}
+        <!-- First letter of username -->
+        {% else %} U
+        <!-- Default for guest users -->
+        {% endif %}
+      </div>
+
+      <!-- User's full name (or 'Guest User') -->
+      <div class="user-name">
+        {% if user %} {{ user.first_name }} {{ user.last_name }}
+        <!-- Combined name -->
+        {% else %} Guest User {% endif %}
+      </div>
+
+      <!-- User role from Django model -->
+      <div class="user-role">
+        {% if user %} {{ user.userType }}
+        <!-- Custom user type field -->
+        {% else %} Guest User {% endif %}
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <ul class="side-nav-menu">
+      <!-- Dashboard Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'teamleaddash' %}" 
+             class="side-nav-link {% if active_page == 'team_lead_dashboard' %}active{% endif %}">
+              <i class="fas fa-home"></i>
+              <span>Dashboard</span>
+          </a>
+      </li>
+  
+      <!-- Health Check Link -->
+      <li class="side-nav-item">
+          <a href="{%url 'team_voting_dashboard'%}" 
+             class="side-nav-link {% if active_page == 'health_cards' or  active_page == 'team_lead_voting' %}active{% endif %}">
+              <i class="fas fa-vote-yea"></i>
+              <span>Session</span>
+          </a>
+      </li>
+  
+      <!-- Reports Link -->
+      <li class="side-nav-item">
+          <a href="{%url 'teamleadprog'%}" 
+             class="side-nav-link {% if active_page == 'team_progress' %}active{% endif %}">
+              <i class="fas fa-chart-line"></i>
+              <span>Reports</span>
+          </a>
+      </li>
+  
+      <!-- Profile Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'team_lead_profile' %}" 
+             class="side-nav-link {% if active_page == 'profile' %}active{% endif %}">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+          </a>
+      </li>
+      <!-- Settings Link -->
+      <li class="side-nav-item">
+        <a href="{% url 'settings_tl' %}" class="side-nav-link{% if active_page == 'settings' %}active{% endif %}">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </a>
+      </li>
+  
+      <!-- Logout Link -->
+      <li class="side-nav-item">
+          <a href="{% url 'logout' %}" class="side-nav-link">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+          </a>
+      </li>
+  </ul>
+</nav>
+    <div class="header">
+        Team Progress Overview
+    </div>
+
+    <div class="content">
+        <div class="team-info">
+            <h3>{{ team.teamname }}</h3>
+            <p>Department: {{ team.departmentid.departmentname }}</p>
         </div>
-        
-        <div class="content-area">
-            <div class="header">
-                TEAMS
-            </div>
 
-            <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-chart-pie"></i> TEAMS OVERVIEW:
-                </div>
-                <div class="chart-container">
-                    <canvas id="teamScoreChart"></canvas>
-                </div>
-                <div class="team-overview">
-                    <h3>Team Name (e.g., 5CS16_A, 5CS16_B, 5CS16_C, 5CS16_D)</h3>
-                    
-                    <div class="health-checks">
-                        <h4><i class="fas fa-heartbeat"></i> Last Health Check of each team:</h4>
-                        {% for team in teams %}
-                            <div class="score-item team-health-item" data-team-id="{{ team.id }}">
-                                <span><i class="fas fa-users"></i> {{ team.name }}</span>
-                                <span class="score-value">- {{ team.last_health_check|date:"M jS Y" }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <div class="controls">
-                        <div class="team-selector">
-                            <select id="team-select">
-                                {% for team in teams %}
-                                    <option value="{{ team.id }}">{{ team.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <button class="overview-button">
-                            <i class="fas fa-eye"></i> OVERVIEW
-                        </button>
-                    </div>
-                </div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Health Score</div>
+                <div class="metric-value">{{ team_metrics.health_score }}</div>
             </div>
-
-            <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-star"></i> Current Score (Overall team performance)
-                </div>
-                <div class="chart-container">
-                    <canvas id="teamPerformanceChart"></canvas>
-                </div>
-                <div class="performance-breakdown">
-                    <h4><i class="fas fa-clipboard-list"></i> Performance Breakdown:</h4>
-                    <div class="score-list" id="performanceScores">
-                        <div class="score-item">
-                            <span><i class="fas fa-bullseye"></i> Mission Score:</span>
-                            <span class="score-value" id="missionScore">Loading...</span>
-                        </div>
-                        <div class="score-item">
-                            <span><i class="fas fa-smile"></i> Fun Score:</span>
-                            <span class="score-value" id="funScore">Loading...</span>
-                        </div>
-                        <div class="score-item">
-                            <span><i class="fas fa-bolt"></i> Speed Score:</span>
-                            <span class="score-value" id="speedScore">Loading...</span>
-                        </div>
-                        <div class="score-item">
-                            <span><i class="fas fa-gem"></i> Value Score:</span>
-                            <span class="score-value" id="valueScore">Loading...</span>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="radarChart"></canvas>
-                    </div>
-                    <div class="performance-summary">
-                        These breakdowns give a quick view of each team's performance across different categories.
-                        <div id="team-title" style="font-weight: bold; margin-top: 10px;">Select a team to see detailed metrics</div>
-                    </div>
-                </div>
+            <div class="metric-card">
+                <div class="metric-label">Mission Score</div>
+                <div class="metric-value">{{ team_metrics.mission_score }}</div>
             </div>
+            <div class="metric-card">
+                <div class="metric-label">Speed Score</div>
+                <div class="metric-value">{{ team_metrics.speed_score }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Value Score</div>
+                <div class="metric-value">{{ team_metrics.value_score }}</div>
+            </div>
+        </div>
 
-            <div class="header">
-                LATEST REPORT
+        <div class="card">
+            <h2>Category Scores</h2>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Health Score Trend</h2>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Votes</div>
+                <div class="metric-value">{{ total_votes }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Participation Rate</div>
+                <div class="metric-value">{{ participation_rate }}%</div>
             </div>
         </div>
     </div>
-    
+
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Store charts globally to update them later
-        let pieChart, barChart, radarChart;
-        
-        // Initialize with sample data (will be replaced with API data)
-        const sampleTeams = [
-            { id: 1, name: "5CS16_A", score: 27.4, last_check: "Feb 28th 2025" },
-            { id: 2, name: "5CS16_B", score: 23.2, last_check: "Feb 20th 2025" },
-            { id: 3, name: "5CS16_C", score: 25.6, last_check: "Feb 19th 2025" },
-            { id: 4, name: "5CS16_D", score: 23.8, last_check: "Feb 25th 2025" }
-        ];
-        
-        const samplePerformance = {
-            1: { overall: 4.5, mission: 4.3, fun: 3.9, speed: 4.0, value: 4.2 },
-            2: { overall: 4.2, mission: 4.1, fun: 4.0, speed: 4.3, value: 4.4 },
-            3: { overall: 4.7, mission: 4.8, fun: 4.5, speed: 4.6, value: 4.7 },
-            4: { overall: 4.1, mission: 4.0, fun: 4.3, speed: 3.9, value: 4.2 }
-        };
-        
-        // Function to fetch team score data (pie chart)
-        function fetchTeamScores() {
-            // This will be replaced with actual API call
-            // fetch('/api/team-scores/')
-            //    .then(response => response.json())
-            //    .then(data => { ... })
-            
-            // Using sample data for now
-            const data = {
-                labels: sampleTeams.map(team => team.name),
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'bar',
+            data: {
+                labels: JSON.parse('{{ category_scores.categories|safe|escapejs }}'),
                 datasets: [{
-                    data: sampleTeams.map(team => team.score),
-                    backgroundColor: [
-                        'rgba(139, 92, 246, 0.7)',
-                        'rgba(124, 58, 237, 0.7)',
-                        'rgba(167, 139, 250, 0.7)',
-                        'rgba(196, 181, 253, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgba(139, 92, 246, 1)',
-                        'rgba(124, 58, 237, 1)',
-                        'rgba(167, 139, 250, 1)',
-                        'rgba(196, 181, 253, 1)'
-                    ],
+                    label: 'Average Score',
+                    data: JSON.parse('{{ category_scores.scores|safe|escapejs }}'),
+                    backgroundColor: 'rgba(74, 59, 153, 0.8)',
+                    borderColor: 'rgba(74, 59, 153, 1)',
                     borderWidth: 1
                 }]
-            };
-            
-            const ctx = document.getElementById('teamScoreChart').getContext('2d');
-            
-            // Clear previous chart if it exists
-            if (pieChart) {
-                pieChart.destroy();
-            }
-            
-            pieChart = new Chart(ctx, {
-                type: 'pie',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5
                     }
                 }
-            });
-        }
-        
-        // Function to fetch performance data (bar chart)
-        function fetchTeamPerformances() {
-            // This will be replaced with actual API call
-            // fetch('/api/team-performance/')
-            //    .then(response => response.json())
-            //    .then(data => { ... })
-            
-            // Using sample data for now
-            const data = {
-                teams: sampleTeams.map(team => team.name),
-                overall_scores: sampleTeams.map(team => samplePerformance[team.id].overall)
-            };
-            
-            const performanceCtx = document.getElementById('teamPerformanceChart').getContext('2d');
-            
-            // Clear previous chart if it exists
-            if (barChart) {
-                barChart.destroy();
             }
-            
-            barChart = new Chart(performanceCtx, {
-                type: 'bar',
-                data: {
-                    labels: data.teams,
-                    datasets: [{
-                        label: 'Overall Score',
-                        data: data.overall_scores,
-                        backgroundColor: 'rgba(139, 92, 246, 0.6)',
-                        borderColor: 'rgba(139, 92, 246, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 5
-                        }
+        });
+
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: JSON.parse('{{ trend_data.dates|safe|escapejs }}'),
+                datasets: [{
+                    label: 'Health Score',
+                    data: JSON.parse('{{ trend_data.scores|safe|escapejs }}'),
+                    borderColor: 'rgba(74, 59, 153, 1)',
+                    backgroundColor: 'rgba(74, 59, 153, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5
                     }
                 }
-            });
-        }
-        
-        // Function to load performance data for a specific team
-        function loadTeamPerformance(teamId) {
-            // This will be replaced with actual API call
-            // fetch(`/api/team-performance/?team_id=${teamId}`)
-            //    .then(response => response.json())
-            //    .then(data => { ... })
-            
-            // Using sample data for now
-            const data = samplePerformance[teamId];
-            const selectedTeam = sampleTeams.find(team => team.id === parseInt(teamId));
-            
-            // Update text elements
-            document.getElementById('missionScore').textContent = `${data.mission} ⭐`;
-            document.getElementById('funScore').textContent = `${data.fun} ⭐`;
-            document.getElementById('speedScore').textContent = `${data.speed} ⭐`;
-            document.getElementById('valueScore').textContent = `${data.value} ⭐`;
-            document.getElementById('team-title').textContent = `Current metrics for ${selectedTeam.name}`;
-            
-            // Add highlight animation
-            document.querySelectorAll('#performanceScores .score-item').forEach(item => {
-                item.classList.add('highlight');
-                setTimeout(() => {
-                    item.classList.remove('highlight');
-                }, 1500);
-            });
-            
-            // Load radar chart
-            loadRadarChart(teamId);
-        }
-        
-        // Function to load radar chart for selected team
-        function loadRadarChart(teamId) {
-            // Using sample data
-            const data = samplePerformance[teamId];
-            const radarCtx = document.getElementById('radarChart').getContext('2d');
-            
-            // Clear previous chart if it exists
-            if (radarChart) {
-                radarChart.destroy();
             }
-            
-            radarChart = new Chart(radarCtx, {
-                type: 'radar',
-                data: {
-                    labels: ['Mission', 'Fun', 'Speed', 'Value'],
-                    datasets: [{
-                        label: 'Performance Metrics',
-                        data: [data.mission, data.fun, data.speed, data.value],
-                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
-                        borderColor: 'rgba(139, 92, 246, 1)',
-                        pointBackgroundColor: 'rgba(139, 92, 246, 1)',
-                        pointBorderColor: '#fff',
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: {
-                                display: true
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 5
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Fetch all initial data
-        fetchTeamScores();
-        fetchTeamPerformances();
-        
-        // Load data for first team
-        const firstTeamId = document.getElementById('team-select').value || 1;
-        loadTeamPerformance(firstTeamId);
-        
-        // Add event listeners
-        const teamSelect = document.getElementById('team-select');
-        teamSelect.addEventListener('change', function() {
-            loadTeamPerformance(this.value);
         });
-        
-        const overviewButton = document.querySelector('.overview-button');
-        overviewButton.addEventListener('click', function() {
-            loadTeamPerformance(teamSelect.value);
-        });
-        
-        // Add click handler for team health items
-        document.querySelectorAll('.team-health-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const teamId = this.dataset.teamId;
-                teamSelect.value = teamId;
-                loadTeamPerformance(teamId);
-            });
-        });
-        
-        // Simulate real-time data updates every 15 seconds
-        // This would be replaced with actual data fetching in production
-        setInterval(() => {
-            // Simulate data changes
-            sampleTeams.forEach(team => {
-                // Random small changes to scores (±0.2)
-                const performanceChange = (Math.random() * 0.4 - 0.2).toFixed(1);
-                
-                // Update overall score
-                samplePerformance[team.id].overall = 
-                    Math.min(5, Math.max(1, parseFloat(samplePerformance[team.id].overall) + parseFloat(performanceChange)));
-                
-                // Update individual scores slightly
-                ['mission', 'fun', 'speed', 'value'].forEach(metric => {
-                    const metricChange = (Math.random() * 0.2 - 0.1).toFixed(1);
-                    samplePerformance[team.id][metric] = 
-                        Math.min(5, Math.max(1, parseFloat(samplePerformance[team.id][metric]) + parseFloat(metricChange)));
-                });
-                
-                // Update team percentage score
-                team.score = Math.min(100, Math.max(0, team.score + (Math.random() * 2 - 1))).toFixed(1);
-            });
-            
-            // Update charts with new data
-            fetchTeamScores();
-            fetchTeamPerformances();
-            loadTeamPerformance(teamSelect.value);
-            
-            console.log("Data refreshed");
-        }, 15000);
-    });
     </script>
 </body>
 </html>

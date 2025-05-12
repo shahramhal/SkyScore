@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dept Lead Reports</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .card { padding: 16px; background: #f9f9f9; border-radius: 8px; }
+    h2 { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <h1>Department Reports</h1>
+  <div class="grid">
+    <div class="card">
+      <h2>Summary</h2>
+      <p>Total teams: <strong>{{ total_teams }}</strong></p>
+      <p>Total members: <strong>{{ total_members }}</strong></p>
+      <p>Participation: <strong>{{ participation_rate }}%</strong></p>
+    </div>
+    <div class="card">
+      <h2>Health Over Time</h2>
+      <canvas id="healthChart"></canvas>
+    </div>
+    <div class="card">
+      <h2>Team Comparison</h2>
+      <canvas id="teamChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // parse the JSON data injected by Django
+    const dates = JSON.parse('{{ dates_json|escapejs }}');
+    const healthScores = JSON.parse('{{ health_scores_json|escapejs }}');
+    const teamNames = JSON.parse('{{ team_names_json|escapejs }}');
+    const teamScores = JSON.parse('{{ team_scores_json|escapejs }}');
+
+    // line chart: health over time
+    new Chart(
+      document.getElementById('healthChart').getContext('2d'),
+      {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [{
+            label: 'Avg Health',
+            data: healthScores,
+            borderColor: '#4a3b99',
+            tension: 0.1
+          }]
+        }
+      }
+    );
+
+    // bar chart: team comparison
+    new Chart(
+      document.getElementById('teamChart').getContext('2d'),
+      {
+        type: 'bar',
+        data: {
+          labels: teamNames,
+          datasets: [{
+            label: 'Avg Score',
+            data: teamScores,
+            backgroundColor: '#7c43bd'
+          }]
+        },
+        options: { scales: { y: { beginAtZero: true, max: 5 } } }
+      }
+    );
+  </script>
+</body>
+</html>
