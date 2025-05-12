@@ -14,28 +14,33 @@ SkyScore is a web-based application designed to streamline the "Health Check" te
 
 ## Setup
 
-```bash
+
 # Clone repository
+```bash
 git clone https://github.com/shahramhal/SkyScore.git
 cd SkyScore
-
+```
 # Install dependencies
+```bash
 pip install -r requirements.txt
-
+```
 # Apply migrations
+```bash
 python manage.py migrate
-
+```
 # Run development server
+```bash
 python manage.py runserver
+```
 
-Open http://127.0.0.1:8000 in your browser to access the application.
+# Open http://127.0.0.1:8000 in your browser to access the application.
 
 # Create a superuser for admin page 
-
+```bash
 python manage.py createsuperuser
-
-Access the admin panel at http://127.0.0.1:8000/admin
 ```
+# Access the admin panel at http://127.0.0.1:8000/admin
+
 
 ## Technical Stack
 - **Backend**: Django (Python)
