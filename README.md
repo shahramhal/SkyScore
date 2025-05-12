@@ -7,9 +7,10 @@ SkyScore is a web-based application designed to streamline the "Health Check" te
 ![image](https://github.com/user-attachments/assets/dcec55af-40db-47d3-b2b0-bfb8a90ac2cf)
 ![image](https://github.com/user-attachments/assets/ede6a14a-e52f-4275-b428-56aacab2b55f)
 ![image](https://github.com/user-attachments/assets/5c831b6f-d24e-41ab-8d86-353c8046212b)
-![image](https://github.com/user-attachments/assets/fc39cfdb-c85e-45e1-9a63-be63b5cdd00e)
 ![image](https://github.com/user-attachments/assets/cef2817d-2da9-416c-a945-f0e6ae58b594)
-![Uploading image.png…]()
+![image](https://github.com/user-attachments/assets/fc39cfdb-c85e-45e1-9a63-be63b5cdd00e)
+![image](https://github.com/user-attachments/assets/16840436-8768-405f-952f-3ce608c67240)
+
 
 
 
